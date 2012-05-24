@@ -156,6 +156,7 @@ create:
 	cd ..; make force
 
 api:
-	sphinx-apidoc ../futuregrid -o build/source
+	echo "no API yet"
+	#sphinx-apidoc ../futuregrid -o build/source
 
 
