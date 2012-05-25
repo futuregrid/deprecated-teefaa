@@ -6,7 +6,6 @@ Teefaa is a set of tools which allows simplified provisioning.
 System requirements
 ------------------
 
-* euca2ools: verison 1.2
 * python: version 2.7
 * virtualenv (optional, if you do not have sudo rights)
 
