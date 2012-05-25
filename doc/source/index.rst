@@ -15,8 +15,6 @@ Contents:
    modules
    futuregrid
 
-Test
-
 Indices and tables
 ==================
 
