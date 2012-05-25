@@ -1,6 +1,8 @@
 INTRODUCTION
 ============
 
+Teefaa is a set of tools which allows simplified provisioning.
+
 System requirements
 ------------------
 
