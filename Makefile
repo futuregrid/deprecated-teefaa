@@ -5,7 +5,7 @@ all:
 	cd /tmp/vc; git clone git://github.com/futuregrid/teefaa.git
 	cd /tmp/vc/teefaa/doc; ls; make html
 	cp -r /tmp/vc/teefaa/doc/build/html/* .
-	find . -name "*.pyc" --exec rm {} \;
+	find . -name "*.pyc" -exec rm {} \;
 	git add .
 	git reset -- doc
 	git reset -- src
