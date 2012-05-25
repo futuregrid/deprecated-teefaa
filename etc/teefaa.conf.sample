@@ -3,14 +3,14 @@ rootimg: /var/lib/teefaa/images/ubuntu-12.04/20120513
 setting: /var/lib/teefaa/commons/ubuntu-12.04
 ostype: ubuntu
 epilogue: none
-agent: hoobaa
+agent: debian-netboot
 
 [nova-compute]
 rootimg: /var/lib/teefaa/images/openstack-compute/20120515
 setting: /var/lib/teefaa/commons/ubuntu-12.04
 epilogue: none
 ostype: ubuntu
-agent: hoobaa
+agent: debian-netboot
 
 [euca-compute]
 rootimg: /var/lib/teefaa/images/euca-compute/20120523
@@ -20,63 +20,75 @@ ostype: rhel5
 agent: hoobaa
 
 [essex_mgmt]
-rootimg: /data/machines/i50_essex_mgmt/20120515
-setting: /home/ktanaka/opt/fgtools/share/ubuntu12.04
+rootimg: /data/machines/essex_mgmt/20120515
+setting: /var/lib/teefaa/commons/essex_mgmt
 ostype: ubuntu
 epilogue: none
 agent: hoobaa
 
-[india-hpc]
+[hpc-node]
 rootimg: /var/lib/teefaa/images/india-hpc/20120301
 setting: /var/lib/teefaa/commons/rhel-5.8
-epilogue: /var/lib/teefaa/epilogues/india-hpc
+epilogue: /var/lib/teefaa/epilogues/hpc-node
 ostype: rhel5
 epilogue: none
 agent: hoobaa
 
-[i121]
-rootimg: /var/lib/teefaa/images/i121/20120521
-setting: /var/lib/teefaa/commons/none
-ostype: ubuntu
-
-[india]
+[cluster-a]
 interface: eth1
-gw: 149.165.146.254
+gw: xxx.xxx.xxx.254
 netmask: 255.255.255.0
 nameservers: 129.79.1.1
-mgmt: im1
-
-[mini]
-interface: eth1
-gw: 149.165.145.46
-netmask: 255.255.255.240
-nameservers: 129.79.1.1
-mgmt: tm1
+mgmt: mgmt1
 
 [nodes]
-i41: 149.165.146.41
-i42: 149.165.146.42
-i43: 149.165.146.43
-i44: 149.165.146.44
-i45: 149.165.146.45
-i47: 149.165.146.47
-i48: 149.165.146.48
-i49: 149.165.146.49
-i50: 149.165.146.50
-i102: 149.165.146.102
-i103: 149.165.146.103
-i104: 149.165.146.104
-i105: 149.165.146.105
-i106: 149.165.146.106
-i107: 149.165.146.107
-i108: 149.165.146.108
-i109: 149.165.146.109
-i110: 149.165.146.110
-i111: 149.165.146.111
-i112: 149.165.146.112
-i113: 149.165.146.113
-i121: 149.165.146.121
-i122: 149.165.146.122
-i123: 149.165.146.123
-i124: 149.165.146.124
-th1: 149.165.145.34
+cluster-a001: 172.20.1.1
+cluster-a002: 172.20.1.2
+cluster-a003: 172.20.1.3
+cluster-a004: 172.20.1.4
+cluster-a005: 172.20.1.5
+cluster-a006: 172.20.1.6
+cluster-a007: 172.20.1.7
+cluster-a008: 172.20.1.8
+cluster-a009: 172.20.1.9
+cluster-a010: 172.20.1.10
+cluster-a011: 172.20.1.11
+cluster-a012: 172.20.1.12
+cluster-a013: 172.20.1.13
+cluster-a014: 172.20.1.14
+cluster-a015: 172.20.1.15
+cluster-a016: 172.20.1.16
+cluster-a017: 172.20.1.17
+cluster-a018: 172.20.1.18
+cluster-a019: 172.20.1.19
+cluster-a020: 172.20.1.20
+cluster-a021: 172.20.1.21
+cluster-a022: 172.20.1.22
+cluster-a023: 172.20.1.23
+cluster-a024: 172.20.1.24
+cluster-a025: 172.20.1.25
+cluster-a026: 172.20.1.26
+cluster-a027: 172.20.1.27
+cluster-a028: 172.20.1.28
+cluster-a029: 172.20.1.29
+cluster-a030: 172.20.1.30
+cluster-a031: 172.20.1.31
+cluster-a032: 172.20.1.32
+cluster-a033: 172.20.1.33
+cluster-a034: 172.20.1.34
+cluster-a035: 172.20.1.35
+cluster-a036: 172.20.1.36
+cluster-a037: 172.20.1.37
+cluster-a038: 172.20.1.38
+cluster-a039: 172.20.1.39
+cluster-a040: 172.20.1.40
+cluster-a041: 172.20.1.41
+cluster-a042: 172.20.1.42
+cluster-a043: 172.20.1.43
+cluster-a044: 172.20.1.44
+cluster-a045: 172.20.1.45
+cluster-a046: 172.20.1.46
+cluster-a047: 172.20.1.47
+cluster-a048: 172.20.1.48
+cluster-a049: 172.20.1.49
+cluster-a050: 172.20.1.50
