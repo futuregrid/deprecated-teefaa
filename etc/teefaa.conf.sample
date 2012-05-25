@@ -1,0 +1,82 @@
+[ubuntu-1204]
+rootimg: /var/lib/teefaa/images/ubuntu-12.04/20120513
+setting: /var/lib/teefaa/commons/ubuntu-12.04
+ostype: ubuntu
+epilogue: none
+agent: hoobaa
+
+[nova-compute]
+rootimg: /var/lib/teefaa/images/openstack-compute/20120515
+setting: /var/lib/teefaa/commons/ubuntu-12.04
+epilogue: none
+ostype: ubuntu
+agent: hoobaa
+
+[euca-compute]
+rootimg: /var/lib/teefaa/images/euca-compute/20120523
+setting: /var/lib/teefaa/commons/rhel-5.8
+epilogue: /var/lib/teefaa/epilogues/euca-compute
+ostype: rhel5
+agent: hoobaa
+
+[essex_mgmt]
+rootimg: /data/machines/i50_essex_mgmt/20120515
+setting: /home/ktanaka/opt/fgtools/share/ubuntu12.04
+ostype: ubuntu
+epilogue: none
+agent: hoobaa
+
+[india-hpc]
+rootimg: /var/lib/teefaa/images/india-hpc/20120301
+setting: /var/lib/teefaa/commons/rhel-5.8
+epilogue: /var/lib/teefaa/epilogues/india-hpc
+ostype: rhel5
+epilogue: none
+agent: hoobaa
+
+[i121]
+rootimg: /var/lib/teefaa/images/i121/20120521
+setting: /var/lib/teefaa/commons/none
+ostype: ubuntu
+
+[india]
+interface: eth1
+gw: 149.165.146.254
+netmask: 255.255.255.0
+nameservers: 129.79.1.1
+mgmt: im1
+
+[mini]
+interface: eth1
+gw: 149.165.145.46
+netmask: 255.255.255.240
+nameservers: 129.79.1.1
+mgmt: tm1
+
+[nodes]
+i41: 149.165.146.41
+i42: 149.165.146.42
+i43: 149.165.146.43
+i44: 149.165.146.44
+i45: 149.165.146.45
+i47: 149.165.146.47
+i48: 149.165.146.48
+i49: 149.165.146.49
+i50: 149.165.146.50
+i102: 149.165.146.102
+i103: 149.165.146.103
+i104: 149.165.146.104
+i105: 149.165.146.105
+i106: 149.165.146.106
+i107: 149.165.146.107
+i108: 149.165.146.108
+i109: 149.165.146.109
+i110: 149.165.146.110
+i111: 149.165.146.111
+i112: 149.165.146.112
+i113: 149.165.146.113
+i121: 149.165.146.121
+i122: 149.165.146.122
+i123: 149.165.146.123
+i124: 149.165.146.124
+th1: 149.165.145.34
