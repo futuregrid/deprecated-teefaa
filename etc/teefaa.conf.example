@@ -1,0 +1,6 @@
+[config]
+mgmt: host_mgmt
+command: /opt/teefaa/sbin/dynamic_provisioning_agent.py
+pxelinux.cfg: /tftpboot/pxelinux.cfg
+netboot: netboot_pxeconf
+localboot: localboot_pxeconf
