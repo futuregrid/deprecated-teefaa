@@ -1,17 +1,76 @@
-[main]
+#******************************************************************************
+# Teefaa Site Configuration File
+#******************************************************************************
+
+#******************************************************************************
+# Image-* is the image configuration information
+#------------------------------------------------------------------------------
+#  rootimg: Image directory
+#
+#  overwriting: Contains directories that have to be overwritten 
+#
+#  partitioning: File with fdisk commands to create partitions
+#
+#  ostype: The OS type
+#
+#  prologue: This is the script you run before the installation like network 
+#  setup.
+#
+#  epilogue: This is the script you run after the installation.
+#******************************************************************************
+
+[Image-ubuntu-1204]
 rootimg: 149.165.145.34:/var/lib/teefaa/images/ubuntu-12.04/20120513
 overwriting: 149.165.145.34:/var/lib/teefaa/overwritings/ubuntu-12.04
 partitioning: 149.165.145.34:/var/lib/teefaa/partitionings/2-50-100.batch
 ostype: ubuntu
 prologue: none
 epilogue: none
+
+[Image-centos-1204]
+rootimg: 149.165.145.34:/var/lib/teefaa/images/ubuntu-12.04/20120513
+overwriting: 149.165.145.34:/var/lib/teefaa/overwritings/ubuntu-12.04
+partitioning: 149.165.145.34:/var/lib/teefaa/partitionings/2-50-100.batch
+ostype: ubuntu
+prologue: none
+epilogue: none
+
+#******************************************************************************
+# General site configuration
+#------------------------------------------------------------------------------
+#  default-if: Default network interface
+#
+#  default-gw: Default gateway 
+#
+#  if2: Second network interface
+#
+#  if3: Third network interface
+#
+#  nameservers: DNS servers
+#******************************************************************************
+
+[general]
 default-if: eth1
 default-gw: 149.165.146.254
 if2: eth0
 if3: none
 nameservers: 129.79.1.1
 
-[default-if]
+#******************************************************************************
+# Default Interface configuration
+#------------------------------------------------------------------------------
+#  default-if: Default network interface
+#
+#  default-gw: Default gateway 
+#
+#  if2: Second network interface
+#
+#  if3: Third network interface
+#
+#  nameservers: A DNS server
+#******************************************************************************
+
+[eth1]
 bootproto: static
 netmask: 255.255.255.0
 i1: 149.165.146.1
@@ -151,7 +210,7 @@ i134: 149.165.146.134
 i135: 149.165.146.135
 i136: 149.165.146.136
 
-[if2]
+[eth0]
 bootproto: dhcp
 netmask: 255.255.254.0
 i1: 172.29.200.1
@@ -292,7 +351,7 @@ i135: 172.29.200.135
 i136: 172.29.200.136
 
 
-[interface3]
+[ib0]
 bootproto: static
 netmask: 255.255.255.0
 i1: 10.10.1.1

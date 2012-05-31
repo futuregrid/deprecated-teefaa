@@ -22,43 +22,37 @@ __author__ = 'Koji Tanaka'
 import time
 import subprocess
 import ConfigParser
-import optparse
+import argparse
 import os
 
-parser = optparse.OptionParser()
-parser.add_option('--host',dest="host",default=False)
-parser.add_option('--conf',dest="conf",default="/opt/teefaa/etc/call_agent.conf")
-parser.add_option('--recipe',dest="recipe",default=False)
-options, remainder = parser.parse_args()
 
-def help():
-    print """
-    usage:
-    
-      teefaa.py --host <HOSTNAME> --conf <CONFIG_FILE> --recipe <RECIPE_FILE>
-    """
-    
-if (options.host == False) or (options.conf == False) or (options.recipe == False):
-    help()
-    exit()
+parser = argparse.ArgumentParser(prog="teefaa", formatter_class=argparse.RawDescriptionHelpFormatter,
+                                     description="FutureGrid Teefaa Dynamic Provisioning Help ")
+parser.add_argument('-H','--host',dest="host", required=True, metavar='hostname', help='Host that will be provisioned with a new OS.')
+parser.add_argument('-C','--conf',dest="conf", metavar='config_file', default="/opt/teefaa/etc/teefaa.conf", help='Configuration file.')
+parser.add_argument('-O','--os',dest="os", required=True, metavar='OS', help='Name of the OS image that will be provisioned.')
+parser.add_argument('--site',dest="site", required=True, metavar='site_name', help='Name of the site.')
+
+options = parser.parse_args()
+
 
 config = ConfigParser.ConfigParser()
 config.read(options.conf)
 
-recipe = ConfigParser.ConfigParser()
-recipe.read(options.recipe)
+siteinfo = ConfigParser.ConfigParser()
+siteinfo.read(options.site)
 
 DPHOST = options.host
-RECIPE = options.recipe
+SITE = options.siteinfo
 COMMAND = config.get("config","command")
 MGMT = config.get("config","mgmt")
 NETBOOT = config.get("config","netboot")
 LOCALBOOT = config.get("config","localboot")
 PXECONF = config.get("config", "pxelinux.cfg")
-Interface = recipe.get("main","default-if")
-IpAddr = recipe.get("default-if",DPHOST)
-Gateway = recipe.get("main","default-gw")
-NetMask = recipe.get("default-if","netmask")
+Interface = siteinfo.get("general","default-if")
+IpAddr = siteinfo.get(Interface,DPHOST)
+Gateway = siteinfo.get("general","default-gw")
+NetMask = siteinfo.get(Interface,"netmask")
 
 # Ready to netboot
 CMD = "ssh " + MGMT + " cp " + PXECONF + "/" + NETBOOT + " " + PXECONF + "/" + DPHOST
@@ -92,12 +86,12 @@ subprocess.check_call(CMD, shell=True)
 CMD = "ssh " + MGMT + " ssh " + DPHOST + " route add default gw " + Gateway
 subprocess.check_call(CMD, shell=True)
 
-# Copy command and recipe.
+# Copy command and siteinfo.
 CMD = "scp " + COMMAND + " " + DPHOST + ":agent.py"
 subprocess.check_call(CMD, shell=True)
-CMD = "scp " + RECIPE + " " + DPHOST + ":recipe.txt"
+CMD = "scp " + SITE + " " + DPHOST + ":" + options.site
 subprocess.check_call(CMD, shell=True)
 
 # Run agent.
-CMD = "ssh " + DPHOST + " ./agent.py --host " + DPHOST + " --recipe recipe.txt" 
+CMD = "ssh " + DPHOST + " ./agent.py --host " + DPHOST + " --recipe " + options.site 
 subprocess.check_call(CMD, shell=True)

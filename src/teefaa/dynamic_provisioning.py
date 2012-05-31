@@ -108,13 +108,13 @@ CMD = "ssh " + DPHOST + " swapon /dev/sda1"
 subprocess.check_call(CMD, shell=True)
 
 if OsType == "ubuntu":
-   # Make ext4 File System
-   CMD = "ssh " + DPHOST + " mkfs.ext4 /dev/sda2"
-   subprocess.check_call(CMD, shell=True)
+    # Make ext4 File System
+    CMD = "ssh " + DPHOST + " mkfs.ext4 /dev/sda2"
+    subprocess.check_call(CMD, shell=True)
 elif OsType == "rhel5":
-   # Make ext3 File System
-   CMD = "ssh " + DPHOST + " mkfs.ext3 /dev/sda2"
-   subprocess.check_call(CMD, shell=True)
+    # Make ext3 File System
+    CMD = "ssh " + DPHOST + " mkfs.ext3 /dev/sda2"
+    subprocess.check_call(CMD, shell=True)
 
 # Wait
 time.sleep(5)
