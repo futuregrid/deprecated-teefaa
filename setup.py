@@ -42,16 +42,16 @@ doclines = __doc__.split("\n")
 
 
 setup(
-    name='futuregrid.move.teefa',
+    name='teefaa',
     version=version,
     description = doclines[0],
     classifiers = filter(None, classifiers.split("\n")),
     long_description = "\n".join(doclines[2:]),
     keywords='FutureGrid teefa',
-    maintainer='Koji Tanaka',
-    maintainer_email="laszewski@gmail.com",
-    author='Koji Tanaka, Gregor von Laszewski',
-    author_email='laszewski@gmail.com',
+    maintainer='Koji Tanaka, Javier Diaz, Gregor von Laszewski',
+    maintainer_email="kj.tanaka@gmail.com",
+    author='Koji Tanaka',
+    author_email='kj.tanaka@gmail.com',
     url='https://github.com/futuregrid/teefaa',
     license='Apache 2.0',
     package_dir = {'': '.'},
