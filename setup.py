@@ -54,7 +54,7 @@ setup(
     author_email='kj.tanaka@gmail.com',
     url='https://github.com/futuregrid/teefaa',
     license='Apache 2.0',
-    package_dir = {'': '.'},
+    package_dir = {'': 'src'},
     packages = find_packages(exclude=['ez_setup', 'examples', 'tests']),
     
     #include_package_data=True,
