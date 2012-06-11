@@ -15,9 +15,9 @@
 # limitations under the License.                                             #
 # -------------------------------------------------------------------------- #
 """
-Description: Symplified Dynamic Provisioning tool in Teefaa. Installs customized images of Operating System on Bare Metal machine.  
+Description: Simplified Dynamic Provisioning tool in Teefaa. Installs customized images of Operating System on Bare Metal machine.  
 """
-__author__ = 'Koji Tanaka'
+__author__ = 'Koji Tanaka, Javier Diaz'
 
 import time
 import subprocess
@@ -33,7 +33,7 @@ import time
 defaultconfigfile = "fg-server.conf"
 
 class Teefaa():
-    def __init__(self, config=None, verbose=False):
+    def __init__(self, config=None, verbose=False):        
         
         #general configuration
         self.verbose = verbose   
@@ -57,23 +57,24 @@ class Teefaa():
         
         self.generalconfig = self.loadGeneralConfig()
         self.logger = self.setup_logger()
+        
+        self.logger.debug("\nTeefaa Reading Configuration file from " + self.configfile + "\n")
+        
     
     def setDefaultConfigFile(self):
         '''
         Set the default configuration file when not configuration file is provided.
         This is always interactive because is executed when we create the object.'''
-        self.configfile = defaultconfigfile
         
         localpath = "~/.fg/"
-
-        self.configfile = os.path.expanduser(localpath) + "/" + self.configfile
+        self.configfile = os.path.expanduser(localpath) + "/" + defaultconfigfile
         if not os.path.isfile(self.configfile):
-            self.configfile = "/etc/futuregrid/" + self.configfile
-
+            self.configfile = "/etc/futuregrid/" + defaultconfigfile
+            
             if not os.path.isfile(self.configfile):
                 print "ERROR: teefaa configuration file " + self.configfile + " not found"
                 sys.exit(1)
-                   
+                 
     
     def setup_logger(self):
         #Setup logging
@@ -130,15 +131,14 @@ class Teefaa():
         return config
     
     def errorMsg(self, msg):
-        self._log.error(msg)
+        self.logger.error(msg)
         if self.verbose:
             print msg
             
-    def loadSpecificConfig(self, host, os, site):
+    def loadSpecificConfig(self, host, operatingsystem, site):
         '''This load the configuration of the site, machine and image to provision.
         Returns None or a dictionary.
         '''
-        
         info = {}
         
         #Site PXE configuration
@@ -168,7 +168,7 @@ class Teefaa():
             self.errorMsg("No localboot option found in section " + section + " file " + self.configfile)
             return 
         try:
-            siteconfigfile = os.path.expanduser(self.generalconfig.get(section, 'siteconf', 0))
+            siteconfigfile = os.path.expandvars(os.path.expanduser(self.generalconfig.get(section, 'siteconf', 0)))
             if not os.path.isfile(siteconfigfile):
                 self.errorMsg("The configuration file " + siteconfigfile + " does not exists. Section " + section)
                 return
@@ -228,7 +228,7 @@ class Teefaa():
         
         
         #OS Image information        
-        section = 'Image-' + os
+        section = 'Image-' + operatingsystem
         try: 
             info['rootimg'] = siteinfo.get(section, 'rootimg', 0)
         except ConfigParser.NoOptionError:
@@ -267,9 +267,16 @@ class Teefaa():
         
         return info
     
-    def provision(self, host, os, site):
+    def provision(self, host, operatingsystem, site):
 
-        info = self.loadSpecificConfig(host, os, site)
+        info = self.loadSpecificConfig(host, operatingsystem, site)
+
+        #Test begin
+        #print " Provisioning " + host + " with OS, which is part of the " + operatingsystem + " site " + site
+        #print str(info)
+        #return 'OK'
+        #Test end
+    
 
         if info != None:
             try:
@@ -465,6 +472,15 @@ class Teefaa():
                 self.logger.error(msg)
                 return msg
             
+            return 'OK'
+            
+        else:
+            msg = "ERROR: Reading configuration for host " + host + ", site " + site + ", os " + operatingsystem
+            self.logger.error(msg)
+            return msg
+        
+            
+            
 def main():
     parser = argparse.ArgumentParser(prog="teefaa", formatter_class=argparse.RawDescriptionHelpFormatter,
                                          description="FutureGrid Teefaa Dynamic Provisioning Help ")
@@ -481,7 +497,11 @@ def main():
         sys.exit(1)    
     
     teefaaobj = Teefaa(conf, True)
-    teefaaobj.provision(options.host, options.os, options.site)
+    status = teefaaobj.provision(options.host, options.os, options.site)
+    if status != 'OK':
+        print status
+    else:
+        print "Teefaa provisioned the host " + options.host + " of the site " + options.site + " with the os " + options.os + " successfully"
         
 if __name__ == "__main__":
     main()
