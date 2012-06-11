@@ -151,7 +151,7 @@ class Teefaa():
             return 
         except ConfigParser.NoSectionError:
             self.errorMsg("Error: no section " + section + " found in the " + self.configfile + " config file")            
-            return False
+            return 
         try:
             info['pxeconf'] = self.generalconfig.get(section, 'pxelinux.cfg', 0)
         except ConfigParser.NoOptionError:

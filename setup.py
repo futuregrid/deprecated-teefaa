@@ -64,10 +64,10 @@ setup(
     #],
 
     
-    entry_points={
-        'console_scripts': [
-                'fg-teefa = futuregrid.move.teefaa.FGteefa:main',
-             ]},
+    #entry_points={
+    #    'console_scripts': [
+    #            'fg-teefa = futuregrid.move.teefaa.FGteefa:main',
+    #         ]},
 
     install_requires = [
              'setuptools',
