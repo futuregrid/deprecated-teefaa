@@ -49,7 +49,7 @@ def main():
     parser.add_option("--imagedir", dest="imagedir", help="Directory where image is.")
     parser.add_option("--overwritting", dest="overwritting", help="Directory with configuration files to overwrite the old ones.")
     parser.add_option("--ostype", dest="ostype", help="OS image type")
-    parser.add_option("--defaultIf", dest="default-if", help="Default Network Interface")
+    parser.add_option("--defaultIf", dest="defaultIf", help="Default Network Interface")
     parser.add_option("--ipaddr", dest="ipaddr", help="IP address of the host to reinstall")
     parser.add_option("--gateway", dest="gateway", help="Gateway of the network.")
     parser.add_option("--netmask", dest="netmask", help="Network mask")

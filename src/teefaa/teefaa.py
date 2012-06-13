@@ -318,7 +318,7 @@ class Teefaa():
                 return msg
             
             #TODO: Prevent to wait forever.
-            self.logger.debug(host , "is booting and not ready yet...")
+            self.logger.debug(host + " is booting and not ready yet...")
             CMD = "ssh -oBatchMode=yes " + info['mgmt'] + " \'ssh -q -oBatchMode=yes -o \"ConnectTimeout 5\" " + host + " " + "hostname\' > /dev/null 2>&1"
             self.logger.debug(CMD)
             p = 1
