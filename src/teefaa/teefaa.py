@@ -327,7 +327,7 @@ class Teefaa():
                 if not p == 0:
                     if self.verbose:
                         print ""
-                        print host + "is booting and not ready yet..."
+                        print host + " is booting and not ready yet..."
                         print ""
                     #exit()
                     time.sleep(5)
