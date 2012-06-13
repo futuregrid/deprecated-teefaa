@@ -407,7 +407,7 @@ class Teefaa():
                 CMD = "ssh -oBatchMode=yes " + host + " ./agent.py --host " + host + " --imagedir " + info['rootimg'] + \
                         " --overwritting " + info['overwriting'] + " --ostype " + info['ostype'] + \
                         " --defaultIf " + info['default-if'] + \
-                        " --ipaddr " + info['IpAddr'] + " --gateway " + info['gateway'] + \
+                        " --ipaddr " + info['IpAddr'] + " --gateway " + info['default-gw'] + \
                         " --netmask " + info['netmask'] + " --dns " + info['nameservers'] + \
                         " --partitioning " + info['partitioning']
                 
