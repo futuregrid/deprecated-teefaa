@@ -327,11 +327,11 @@ class Teefaa():
                 if not p == 0:
                     if self.verbose:
                         print ""
-                        print host , "is booting and not ready yet..."
+                        print host + "is booting and not ready yet..."
                         print ""
                     #exit()
                     time.sleep(5)
-            self.logger.debug(host , " has started with the auxiliary netboot image.")
+            self.logger.debug(host + " has started with the auxiliary netboot image.")
             
             try:            
                 # Switch it back to local boot
