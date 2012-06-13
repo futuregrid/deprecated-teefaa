@@ -74,7 +74,7 @@ def main():
     Prologue = options.prologue
     Epilogue = options.epilogue
     
-    RSYNC = "rsync -a --stat --one-file-system"
+    RSYNC = "rsync -a -stat --one-file-system"
 
     log=setup_logger()
 
