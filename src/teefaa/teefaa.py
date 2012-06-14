@@ -443,13 +443,13 @@ class Teefaa():
                     p = subprocess.Popen(CMD.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                     std = p.communicate()
                     if p.returncode != 0:
-                        msg = "ERROR: Sending the script to the machine. cmd= " + CMD + ". stderr= " + std[1]
+                        msg = "ERROR: Getting the log file. cmd= " + CMD + ". stderr= " + std[1]
                         self.logger.error(msg)
-                        return msg
+                        #return msg
             except subprocess.CalledProcessError:
                 msg = "ERROR: Sending the script to the machine. cmd= " + CMD + ". sysexit= " + str(sys.exc_info())
                 self.logger.error(msg)
-                return msg
+                #return msg
             
             try:
                 # Reboot machine
