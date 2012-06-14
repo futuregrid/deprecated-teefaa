@@ -434,7 +434,7 @@ class Teefaa():
             try:
                 # Get the log file.
                 t = time.localtime()
-                timestamp = str(t.tm_year) + "-" + str(t.tm_month) + "-" + str(t.tm_mday) + "_" + str(t.tm_hour) + str(t.tm_min)  
+                timestamp = str(t.tm_year) + "-" + str(t.tm_mon) + "-" + str(t.tm_mday) + "_" + str(t.tm_hour) + str(t.tm_min)  
                 CMD = "scp -oBatchMode=yes " + host + ":/tmp/logfile.log " + self.logDir + "/provision-" + host + "." + timestamp
                 self.logger.debug(CMD) 
                 if self.verbose:
