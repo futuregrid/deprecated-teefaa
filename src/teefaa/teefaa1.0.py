@@ -136,7 +136,6 @@ class Teefaa():
         
         try:
             info['pxe_server'] = self.generalconfig.get(section, 'pxe_server', 0)
-            print info['pxe_server']
         except ConfigParser.NoOptionError:
             self.errorMsg("No pxe_server option found in section " + section + " file " + self.configfile)
             return
@@ -145,13 +144,11 @@ class Teefaa():
             return
         try:
             info['git_remote_prefix'] = self.generalconfig.get(section, 'git_remote_prefix', 0)
-            return
         except ConfigParser.NoOptionError:
             self.errorMsg("No git_remote_prefix option found in section " + section + " file " + self.configfile)
             return
         try:
             info['image_dir'] = self.generalconfig.get(section, 'image_dir', 0)
-            return
         except ConfigParser.NoOptionError:
             self.errorMsg("No image_dir option found in section " + section + " file " + self.configfile)
             return
