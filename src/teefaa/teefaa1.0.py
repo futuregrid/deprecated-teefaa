@@ -164,6 +164,7 @@ class Teefaa():
         #Test Begin
         print " Provisioning " + host + " with the image \"" + image + "\""
         print str(info)
+        print info['image_dir']
         return 'OK'
         #Test End
 
