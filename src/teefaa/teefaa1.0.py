@@ -96,27 +96,12 @@ class Teefaa():
         
         section = 'Main'
         try:
-            self.imageDir = os.path.expanduser(config.get(section, 'image_dir', 0))
-        except ConfigParser.NoOptionError:
-            print "No image_dir option found in section " + section + " file " + self.configfile
-            sys.exit(1)
-        except ConfigParser.NoSectionError:
-            print "Error: no section " + section + " found in the " + self.configfile + " config file"
-            sys.exit(1)
-        try:
-            self.commonDir = os.path.expanduser(config.get(section, 'common_dir', 0))
-        except ConfigParser.NoOptionError:
-            print "No common_dir option found in section " + section + " file " + self.configfile
-            sys.exit(1)
-        try:
-            self.indivDir = os.path.expanduser(config.get(section, 'indiv_dir', 0))
-        except ConfigParser.NoOptionError:
-            print "No indiv_dir option found in section " + section + " file " + self.configfile
-            sys.exit(1)
-        try:
             self.logFilename = os.path.expanduser(config.get(section, 'log', 0))
         except ConfigParser.NoOptionError:
             print "No log option found in section " + section + " file " + self.configfile
+            sys.exit(1)
+        except ConfigParser.NoSectionError:
+            print "Error: no section " + section + " found in the " + self.configfile + " config file"
             sys.exit(1)
         try:
             tempLevel = string.upper(config.get(section, 'log_level', 0))
@@ -135,15 +120,56 @@ class Teefaa():
         return config
     
     def errorMsg(self, msg):
+        
         self.logger.error(msg)
         if self.verbose:
             print msg
     
-    def provision(self, )     
-    
+    def loadSpecificConfig(self, host, image):
+        '''This load the configuration of the site, machine and image to provision.
+        Returns None or a dictionary.'''
+        
+        info = {}
+        
+        
+
+    def provision(self, image):
+        
+        info = self.loadSpecificConfig(host, image)
+        
+        #Test Begin
+        print " Provisioning " + host + " with the image \"" + image + "\""
+        print str(info)
+        return 'OK'
+        #Test End
+
     
 def main():
+    parser = argparse.ArgumentParser(prog="teefaa", formatter_class=argparse.RawDescriptionHelpFormatter,
+            description="FutureGrid Teefaa Dynamic Provisioning Help ")
+    parser.add_argument('--host', dest="host", required=True, metavar='hostname', 
+            help='Host that will be provisioned with a new OS.')
+    parser.add_argument('--conf', dest="conf", metavar='config_file', default="/opt/teefaa/etc/teefaa1.0.conf", 
+            help='Configuration file.')
+    parser.add_argument('--image', dest="os", required=True, metavar='OS', 
+            help='Name of the OS image that will be provisioned.')
+    parser.add_argument('--site', dest="site", required=True, metavar='site_name', 
+            help='Name of the site.')
+    
+    options = parser.parse_args()
+    
+    conf = os.path.expandvars(os.path.expanduser(options.conf))
+    
+    if not os.path.isfile(conf):
+        print "ERROR: Configutarion file " + conf + " not found."
+        sys.exit(1)
 
+    teefaaobj = Teefaa(conf, True)
+    status = teefaaobj.provision(options.host, options.os, options.site)
+    if status != 'OK':
+        print status
+    else:
+        print "Teefaa provisioned the host " + options.host + " of the site " + options.site + " with the os " + options.os + " successfully"
 
 if __name__ == "__main__":
     main()
