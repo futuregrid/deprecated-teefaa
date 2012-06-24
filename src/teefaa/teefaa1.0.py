@@ -154,6 +154,8 @@ class Teefaa():
         except ConfigParser.NoOptionError:
             self.errorMsg("No image_dir option found in section " + section + " file " + self.configfile)
             return
+        
+        return info
     
     def provision(self, host, image):
         
@@ -161,8 +163,7 @@ class Teefaa():
         
         #Test Begin
         print " Provisioning " + host + " with the image \"" + image + "\""
-        #print str(info)
-        print info['image_dir']
+        print str(info)
         return 'OK'
         #Test End
 
