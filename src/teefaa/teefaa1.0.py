@@ -94,7 +94,7 @@ class Teefaa():
         config = ConfigParser.ConfigParser()
         config.read(self.configfile)
         
-        section = 'Main'
+        section = 'Default'
         try:
             self.logFilename = os.path.expanduser(config.get(section, 'log', 0))
         except ConfigParser.NoOptionError:
