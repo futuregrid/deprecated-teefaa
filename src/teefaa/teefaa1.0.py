@@ -161,7 +161,8 @@ class Teefaa():
         
         #Test Begin
         print " Provisioning " + host + " with the image \"" + image + "\""
-        print str(info)
+        #print str(info)
+        print info['image_dir']
         return 'OK'
         #Test End
 
@@ -189,7 +190,7 @@ def main():
     if status != 'OK':
         print status
     else:
-        print "Teefaa provisioned the host " + options.host + " of the image " + options.image + " successfully"
+        print " Teefaa provisioned the host " + options.host + " of the image " + options.image + " successfully"
 
 if __name__ == "__main__":
     main()
