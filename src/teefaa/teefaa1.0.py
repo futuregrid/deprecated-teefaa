@@ -131,8 +131,30 @@ class Teefaa():
         
         info = {}
         
+        #Default configuraton
+        section = 'Default'
         
-
+        try:
+            info['pxe_server'] = self.generalconfig.get(section, 'pxe_server', 0)
+        except ConfigParser.NoOptionError:
+            self.errorMsg("No pxe_server option found in section " + section + " file " + self.configfile)
+            return
+        except ConfigParser.NoSectionError:
+            self.errorMsg("Error: no section " + section + " found in the " + self.configfile + " config file")
+            return
+        try:
+            info['git_remote_prefix'] = self.generalconfig.get(section, 'git_remote_prefix', 0)
+            return
+        except ConfigParser.NoOptionError:
+            self.errorMsg("No git_remote_prefix option found in section " + section + " file " + self.configfile)
+            return
+        try:
+            info['image_dir'] = self.generalconfig.get(section, 'image_dir', 0)
+            return
+        except ConfigParser.NoOptionError:
+            self.errorMsg("No image_dir option found in section " + section + " file " + self.configfile)
+            return
+    
     def provision(self, image):
         
         info = self.loadSpecificConfig(host, image)
@@ -151,10 +173,8 @@ def main():
             help='Host that will be provisioned with a new OS.')
     parser.add_argument('--conf', dest="conf", metavar='config_file', default="/opt/teefaa/etc/teefaa1.0.conf", 
             help='Configuration file.')
-    parser.add_argument('--image', dest="os", required=True, metavar='OS', 
+    parser.add_argument('--image', dest="image", required=True, metavar='image', 
             help='Name of the OS image that will be provisioned.')
-    parser.add_argument('--site', dest="site", required=True, metavar='site_name', 
-            help='Name of the site.')
     
     options = parser.parse_args()
     
@@ -165,11 +185,11 @@ def main():
         sys.exit(1)
 
     teefaaobj = Teefaa(conf, True)
-    status = teefaaobj.provision(options.host, options.os, options.site)
+    status = teefaaobj.provision(options.host, options.image)
     if status != 'OK':
         print status
     else:
-        print "Teefaa provisioned the host " + options.host + " of the site " + options.site + " with the os " + options.os + " successfully"
+        print "Teefaa provisioned the host " + options.host + " of the image " + options.image + " successfully"
 
 if __name__ == "__main__":
     main()
