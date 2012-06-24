@@ -152,6 +152,21 @@ class Teefaa():
         except ConfigParser.NoOptionError:
             self.errorMsg("No image_dir option found in section " + section + " file " + self.configfile)
             return
+        try:
+            info['pxe_conf_dir'] = self.generalconfig.get(section, 'pxe_conf_dir', 0)
+        except ConfigParser.NoOptionError:
+            self.errorMsg("No pxe_conf_dir option found in section " + section + " file " + self.configfile)
+            return
+        try:
+            info['netboot_conf'] = self.generalconfig.get(section, 'netboot_conf', 0)
+        except ConfigParser.NoOptionError:
+            self.errorMsg("No netboot_conf option found in section " + section + " file " + self.configfile)
+            return
+        try:
+            info['localboot_conf'] = self.generalconfig.get(section, 'localboot_conf', 0)
+        except ConfigParser.NoOptionError:
+            self.errorMsg("No localboot_conf option found in section " + section + " file " + self.configfile)
+            return
         
         return info
     
@@ -160,12 +175,70 @@ class Teefaa():
         info = self.loadSpecificConfig(host, image)
         
         #Test Begin
-        print " Provisioning " + host + " with the image \"" + image + "\""
-        print str(info)
-        return 'OK'
+        #print " Provisioning " + host + " with the image \"" + image + "\""
+        #print str(info)
+        #return 'OK'
         #Test End
+        
+        if info != None:
+            try:
+                # Get ready to netboot
+                CMD = "echo ssh -oBatchMode=yes " + info['pxe_server'] + " cp " + info['pxe_conf_dir'] + "/" + info['netboot_conf'] + " " + info['pxe_conf_dir'] + "/" + host
+                self.logger.debug(CMD)
+                if self.verbose:
+                    subprocess.check_call(CMD, shell=True)
+                else:
+                    p = subprocess.Popen(CMD.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    std = p.communicate()
+                    if p.returncode != 0:
+                        msg = "ERROR: Coping the pxeboot netboot configuration. cmd= " + CMD + ". stderr= " + std[1]
+                        self.logger.error(msg)
+                        return msg
+            except subprocess.CalledProcessError:
+                msg = "ERROR: Coping the pxeboot netboot configuration. cmd= " + CMD
+                self.logger.error(msg)
+                return msg
+            try:
+                # Reboot the host
+                CMD = "echo ssh -oBatchMode=yes " + info['pxe_server'] + " rpower " + host + " boot"
+                self.logger.debug(CMD)
+                #
+                #TODO: rpower command will be replaced to ipmi command soon.
+                #
+                
+                if self.verbose:
+                    subprocess.check_call(CMD, shell=True)
+                else:
+                    p = subprocess.Popen(CMD.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    std = p.communicate()
+                    if p.returncode != 0:
+                        msg = "ERROR: Rebooting the machine. cmd= " + CMD + ". stderr= " + std[1]
+                        self.logger.error(msg)
+                        return msg
+            except subprocess.CalledProcessError:
+                msg = "ERROR: Rebooting the machine. cmd= " + CMD
+                self.logger.error(msg)
+                return msg
+            
+            #TODO: Prevent to wait forver.
+            self.logger.debug(host + " is booting and not ready yet...")
+            CMD = "echo ssh -oBatchMode=yes " + info['pxe_server'] + " \'ssh -q -oBatchMode=yes -o \"ConnectTimeout 5\" " + host + " " + "hostname\' > /dev/null 2>&1"
+            self.logger.debug(CMD)
+            p = 1
+            while (not p == 0):
+                p = subprocess.call(CMD, shell=True)
+                if self.verbose:
+                    print ""
+                    print host + " is booting and not ready yet..."
+                    print ""
+                time.sleep(5)
+            self.logger.debug(host + " has started with the auxiliary netboot image.")
+            
+        else:
+            msg = "ERROR: Reading configuration for host " + host + ", image " + image
+            self.logger.error(msg)
+            return msg
 
-    
 def main():
     parser = argparse.ArgumentParser(prog="teefaa", formatter_class=argparse.RawDescriptionHelpFormatter,
             description="FutureGrid Teefaa Dynamic Provisioning Help ")
@@ -183,7 +256,7 @@ def main():
     if not os.path.isfile(conf):
         print "ERROR: Configutarion file " + conf + " not found."
         sys.exit(1)
-
+    
     teefaaobj = Teefaa(conf, True)
     status = teefaaobj.provision(options.host, options.image)
     if status != 'OK':
