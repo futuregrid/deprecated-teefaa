@@ -155,7 +155,7 @@ class Teefaa():
             self.errorMsg("No image_dir option found in section " + section + " file " + self.configfile)
             return
     
-    def provision(self, image):
+    def provision(self, host, image):
         
         info = self.loadSpecificConfig(host, image)
         
