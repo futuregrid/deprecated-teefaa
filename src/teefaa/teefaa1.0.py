@@ -136,6 +136,7 @@ class Teefaa():
         
         try:
             info['pxe_server'] = self.generalconfig.get(section, 'pxe_server', 0)
+            print info['pxe_server']
         except ConfigParser.NoOptionError:
             self.errorMsg("No pxe_server option found in section " + section + " file " + self.configfile)
             return
@@ -164,7 +165,6 @@ class Teefaa():
         #Test Begin
         print " Provisioning " + host + " with the image \"" + image + "\""
         print str(info)
-        print info['image_dir']
         return 'OK'
         #Test End
 
