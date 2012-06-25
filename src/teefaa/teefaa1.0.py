@@ -198,8 +198,11 @@ class Teefaa():
                 msg = "ERROR: Coping the pxeboot netboot configuration. cmd= " + CMD
                 self.logger.error(msg)
                 return msg
+            
+            #
+            # REBOOT HOST 
+            #
             try:
-                # Reboot the host
                 CMD = "echo ssh -oBatchMode=yes " + info['pxe_server'] + " rpower " + host + " boot"
                 self.logger.debug(CMD)
                 #
@@ -222,7 +225,7 @@ class Teefaa():
             
             #TODO: Prevent to wait forver.
             self.logger.debug(host + " is booting and not ready yet...")
-            CMD = "echo ssh -oBatchMode=yes " + info['pxe_server'] + " \'ssh -q -oBatchMode=yes -o \"ConnectTimeout 5\" " + host + " " + "hostname\' > /dev/null 2>&1"
+            CMD = "echo ssh -q -oBatchMode=yes -o \"ConnectTimeout 5\" " + host + " " + "hostname > /dev/null 2>&1"
             self.logger.debug(CMD)
             p = 1
             while (not p == 0):
@@ -233,6 +236,49 @@ class Teefaa():
                     print ""
                 time.sleep(5)
             self.logger.debug(host + " has started with the auxiliary netboot image.")
+            
+            #
+            # SWITCH IT BACK TO LOCAL BOOT
+            #
+            try:
+                CMD = "echo ssh -oBatchMode=yes " + info['pxe_server'] + " cp /tftpboot/pxelinux.cfg/localboot /tftpboot/pxelinux.cfg/" + host
+                self.logger.debug(CMD)
+                
+                if self.verbose:
+                    subprocess.check_call(CMD, shell=True)
+                else:
+                    p = subprocess.Popen(CMD.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    std = p.communicate()
+                    if p.returncode != 0:
+                        msg = "ERROR: Copying the pxeboot localdisk configuration. cmd= " + CMD + ". stderr= " + std[1]
+                        self.logger.error(msg)
+                        return msg
+            except subprocess.CalledProcessError:
+                msg = "ERROR: Copying the pxeboot localdisk configuration. cmd= " + CMD
+                self.logger.error(msg)
+                return msg
+            
+            #
+            # PARTITIONING
+            #
+            #try:
+            
+            #
+            # SYNC IMAGE
+            #
+            #try:
+            
+            #
+            # SYNC GIT
+            #
+            #try:
+            
+            #
+            # INSTALL GRUB
+            #
+            #try:
+            
+            return 'OK'
             
         else:
             msg = "ERROR: Reading configuration for host " + host + ", image " + image
@@ -248,6 +294,8 @@ def main():
             help='Configuration file.')
     parser.add_argument('--image', dest="image", required=True, metavar='image', 
             help='Name of the OS image that will be provisioned.')
+    parser.add_argument('--verbose', dest="verbose", metavar='verbose', default=False,
+            help='Verbose mode True or False, default=False')
     
     options = parser.parse_args()
     
@@ -257,7 +305,7 @@ def main():
         print "ERROR: Configutarion file " + conf + " not found."
         sys.exit(1)
     
-    teefaaobj = Teefaa(conf, True)
+    teefaaobj = Teefaa(conf, options.verbose)
     status = teefaaobj.provision(options.host, options.image)
     if status != 'OK':
         print status
