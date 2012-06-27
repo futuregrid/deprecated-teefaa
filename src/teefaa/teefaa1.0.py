@@ -326,7 +326,7 @@ class Teefaa():
                 return msg
             # mkfs.ext4(or mkfs.ext3) /dev/sda2
             try:
-                CMD = "echo ssh " + host + " swapon /dev/sda1"
+                CMD = "echo ssh " + host + " mkfs.ext4 /dev/sda2"
                 
                 self.logger.debug(CMD)
                 
@@ -336,11 +336,76 @@ class Teefaa():
                     p = subprocess.Popen(CMD.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                     std = p.communicate()
                     if p.returncode != 0:
-                        msg = "ERROR: Failed to turn swap on. cmd= " + CMD + ". stderr= " + std[1]
+                        msg = "ERROR: Failed to make filesystem. cmd= " + CMD + ". stderr= " + std[1]
                         self.logger.error(msg)
                         return msg
             except subprocess.CalledProcessError:
-                msg = "ERROR: Failed to turn swap on. cmd= " + CMD
+                msg = "ERROR: Failed to make filesystem. cmd= " + CMD
+                self.logger.error(msg)
+                return msg
+            
+            # mount /dev/sda2 /mnt
+            try:
+                CMD = "echo ssh " + host + " mount /dev/sda2 /mnt"
+                
+                self.logger.debug(CMD)
+                
+                if self.verbose:
+                    subprocess.check_call(CMD, shell=True)
+                else:
+                    p = subprocess.Popen(CMD.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    std = p.communicate()
+                    if p.returncode != 0:
+                        msg = "ERROR: Failed to mount /dev/sda2. cmd= " + CMD + ". stderr= " + std[1]
+                        self.logger.error(msg)
+                        return msg
+            except subprocess.CalledProcessError:
+                msg = "ERROR: Failed to mount /dev/sda2. cmd= " + CMD
+                self.logger.error(msg)
+                return msg
+            
+            #
+            # COPY IMAGE TO HOST:/MNT
+            #
+            # rsync -av image_dir/image/ host:/mnt
+            try:
+                CMD = "echo rsync -av --exclude=\".git\" " + info['image_dir'] + "/" + image + " " + host + ":/mnt"
+                
+                self.logger.debug(CMD)
+                
+                if self.verbose:
+                    subprocess.check_call(CMD, shell=True)
+                else:
+                    p = subprocess.Popen(CMD.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    std = p.communicate()
+                    if p.returncode != 0:
+                        msg = "ERROR: Failed to coping image to " + host + ". cmd= " + CMD + ". stderr= " + std[1]
+                        self.logger.error(msg)
+                        return msg
+            except subprocess.CalledProcessError:
+                msg = "ERROR: Failed to coping image to " + host + ". cmd= " + CMD
+                self.logger.error(msg)
+                return msg
+            
+            #
+            # COPY
+            #
+            try:
+                CMD = "echo ssh " + host + " git clone " + info['git_remote_prefix'] + image + ".git"
+                
+                self.logger.debug(CMD)
+                
+                if self.verbose:
+                    subprocess.check_call(CMD, shell=True)
+                else:
+                    p = subprocess.Popen(CMD.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    std = p.communicate()
+                    if p.returncode != 0:
+                        msg = "ERROR: Failed to git clone. cmd= " + CMD + ". stderr= " + std[1]
+                        self.logger.error(msg)
+                        return msg
+            except subprocess.CalledProcessError:
+                msg = "ERROR: Failed to git clone. cmd= " + CMD
                 self.logger.error(msg)
                 return msg
             
