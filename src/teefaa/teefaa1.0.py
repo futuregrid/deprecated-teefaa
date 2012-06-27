@@ -30,7 +30,7 @@ import sys
 import string
 import time
 
-defaultconfigfile = "fg-server.conf"
+defaultconfigfile = "teefaa1.0.conf"
 
 class Teefaa():
     def __init__(self, config=None, verbose=False):
@@ -174,6 +174,25 @@ class Teefaa():
             return
         
         return info
+    
+    def executeCMD(self, CMD, errormsg):
+        
+        try:
+            self.logger.debug(CMD)
+            
+            if self.verbose:
+                subprocess.check_call(CMD, shell=True)
+            else:
+                p = subprocess.Popen(CMD.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                std = p.communicate()
+                if p.returncode != 0:
+                    msg = errormsg + " cmd= " + CMD + ". stderr= " + std[1]
+                    self.logger.error(msg)
+                    return msg
+        except subprocess.CalledProcessError:
+            msg = errormsg + " cmd= " + CMD
+            self.logger.error(msg)
+            return msg
     
     def provision(self, host, image):
         
@@ -368,51 +387,26 @@ class Teefaa():
             # COPY IMAGE TO HOST:/MNT
             #
             # rsync -av image_dir/image/ host:/mnt
-            try:
-                CMD = "echo rsync -av --exclude=\".git\" " + info['image_dir'] + "/" + image + " " + host + ":/mnt"
-                
-                self.logger.debug(CMD)
-                
-                if self.verbose:
-                    subprocess.check_call(CMD, shell=True)
-                else:
-                    p = subprocess.Popen(CMD.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                    std = p.communicate()
-                    if p.returncode != 0:
-                        msg = "ERROR: Failed to coping image to " + host + ". cmd= " + CMD + ". stderr= " + std[1]
-                        self.logger.error(msg)
-                        return msg
-            except subprocess.CalledProcessError:
-                msg = "ERROR: Failed to coping image to " + host + ". cmd= " + CMD
-                self.logger.error(msg)
-                return msg
+            CMD = "echo rsync -av --exclude=\".git\" " + info['image_dir'] + "/" + image + "/ " + host + ":/mnt"
+            self.executeCMD(CMD, "ERROR: Failed to copy image")
             
             #
-            # COPY
+            # DOWNLOAD INDIVIDUAL CONFIG VIA GIT REPOSITORY
             #
-            try:
-                CMD = "echo ssh " + host + " git clone " + info['git_remote_prefix'] + image + ".git"
-                
-                self.logger.debug(CMD)
-                
-                if self.verbose:
-                    subprocess.check_call(CMD, shell=True)
-                else:
-                    p = subprocess.Popen(CMD.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                    std = p.communicate()
-                    if p.returncode != 0:
-                        msg = "ERROR: Failed to git clone. cmd= " + CMD + ". stderr= " + std[1]
-                        self.logger.error(msg)
-                        return msg
-            except subprocess.CalledProcessError:
-                msg = "ERROR: Failed to git clone. cmd= " + CMD
-                self.logger.error(msg)
-                return msg
+            CMD = "echo ssh " + host + " git clone -b " + host + " " + info['git_remote_prefix'] + image + ".git"
+            self.executeCMD(CMD, "ERROR: Failed to git clone.")
+            
+            #
+            # COPY THEM TO /MNT
+            #
+            CMD = "echo ssh " + host + " rsync -av --exclude=\".git\" " + image + "/ " + host + ":/mnt"
+            self.executeCMD(CMD, "ERROR: Failed to coping indivicual files.")
             
             #
             # INSTALL GRUB
             #
-            #try:
+            CMD = "echo GRUB TEST"
+            self.executeCMD(CMD, "ERROR: This is test.")
             
             return 'OK'
             
