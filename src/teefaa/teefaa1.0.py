@@ -205,48 +205,20 @@ class Teefaa():
         #Test End
         
         if info != None:
-            try:
-                # Get ready to netboot
-                CMD = "echo ssh -oBatchMode=yes " + info['pxe_server'] + " cp " + info['pxe_conf_dir'] + "/" + info['netboot_conf'] + " " + info['pxe_conf_dir'] + "/" + host
-                self.logger.debug(CMD)
-                if self.verbose:
-                    subprocess.check_call(CMD, shell=True)
-                else:
-                    p = subprocess.Popen(CMD.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                    std = p.communicate()
-                    if p.returncode != 0:
-                        msg = "ERROR: Coping the pxeboot netboot configuration. cmd= " + CMD + ". stderr= " + std[1]
-                        self.logger.error(msg)
-                        return msg
-            except subprocess.CalledProcessError:
-                msg = "ERROR: Coping the pxeboot netboot configuration. cmd= " + CMD
-                self.logger.error(msg)
-                return msg
+            # Get ready to netboot
+            CMD = "echo ssh -oBatchMode=yes " + info['pxe_server'] + " cp " + info['pxe_conf_dir'] + "/" + info['netboot_conf'] + " " + info['pxe_conf_dir'] + "/" + host
+            self.executeCMD(CMD, "ERROR: Coping the pxeboot netboot configuration.")
             
             #
             # REBOOT HOST 
             #
-            try:
-                CMD = "echo ssh -oBatchMode=yes " + info['pxe_server'] + " rpower " + host + " boot"
-                self.logger.debug(CMD)
-                #
-                #TODO: rpower command will be replaced to ipmi command soon.
-                #
-                
-                if self.verbose:
-                    subprocess.check_call(CMD, shell=True)
-                else:
-                    p = subprocess.Popen(CMD.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                    std = p.communicate()
-                    if p.returncode != 0:
-                        msg = "ERROR: Rebooting the machine. cmd= " + CMD + ". stderr= " + std[1]
-                        self.logger.error(msg)
-                        return msg
-            except subprocess.CalledProcessError:
-                msg = "ERROR: Rebooting the machine. cmd= " + CMD
-                self.logger.error(msg)
-                return msg
+            CMD = "echo ssh -oBatchMode=yes " + info['pxe_server'] + " rpower " + host + " boot"
+            #TODO: rpower command will be replaced to ipmi command soon.
+            self.executeCMD(CMD, "ERROR: Rebooting the machine.")
             
+            #
+            # WAIT TILL HOST BOOTS UP. 
+            #
             #TODO: Prevent to wait forver.
             self.logger.debug(host + " is booting and not ready yet...")
             CMD = "echo ssh -q -oBatchMode=yes -o \"ConnectTimeout 5\" " + host + " " + "hostname > /dev/null 2>&1"
@@ -264,124 +236,30 @@ class Teefaa():
             #
             # SWITCH IT BACK TO LOCAL BOOT
             #
-            try:
-                CMD = "echo ssh -oBatchMode=yes " + info['pxe_server'] + " cp /tftpboot/pxelinux.cfg/localboot /tftpboot/pxelinux.cfg/" + host
+            CMD = "echo ssh -oBatchMode=yes " + info['pxe_server'] + " cp /tftpboot/pxelinux.cfg/localboot /tftpboot/pxelinux.cfg/" + host
+            self.executeCMD(CMD, "ERROR: Copying the pxeboot localdisk configuration.")
                 
-                self.logger.debug(CMD)
-                
-                if self.verbose:
-                    subprocess.check_call(CMD, shell=True)
-                else:
-                    p = subprocess.Popen(CMD.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                    std = p.communicate()
-                    if p.returncode != 0:
-                        msg = "ERROR: Copying the pxeboot localdisk configuration. cmd= " + CMD + ". stderr= " + std[1]
-                        self.logger.error(msg)
-                        return msg
-            except subprocess.CalledProcessError:
-                msg = "ERROR: Copying the pxeboot localdisk configuration. cmd= " + CMD
-                self.logger.error(msg)
-                return msg
-            
             #
             # PARTITIONING
             #
-            #TODO: Add argumetn of partitioning dir
-            try:
-                CMD = "echo ssh " + host + " fdisk /dev/sda < " + info['part_batch_dir'] + "/" + image + ".batch"
-                
-                self.logger.debug(CMD)
-                
-                if self.verbose:
-                    subprocess.check_call(CMD, shell=True)
-                else:
-                    p = subprocess.Popen(CMD.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                    std = p.communicate()
-                    if p.returncode != 0:
-                        msg = "ERROR: Partitioning failed. cmd= " + CMD + ". stderr= " + std[1]
-                        self.logger.error(msg)
-                        return msg
-            except subprocess.CalledProcessError:
-                msg = "ERROR: Partitioning failed. cmd= " + CMD
-                self.logger.error(msg)
-                return msg
-            # mkswap /dev/sda1
-            try:
-                CMD = "echo ssh " + host + " mkswap /dev/sda1"
-                
-                self.logger.debug(CMD)
-                
-                if self.verbose:
-                    subprocess.check_call(CMD, shell=True)
-                else:
-                    p = subprocess.Popen(CMD.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                    std = p.communicate()
-                    if p.returncode != 0:
-                        msg = "ERROR: Failed to make swap. cmd= " + CMD + ". stderr= " + std[1]
-                        self.logger.error(msg)
-                        return msg
-            except subprocess.CalledProcessError:
-                msg = "ERROR: Failed to make swap. cmd= " + CMD
-                self.logger.error(msg)
-                return msg
-            # swapon /dev/sda1
-            try:
-                CMD = "echo ssh " + host + " swapon /dev/sda1"
-                
-                self.logger.debug(CMD)
-                
-                if self.verbose:
-                    subprocess.check_call(CMD, shell=True)
-                else:
-                    p = subprocess.Popen(CMD.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                    std = p.communicate()
-                    if p.returncode != 0:
-                        msg = "ERROR: Failed to turn swap on. cmd= " + CMD + ". stderr= " + std[1]
-                        self.logger.error(msg)
-                        return msg
-            except subprocess.CalledProcessError:
-                msg = "ERROR: Failed to turn swap on. cmd= " + CMD
-                self.logger.error(msg)
-                return msg
-            # mkfs.ext4(or mkfs.ext3) /dev/sda2
-            try:
-                CMD = "echo ssh " + host + " mkfs.ext4 /dev/sda2"
-                
-                self.logger.debug(CMD)
-                
-                if self.verbose:
-                    subprocess.check_call(CMD, shell=True)
-                else:
-                    p = subprocess.Popen(CMD.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                    std = p.communicate()
-                    if p.returncode != 0:
-                        msg = "ERROR: Failed to make filesystem. cmd= " + CMD + ". stderr= " + std[1]
-                        self.logger.error(msg)
-                        return msg
-            except subprocess.CalledProcessError:
-                msg = "ERROR: Failed to make filesystem. cmd= " + CMD
-                self.logger.error(msg)
-                return msg
+            CMD = "echo ssh " + host + " fdisk /dev/sda < " + info['part_batch_dir'] + "/" + image + ".batch"
+            self.executeCMD(CMD, "ERROR: Partitioning failed.")
             
+            # mkswap /dev/sda1
+            CMD = "echo ssh " + host + " mkswap /dev/sda1"
+            self.executeCMD(CMD, "ERROR: Failed to make swap.")
+            
+            # swapon /dev/sda1
+            CMD = "echo ssh " + host + " swapon /dev/sda1"
+            self.executeCMD(CMD, "ERROR: Failed to turn swap on.")
+            
+            # mkfs.ext4(or mkfs.ext3) /dev/sda2
+            CMD = "echo ssh " + host + " mkfs.ext4 /dev/sda2"
+            self.executeCMD(CMD, "ERROR: Failed to make filesystem.")
+                
             # mount /dev/sda2 /mnt
-            try:
-                CMD = "echo ssh " + host + " mount /dev/sda2 /mnt"
-                
-                self.logger.debug(CMD)
-                
-                if self.verbose:
-                    subprocess.check_call(CMD, shell=True)
-                else:
-                    p = subprocess.Popen(CMD.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                    std = p.communicate()
-                    if p.returncode != 0:
-                        msg = "ERROR: Failed to mount /dev/sda2. cmd= " + CMD + ". stderr= " + std[1]
-                        self.logger.error(msg)
-                        return msg
-            except subprocess.CalledProcessError:
-                msg = "ERROR: Failed to mount /dev/sda2. cmd= " + CMD
-                self.logger.error(msg)
-                return msg
+            CMD = "echo ssh " + host + " mount /dev/sda2 /mnt"
+            self.executeCMD(CMD, "ERROR: Failed to mount /dev/sda2.")
             
             #
             # COPY IMAGE TO HOST:/MNT
