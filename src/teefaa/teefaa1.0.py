@@ -167,6 +167,11 @@ class Teefaa():
         except ConfigParser.NoOptionError:
             self.errorMsg("No localboot_conf option found in section " + section + " file " + self.configfile)
             return
+        try:
+            info['part_batch_dir'] = self.generalconfig.get(section, 'part_batch_dir', 0)
+        except ConfigParser.NoOptionError:
+            self.errorMsg("No part_batch_dir option found in section " + section + " file " + self.configfile)
+            return
         
         return info
     
@@ -242,6 +247,7 @@ class Teefaa():
             #
             try:
                 CMD = "echo ssh -oBatchMode=yes " + info['pxe_server'] + " cp /tftpboot/pxelinux.cfg/localboot /tftpboot/pxelinux.cfg/" + host
+                
                 self.logger.debug(CMD)
                 
                 if self.verbose:
@@ -261,17 +267,82 @@ class Teefaa():
             #
             # PARTITIONING
             #
-            #try:
-            
-            #
-            # SYNC IMAGE
-            #
-            #try:
-            
-            #
-            # SYNC GIT
-            #
-            #try:
+            #TODO: Add argumetn of partitioning dir
+            try:
+                CMD = "echo ssh " + host + " fdisk /dev/sda < " + info['part_batch_dir'] + "/" + image + ".batch"
+                
+                self.logger.debug(CMD)
+                
+                if self.verbose:
+                    subprocess.check_call(CMD, shell=True)
+                else:
+                    p = subprocess.Popen(CMD.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    std = p.communicate()
+                    if p.returncode != 0:
+                        msg = "ERROR: Partitioning failed. cmd= " + CMD + ". stderr= " + std[1]
+                        self.logger.error(msg)
+                        return msg
+            except subprocess.CalledProcessError:
+                msg = "ERROR: Partitioning failed. cmd= " + CMD
+                self.logger.error(msg)
+                return msg
+            # mkswap /dev/sda1
+            try:
+                CMD = "echo ssh " + host + " mkswap /dev/sda1"
+                
+                self.logger.debug(CMD)
+                
+                if self.verbose:
+                    subprocess.check_call(CMD, shell=True)
+                else:
+                    p = subprocess.Popen(CMD.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    std = p.communicate()
+                    if p.returncode != 0:
+                        msg = "ERROR: Failed to make swap. cmd= " + CMD + ". stderr= " + std[1]
+                        self.logger.error(msg)
+                        return msg
+            except subprocess.CalledProcessError:
+                msg = "ERROR: Failed to make swap. cmd= " + CMD
+                self.logger.error(msg)
+                return msg
+            # swapon /dev/sda1
+            try:
+                CMD = "echo ssh " + host + " swapon /dev/sda1"
+                
+                self.logger.debug(CMD)
+                
+                if self.verbose:
+                    subprocess.check_call(CMD, shell=True)
+                else:
+                    p = subprocess.Popen(CMD.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    std = p.communicate()
+                    if p.returncode != 0:
+                        msg = "ERROR: Failed to turn swap on. cmd= " + CMD + ". stderr= " + std[1]
+                        self.logger.error(msg)
+                        return msg
+            except subprocess.CalledProcessError:
+                msg = "ERROR: Failed to turn swap on. cmd= " + CMD
+                self.logger.error(msg)
+                return msg
+            # mkfs.ext4(or mkfs.ext3) /dev/sda2
+            try:
+                CMD = "echo ssh " + host + " swapon /dev/sda1"
+                
+                self.logger.debug(CMD)
+                
+                if self.verbose:
+                    subprocess.check_call(CMD, shell=True)
+                else:
+                    p = subprocess.Popen(CMD.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    std = p.communicate()
+                    if p.returncode != 0:
+                        msg = "ERROR: Failed to turn swap on. cmd= " + CMD + ". stderr= " + std[1]
+                        self.logger.error(msg)
+                        return msg
+            except subprocess.CalledProcessError:
+                msg = "ERROR: Failed to turn swap on. cmd= " + CMD
+                self.logger.error(msg)
+                return msg
             
             #
             # INSTALL GRUB
