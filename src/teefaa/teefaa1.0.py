@@ -188,11 +188,14 @@ class Teefaa():
                 if p.returncode != 0:
                     msg = errormsg + " cmd= " + CMD + ". stderr= " + std[1]
                     self.logger.error(msg)
-                    return msg
+                    print msg
+                    sys.exit(1)
+                    
         except subprocess.CalledProcessError:
             msg = errormsg + " cmd= " + CMD
             self.logger.error(msg)
-            return msg
+            print msg
+            sys.exit(1)
     
     def provision(self, host, image):
         
@@ -283,8 +286,8 @@ class Teefaa():
             #
             # INSTALL GRUB
             #
-            CMD = "echo GRUB TEST"
-            self.executeCMD(CMD, "ERROR: This is test.")
+            CMD = "ssh -l test deigo"
+            self.executeCMD(CMD, "ERROR: Succeeded to fail.")
             
             return 'OK'
             
