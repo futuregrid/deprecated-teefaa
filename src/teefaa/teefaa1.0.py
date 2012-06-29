@@ -231,13 +231,13 @@ class Teefaa():
         
         if info != None:
             # Get ready to netboot
-            CMD = "echo ssh -oBatchMode=yes " + info['pxe_server'] + " cp " + info['pxe_conf_dir'] + "/" + info['netboot_conf'] + " " + info['pxe_conf_dir'] + "/" + host
+            CMD = "ssh -oBatchMode=yes " + info['pxe_server'] + " cp " + info['pxe_conf_dir'] + "/" + info['netboot_conf'] + " " + info['pxe_conf_dir'] + "/" + host
             self.executeCMD(CMD, "ERROR: Coping the pxeboot netboot configuration.")
             
             #
             # REBOOT HOST 
             #
-            CMD = "echo ssh -oBatchMode=yes " + info['pxe_server'] + " rpower " + host + " boot"
+            CMD = "ssh -oBatchMode=yes " + info['pxe_server'] + " rpower " + host + " boot"
             #TODO: rpower command will be replaced to ipmi command soon.
             self.executeCMD(CMD, "ERROR: Rebooting the machine.")
             
@@ -246,7 +246,7 @@ class Teefaa():
             #
             #TODO: Prevent to wait forver.
             self.logger.debug(host + " is booting and not ready yet...")
-            CMD = "echo ssh -q -oBatchMode=yes -o \"ConnectTimeout 5\" " + host + " " + "hostname > /dev/null 2>&1"
+            CMD = "ssh -q -oBatchMode=yes -o \"ConnectTimeout 5\" " + host + " " + "hostname > /dev/null 2>&1"
             self.logger.debug(CMD)
             p = 1
             while (not p == 0):
@@ -261,27 +261,27 @@ class Teefaa():
             #
             # SWITCH IT BACK TO LOCAL BOOT
             #
-            CMD = "echo ssh -oBatchMode=yes " + info['pxe_server'] + " cp /tftpboot/pxelinux.cfg/localboot /tftpboot/pxelinux.cfg/" + host
+            CMD = "ssh -oBatchMode=yes " + info['pxe_server'] + " cp /tftpboot/pxelinux.cfg/localboot /tftpboot/pxelinux.cfg/" + host
             self.executeCMD(CMD, "ERROR: Copying the pxeboot localdisk configuration.")
                 
             #
             # DOWNLOAD INDIVIDUAL CONFIG VIA GIT REPOSITORY
             #
-            CMD = "echo ssh " + host + " git clone -b " + host + " " + info['git_remote_prefix'] + image + ".git"
+            CMD = "ssh " + host + " git clone -b " + host + " " + info['git_remote_prefix'] + image + ".git"
             self.executeCMD(CMD, "ERROR: Failed to git clone.")
             
             #
             # PARTITIONING
             #
-            CMD = "echo ssh " + host + " fdisk /dev/sda < " + info['part_batch_dir'] + "/" + image + ".batch"
+            CMD = "ssh " + host + " fdisk /dev/sda < " + info['part_batch_dir'] + "/" + image + ".batch"
             self.executeCMD(CMD, "ERROR: Partitioning failed.")
             
             # mkswap /dev/sda1
-            CMD = "echo ssh " + host + " mkswap /dev/sda1"
+            CMD = "ssh " + host + " mkswap /dev/sda1"
             self.executeCMD(CMD, "ERROR: Failed to make swap.")
             
             # swapon /dev/sda1
-            CMD = "echo ssh " + host + " swapon /dev/sda1"
+            CMD = "ssh " + host + " swapon /dev/sda1"
             self.executeCMD(CMD, "ERROR: Failed to turn swap on.")
             
             # check file system
@@ -289,23 +289,23 @@ class Teefaa():
             checkfs = self.executeCMD(CMD, "ERROR: Checking the type of file system.")
 
             # mkfs.ext4(or mkfs.ext3) /dev/sda2
-            CMD = "echo ssh " + host + " mkfs." + checkfs + " /dev/sda2"
+            CMD = "ssh " + host + " mkfs." + checkfs + " /dev/sda2"
             self.executeCMD(CMD, "ERROR: Failed to make filesystem.")
                 
             # mount /dev/sda2 /mnt
-            CMD = "echo ssh " + host + " mount /dev/sda2 /mnt"
+            CMD = "ssh " + host + " mount /dev/sda2 /mnt"
             self.executeCMD(CMD, "ERROR: Failed to mount /dev/sda2.")
             
             #
             # COPY IMAGE TO HOST:/MNT
             #
-            CMD = "echo rsync -av --exclude=\".git\" " + info['image_dir'] + "/" + image + "/ " + host + ":/mnt"
+            CMD = "rsync -av --exclude=\".git\" " + info['image_dir'] + "/" + image + "/ " + host + ":/mnt"
             self.executeCMD(CMD, "ERROR: Failed to copy image")
             
             #
             # COPY THEM TO /MNT
             #
-            CMD = "echo ssh " + host + " rsync -av --exclude=\".git\" " + image + "/ " + host + ":/mnt"
+            CMD = "ssh " + host + " rsync -av --exclude=\".git\" " + image + "/ " + host + ":/mnt"
             self.executeCMD(CMD, "ERROR: Failed to coping indivicual files.")
             
             #
@@ -314,36 +314,36 @@ class Teefaa():
             rootimg = info['image_dir'] + "/" + image
             distro = self.checkDistro(rootimg)
             if (distro == "ubuntu" or (distro == "centos" and checkfs == "ext4")):
-                CMD = "echo ssh " + host + " mount -t proc proc /mnt/proc"
+                CMD = "ssh " + host + " mount -t proc proc /mnt/proc"
                 self.executeCMD(CMD, "ERROR: Failed to mount proc")
                 
-                CMD = "echo ssh " + host + " mount -t sysfs sys /mnt/sys"
+                CMD = "ssh " + host + " mount -t sysfs sys /mnt/sys"
                 self.executeCMD(CMD, "ERROR: Failed to mount sysfs")
                 
-                CMD = "echo ssh " + host + "mount -o bind /dev /mnt/dev"
+                CMD = "ssh " + host + "mount -o bind /dev /mnt/dev"
                 self.executeCMD(CMD, "ERROR: Failed to mount sysfs")
 
-                CMD = "echo ssh " + host + "chroot /mnt grub-install /dev/sda"
+                CMD = "ssh " + host + "chroot /mnt grub-install /dev/sda"
                 self.executeCMD(CMD, "ERROR: Failed to install GRUB")
 
-                CMD = "echo ssh " + host + "umount /mnt/proc"
+                CMD = "ssh " + host + "umount /mnt/proc"
                 self.executeCMD(CMD, "ERROR: Failed to umount proc")
 
-                CMD = "echo ssh " + host + "umount /mnt/sys"
+                CMD = "ssh " + host + "umount /mnt/sys"
                 self.executeCMD(CMD, "ERROR: Failed to umount sys")
 
-                CMD = "echo ssh " + host + "umount /mnt/dev"
+                CMD = "ssh " + host + "umount /mnt/dev"
                 self.executeCMD(CMD, "ERROR: Failed to umount dev")
 
             elif (distro == "centos" and checkfs == "ext3"):
 
-                CMD = "echo ssh " + host + " grub-install --root-directory=/mnt /dev/sda"
+                CMD = "ssh " + host + " grub-install --root-directory=/mnt /dev/sda"
                 self.executeCMD(CMD, "ERROR: Failed to install GRUB")
             
             time.sleep(5)
 
             # REBOOT
-            CMD = "echo ssh " + host + " reboot"
+            CMD = "ssh " + host + " reboot"
             self.executeCMD(CMD, "ERROR: Failed to reboot")
 
             
