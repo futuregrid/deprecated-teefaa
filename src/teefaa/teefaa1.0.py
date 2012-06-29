@@ -190,6 +190,8 @@ class Teefaa():
                     self.logger.error(msg)
                     print msg
                     sys.exit(1)
+                
+                return std[0].strip()
                     
         except subprocess.CalledProcessError:
             msg = errormsg + " cmd= " + CMD
@@ -211,12 +213,11 @@ class Teefaa():
             
             distro = "suse"
             
-        elif os.path.isfile(rootimg + "/etc/SuSE-release"):
+        elif os.path.isfile(rootimg + "/etc/freebsd-update.conf"):
             
             distro = "freebsd"
         
         return distro
-    
     
     def provision(self, host, image):
         
@@ -264,6 +265,12 @@ class Teefaa():
             self.executeCMD(CMD, "ERROR: Copying the pxeboot localdisk configuration.")
                 
             #
+            # DOWNLOAD INDIVIDUAL CONFIG VIA GIT REPOSITORY
+            #
+            CMD = "echo ssh " + host + " git clone -b " + host + " " + info['git_remote_prefix'] + image + ".git"
+            self.executeCMD(CMD, "ERROR: Failed to git clone.")
+            
+            #
             # PARTITIONING
             #
             CMD = "echo ssh " + host + " fdisk /dev/sda < " + info['part_batch_dir'] + "/" + image + ".batch"
@@ -277,8 +284,12 @@ class Teefaa():
             CMD = "echo ssh " + host + " swapon /dev/sda1"
             self.executeCMD(CMD, "ERROR: Failed to turn swap on.")
             
+            # check file system
+            CMD = "ssh " + host + " grep ^/dev/sda2 " + image + "/etc/fstab | awk '{print $3}'"
+            checkfs = self.executeCMD(CMD, "ERROR: Checking the type of file system.")
+
             # mkfs.ext4(or mkfs.ext3) /dev/sda2
-            CMD = "echo ssh " + host + " mkfs.ext4 /dev/sda2"
+            CMD = "echo ssh " + host + " mkfs." + checkfs + " /dev/sda2"
             self.executeCMD(CMD, "ERROR: Failed to make filesystem.")
                 
             # mount /dev/sda2 /mnt
@@ -288,15 +299,8 @@ class Teefaa():
             #
             # COPY IMAGE TO HOST:/MNT
             #
-            # rsync -av image_dir/image/ host:/mnt
             CMD = "echo rsync -av --exclude=\".git\" " + info['image_dir'] + "/" + image + "/ " + host + ":/mnt"
             self.executeCMD(CMD, "ERROR: Failed to copy image")
-            
-            #
-            # DOWNLOAD INDIVIDUAL CONFIG VIA GIT REPOSITORY
-            #
-            CMD = "echo ssh " + host + " git clone -b " + host + " " + info['git_remote_prefix'] + image + ".git"
-            self.executeCMD(CMD, "ERROR: Failed to git clone.")
             
             #
             # COPY THEM TO /MNT
@@ -309,9 +313,39 @@ class Teefaa():
             #
             rootimg = info['image_dir'] + "/" + image
             distro = self.checkDistro(rootimg)
-            print "Distro = " + distro
-            CMD = "echo INSTALL GRUB"
-            self.executeCMD(CMD, "ERROR: Succeeded to fail.")
+            if distro == "ubuntu":
+                CMD = "echo ssh " + host + " mount -t proc proc /mnt/proc"
+                self.executeCMD(CMD, "ERROR: Failed to mount proc")
+                
+                CMD = "echo ssh " + host + " mount -t sysfs sys /mnt/sys"
+                self.executeCMD(CMD, "ERROR: Failed to mount sysfs")
+                
+                CMD = "echo ssh " + host + "mount -o bind /dev /mnt/dev"
+                self.executeCMD(CMD, "ERROR: Failed to mount sysfs")
+
+                CMD = "echo ssh " + host + "chroot /mnt grub-install /dev/sda"
+                self.executeCMD(CMD, "ERROR: Failed to install GRUB")
+
+                CMD = "echo ssh " + host + "umount /mnt/proc"
+                self.executeCMD(CMD, "ERROR: Failed to umount proc")
+
+                CMD = "echo ssh " + host + "umount /mnt/sys"
+                self.executeCMD(CMD, "ERROR: Failed to umount sys")
+
+                CMD = "echo ssh " + host + "umount /mnt/dev"
+                self.executeCMD(CMD, "ERROR: Failed to umount dev")
+
+            elif (distro == "centos" and filesys == "ext3"):
+
+                CMD = "echo ssh " + host + "grub-install --root-directory=/mnt /dev/sda"
+                self.executeCMD(CMD, "ERROR: Failed to install GRUB")
+            
+            time.sleep(5)
+
+            # REBOOT
+            CMD = "echo ssh " + host + " reboot"
+            self.executeCMD(CMD, "ERROR: Failed to reboot")
+
             
             return 'OK'
             
