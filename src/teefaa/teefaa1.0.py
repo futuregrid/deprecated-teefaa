@@ -203,7 +203,7 @@ class Teefaa():
     def checkDistro(self, rootimg):
         
         distro = "ubuntu"
-        
+
         if (os.path.isfile(rootimg + "/etc/redhat-release") or 
                 os.path.isfile(rootimg + "/etc/fedora-release")):
             
@@ -313,7 +313,7 @@ class Teefaa():
             #
             rootimg = info['image_dir'] + "/" + image
             distro = self.checkDistro(rootimg)
-            if distro == "ubuntu":
+            if (distro == "ubuntu" or (distro == "centos" and checkfs == "ext4")):
                 CMD = "echo ssh " + host + " mount -t proc proc /mnt/proc"
                 self.executeCMD(CMD, "ERROR: Failed to mount proc")
                 
@@ -335,9 +335,9 @@ class Teefaa():
                 CMD = "echo ssh " + host + "umount /mnt/dev"
                 self.executeCMD(CMD, "ERROR: Failed to umount dev")
 
-            elif (distro == "centos" and filesys == "ext3"):
+            elif (distro == "centos" and checkfs == "ext3"):
 
-                CMD = "echo ssh " + host + "grub-install --root-directory=/mnt /dev/sda"
+                CMD = "echo ssh " + host + " grub-install --root-directory=/mnt /dev/sda"
                 self.executeCMD(CMD, "ERROR: Failed to install GRUB")
             
             time.sleep(5)
