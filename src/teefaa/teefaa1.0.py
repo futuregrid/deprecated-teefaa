@@ -196,6 +196,27 @@ class Teefaa():
             self.logger.error(msg)
             print msg
             sys.exit(1)
+
+    
+    def ceckDistro(self, rootimg):
+        
+        distro = "ubuntu"
+        
+        if (os.path.isfile(rootimg + "/etc/redhat-release") or 
+                os.path.isfile(rootimg + "/etc/fedora-release")):
+            
+            disto = "centos"
+            
+        elif os.path.isfile(rootimg + "/etc/SuSE-release"):
+            
+            distro = "suse"
+            
+        elif os.path.isfile(rootimg + "/etc/SuSE-release"):
+            
+            distro = "freebsd"
+        
+        return distro
+    
     
     def provision(self, host, image):
         
