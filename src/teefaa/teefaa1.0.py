@@ -196,16 +196,16 @@ class Teefaa():
             self.logger.error(msg)
             print msg
             sys.exit(1)
-
     
-    def ceckDistro(self, rootimg):
+    
+    def checkDistro(self, rootimg):
         
         distro = "ubuntu"
         
         if (os.path.isfile(rootimg + "/etc/redhat-release") or 
                 os.path.isfile(rootimg + "/etc/fedora-release")):
             
-            disto = "centos"
+            distro = "centos"
             
         elif os.path.isfile(rootimg + "/etc/SuSE-release"):
             
@@ -307,7 +307,10 @@ class Teefaa():
             #
             # INSTALL GRUB
             #
-            CMD = "ssh -l test deigo"
+            rootimg = info['image_dir'] + "/" + image
+            distro = self.checkDistro(rootimg)
+            print "Distro = " + distro
+            CMD = "echo INSTALL GRUB"
             self.executeCMD(CMD, "ERROR: Succeeded to fail.")
             
             return 'OK'
