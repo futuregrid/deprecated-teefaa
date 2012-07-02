@@ -320,7 +320,7 @@ class Teefaa():
                 CMD = "ssh " + host + " ls -la /dev/disk/by-uuid/ |grep sda2| awk '{print $9}'"
                 uuid = self.executeCMD(CMD, "ERROR: Failed to check the current uuid")
 
-                CMD = "sed -i -e \"s/" + pre_uuid + "/" + uuid + "/\"" + " /mnt/boot/grub/grub.cfg"
+                CMD = "ssh " + host + " sed -i -e \"s/" + pre_uuid + "/" + uuid + "/\"" + " /mnt/boot/grub/grub.cfg"
                 self.executeCMD(CMD, "ERROR: Failed to update grub.cfg")
 
 
