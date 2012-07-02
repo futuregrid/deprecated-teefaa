@@ -313,6 +313,17 @@ class Teefaa():
             #
             rootimg = info['image_dir'] + "/" + image
             distro = self.checkDistro(rootimg)
+            if distro == "ubuntu":
+                CMD = "ssh " + host + " grep \"search --no-floppy --fs-uuid --set=root\" " + "/mnt/boot/grub/grub.cfg" + " |head -1| awk '{print $5}'"
+                pre_uuid = self.executeCMD(CMD, "ERROR: Failed to check the previous uuid")
+                
+                CMD = "ssh " + host + " ls -la /dev/disk/by-uuid/ |grep sda2| awk '{print $9}'"
+                uuid = self.executeCMD(CMD, "ERROR: Failed to check the current uuid")
+
+                CMD = "sed -i -e \"s/" + pre_uuid + "/" + uuid + "/\"" + " /mnt/boot/grub/grub.cfg"
+                self.executeCMD(CMD, "ERROR: Failed to update grub.cfg")
+
+
             if (distro == "ubuntu" or (distro == "centos" and checkfs == "ext4")):
                 CMD = "ssh " + host + " mount -t proc proc /mnt/proc"
                 self.executeCMD(CMD, "ERROR: Failed to mount proc")
