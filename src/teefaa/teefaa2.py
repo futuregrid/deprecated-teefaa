@@ -273,7 +273,7 @@ class Teefaa():
             #
             # PARTITIONING
             #
-            CMD = "echo ssh " + host + " fdisk /dev/sda < " + info['part_batch_dir'] + "/" + image + ".batch"
+            CMD = "echo ssh " + host + " fdisk /dev/sda < " + image + "/" + info['part_batch_dir'] + "/" + image + ".batch"
             self.executeCMD(CMD, "ERROR: Partitioning failed.")
             
             # mkswap /dev/sda1
