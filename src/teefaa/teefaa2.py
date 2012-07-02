@@ -30,7 +30,7 @@ import sys
 import string
 import time
 
-defaultconfigfile = "teefaa1.0.conf"
+defaultconfigfile = "teefaa2.conf"
 
 class Teefaa():
     def __init__(self, config=None, verbose=False):
@@ -231,13 +231,13 @@ class Teefaa():
         
         if info != None:
             # Get ready to netboot
-            CMD = "ssh -oBatchMode=yes " + info['pxe_server'] + " cp " + info['pxe_conf_dir'] + "/" + info['netboot_conf'] + " " + info['pxe_conf_dir'] + "/" + host
+            CMD = "echo ssh -oBatchMode=yes " + info['pxe_server'] + " cp " + info['pxe_conf_dir'] + "/" + info['netboot_conf'] + " " + info['pxe_conf_dir'] + "/" + host
             self.executeCMD(CMD, "ERROR: Coping the pxeboot netboot configuration.")
             
             #
             # REBOOT HOST 
             #
-            CMD = "ssh -oBatchMode=yes " + info['pxe_server'] + " rpower " + host + " boot"
+            CMD = "echo ssh -oBatchMode=yes " + info['pxe_server'] + " rpower " + host + " boot"
             #TODO: rpower command will be replaced to ipmi command soon.
             self.executeCMD(CMD, "ERROR: Rebooting the machine.")
             
@@ -246,7 +246,7 @@ class Teefaa():
             #
             #TODO: Prevent to wait forver.
             self.logger.debug(host + " is booting and not ready yet...")
-            CMD = "ssh -q -oBatchMode=yes -o \"ConnectTimeout 5\" " + host + " " + "hostname > /dev/null 2>&1"
+            CMD = "echo ssh -q -oBatchMode=yes -o \"ConnectTimeout 5\" " + host + " " + "hostname > /dev/null 2>&1"
             self.logger.debug(CMD)
             p = 1
             while (not p == 0):
@@ -261,27 +261,27 @@ class Teefaa():
             #
             # SWITCH IT BACK TO LOCAL BOOT
             #
-            CMD = "ssh -oBatchMode=yes " + info['pxe_server'] + " cp /tftpboot/pxelinux.cfg/localboot /tftpboot/pxelinux.cfg/" + host
+            CMD = "echo ssh -oBatchMode=yes " + info['pxe_server'] + " cp /tftpboot/pxelinux.cfg/localboot /tftpboot/pxelinux.cfg/" + host
             self.executeCMD(CMD, "ERROR: Copying the pxeboot localdisk configuration.")
                 
             #
             # DOWNLOAD INDIVIDUAL CONFIG VIA GIT REPOSITORY
             #
-            CMD = "ssh " + host + " git clone -b " + host + " " + info['git_remote_prefix'] + image + ".git"
+            CMD = "echo ssh " + host + " git clone -b " + host + " " + info['git_remote_prefix'] + image + ".git"
             self.executeCMD(CMD, "ERROR: Failed to git clone.")
             
             #
             # PARTITIONING
             #
-            CMD = "ssh " + host + " fdisk /dev/sda < " + info['part_batch_dir'] + "/" + image + ".batch"
+            CMD = "echo ssh " + host + " fdisk /dev/sda < " + info['part_batch_dir'] + "/" + image + ".batch"
             self.executeCMD(CMD, "ERROR: Partitioning failed.")
             
             # mkswap /dev/sda1
-            CMD = "ssh " + host + " mkswap /dev/sda1"
+            CMD = "echo ssh " + host + " mkswap /dev/sda1"
             self.executeCMD(CMD, "ERROR: Failed to make swap.")
             
             # swapon /dev/sda1
-            CMD = "ssh " + host + " swapon /dev/sda1"
+            CMD = "echo ssh " + host + " swapon /dev/sda1"
             self.executeCMD(CMD, "ERROR: Failed to turn swap on.")
             
             # check file system
@@ -289,23 +289,23 @@ class Teefaa():
             checkfs = self.executeCMD(CMD, "ERROR: Checking the type of file system.")
 
             # mkfs.ext4(or mkfs.ext3) /dev/sda2
-            CMD = "ssh " + host + " mkfs." + checkfs + " /dev/sda2"
+            CMD = "echo ssh " + host + " mkfs." + checkfs + " /dev/sda2"
             self.executeCMD(CMD, "ERROR: Failed to make filesystem.")
                 
             # mount /dev/sda2 /mnt
-            CMD = "ssh " + host + " mount /dev/sda2 /mnt"
+            CMD = "echo ssh " + host + " mount /dev/sda2 /mnt"
             self.executeCMD(CMD, "ERROR: Failed to mount /dev/sda2.")
             
             #
             # COPY IMAGE TO HOST:/MNT
             #
-            CMD = "rsync -av --exclude=\".git\" " + info['image_dir'] + "/" + image + "/ " + host + ":/mnt"
+            CMD = "echo rsync -av --exclude=\".git\" " + info['image_dir'] + "/" + image + "/ " + host + ":/mnt"
             self.executeCMD(CMD, "ERROR: Failed to copy image")
             
             #
             # COPY THEM TO /MNT
             #
-            CMD = "ssh " + host + " rsync -av --exclude=\".git\" " + image + "/ " + host + ":/mnt"
+            CMD = "echo ssh " + host + " rsync -av --exclude=\".git\" " + image + "/ " + host + ":/mnt"
             self.executeCMD(CMD, "ERROR: Failed to coping indivicual files.")
             
             #
@@ -314,36 +314,42 @@ class Teefaa():
             rootimg = info['image_dir'] + "/" + image
             distro = self.checkDistro(rootimg)
             if (distro == "ubuntu" or (distro == "centos" and checkfs == "ext4")):
-                CMD = "ssh " + host + " mount -t proc proc /mnt/proc"
+                CMD = "echo ssh " + host + " mount -t proc proc /mnt/proc"
                 self.executeCMD(CMD, "ERROR: Failed to mount proc")
                 
-                CMD = "ssh " + host + " mount -t sysfs sys /mnt/sys"
+                CMD = "echo ssh " + host + " mount -t sysfs sys /mnt/sys"
                 self.executeCMD(CMD, "ERROR: Failed to mount sysfs")
                 
-                CMD = "ssh " + host + "mount -o bind /dev /mnt/dev"
+                CMD = "echo ssh " + host + " mount -o bind /dev /mnt/dev"
                 self.executeCMD(CMD, "ERROR: Failed to mount sysfs")
 
-                CMD = "ssh " + host + "chroot /mnt grub-install /dev/sda"
+                CMD = "echo ssh " + host + " chroot /mnt grub-install /dev/sda"
                 self.executeCMD(CMD, "ERROR: Failed to install GRUB")
 
-                CMD = "ssh " + host + "umount /mnt/proc"
+                CMD = "echo ssh " + host + " umount /mnt/proc"
                 self.executeCMD(CMD, "ERROR: Failed to umount proc")
 
-                CMD = "ssh " + host + "umount /mnt/sys"
+                CMD = "echo ssh " + host + " umount /mnt/sys"
                 self.executeCMD(CMD, "ERROR: Failed to umount sys")
 
-                CMD = "ssh " + host + "umount /mnt/dev"
+                CMD = "echo ssh " + host + " umount /mnt/dev"
                 self.executeCMD(CMD, "ERROR: Failed to umount dev")
 
             elif (distro == "centos" and checkfs == "ext3"):
 
-                CMD = "ssh " + host + " grub-install --root-directory=/mnt /dev/sda"
+                CMD = "echo ssh " + host + " grub-install --root-directory=/mnt /dev/sda"
                 self.executeCMD(CMD, "ERROR: Failed to install GRUB")
+
+            else:
+                msg = "ERROR: Failed to install Grub. Distribution = " + distro + ", File System = " + checkfs + "."
+                self.logger.error(msg)
+                print msg
+                sys.exit(1)
             
             time.sleep(5)
 
             # REBOOT
-            CMD = "ssh " + host + " reboot"
+            CMD = "echo ssh " + host + " reboot"
             self.executeCMD(CMD, "ERROR: Failed to reboot")
 
             
@@ -359,7 +365,7 @@ def main():
             description="FutureGrid Teefaa Dynamic Provisioning Help ")
     parser.add_argument('--host', dest="host", required=True, metavar='hostname', 
             help='Host that will be provisioned with a new OS.')
-    parser.add_argument('--conf', dest="conf", metavar='config_file', default="/opt/teefaa/etc/teefaa1.0.conf", 
+    parser.add_argument('--conf', dest="conf", metavar='config_file', default="/opt/teefaa/etc/teefaa2.conf", 
             help='Configuration file.')
     parser.add_argument('--image', dest="image", required=True, metavar='image', 
             help='Name of the OS image that will be provisioned.')
@@ -379,7 +385,9 @@ def main():
     if status != 'OK':
         print status
     else:
-        print " Teefaa provisioned the host " + options.host + " of the image " + options.image + " successfully"
+        print ""
+        print " provisioning finished successfully. Host = " + options.host + ", Image = " + options.image + ""
+        print ""
 
 if __name__ == "__main__":
     main()
