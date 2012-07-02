@@ -305,7 +305,7 @@ class Teefaa():
             #
             # COPY THEM TO /MNT
             #
-            CMD = "echo ssh " + host + " rsync -av --exclude=\".git\" " + image + "/ " + host + ":/mnt"
+            CMD = "echo ssh " + host + " rsync -av --exclude=\".git\" " + image + "/" + " /mnt"
             self.executeCMD(CMD, "ERROR: Failed to coping indivicual files.")
             
             #
