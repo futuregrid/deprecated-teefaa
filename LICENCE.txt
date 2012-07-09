@@ -6,14 +6,12 @@ Institution:
 Indiana University
 
 Authors:
-Koji Tanaka
+Koji Tanaka, Javier Diaz
+e-mails:
+kj.tanaka@gmail.com, javier.diazmontes@gmail.com
 
-e-mail:
-??
 
 Contributors:
 Gregor von Laszewski
-
 e-mail:
 laszewski@gmail.com
-
