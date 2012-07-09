@@ -282,6 +282,7 @@ class Teefaa():
             try:
                 # Ready to netboot
                 CMD = "ssh -oBatchMode=yes " + info['mgmt'] + " cp " + info['pxeconf'] + "/" + info['netboot'] + " " + info['pxeconf'] + "/" + host
+                CMD = "sudo " + CMD
                 self.logger.debug(CMD)
                 if self.verbose:                    
                     subprocess.check_call(CMD, shell=True)
@@ -300,6 +301,7 @@ class Teefaa():
             try:   
                 # Reboot the machine
                 CMD = "ssh -oBatchMode=yes " + info['mgmt'] + " rpower " + host + " boot"
+                CMD = "sudo " + CMD
                 self.logger.debug(CMD)
                 # This will be changed to below soon.
                 #CMD = "ssh " + info['mgmt'] + " ipmitool -I lanplus chassis power on -U $USERNAME -P $SECRETPASS -H $BMCNAME"
@@ -320,6 +322,7 @@ class Teefaa():
             #TODO: Prevent to wait forever.
             self.logger.debug(host + " is booting and not ready yet...")
             CMD = "ssh -oBatchMode=yes " + info['mgmt'] + " \'ssh -q -oBatchMode=yes -o \"ConnectTimeout 5\" " + host + " " + "hostname\' > /dev/null 2>&1"
+            CMD = "sudo " + CMD
             self.logger.debug(CMD)
             p = 1
             while (not p == 0):                 
@@ -336,6 +339,7 @@ class Teefaa():
             try:            
                 # Switch it back to local boot
                 CMD = "ssh -oBatchMode=yes " + info['mgmt'] + " cp /tftpboot/pxelinux.cfg/localboot /tftpboot/pxelinux.cfg/" + host
+                CMD = "sudo " + CMD
                 self.logger.debug(CMD)
                 if self.verbose:
                     subprocess.check_call(CMD, shell=True)
@@ -354,6 +358,7 @@ class Teefaa():
             try:
                 # Setup Default Interface
                 CMD = "ssh -oBatchMode=yes " + info['mgmt'] + " ssh " + host + " ifconfig " + info['default-if'] + " " + info['IpAddr'] + " netmask " + info['netmask']
+                CMD = "sudo " + CMD
                 self.logger.debug(CMD)
                 if self.verbose:              
                     subprocess.check_call(CMD, shell=True)
@@ -371,6 +376,7 @@ class Teefaa():
             try:
                 # Setup routing
                 CMD = "ssh -oBatchMode=yes " + info['mgmt'] + " ssh " + host + " route add default gw " + info['default-gw']
+                CMD = "sudo " + CMD
                 self.logger.debug(CMD)
                 if self.verbose:
                     subprocess.check_call(CMD, shell=True)
@@ -388,6 +394,7 @@ class Teefaa():
             try:
                 # Copy command and siteinfo.
                 CMD = "scp -oBatchMode=yes " + self.command + " " + host + ":agent.py"
+                CMD = "sudo " + CMD
                 self.logger.debug(CMD)
                 if self.verbose:
                     subprocess.check_call(CMD, shell=True)
@@ -410,7 +417,7 @@ class Teefaa():
                         " --ipaddr " + info['IpAddr'] + " --gateway " + info['default-gw'] + \
                         " --netmask " + info['netmask'] + " --dns " + info['nameservers'] + \
                         " --partitioning " + info['partitioning']
-                
+                CMD = "sudo " + CMD
                 #CHECK if prologue and epilogue exists
                 if 'prologue' in info:
                     CMD += " --prologue " + info['prologue']
@@ -436,6 +443,7 @@ class Teefaa():
                 t = time.localtime()
                 timestamp = str(t.tm_year) + "-" + str(t.tm_mon) + "-" + str(t.tm_mday) + "_" + str(t.tm_hour) + str(t.tm_min)  
                 CMD = "scp -oBatchMode=yes " + host + ":/tmp/logfile.log " + self.logDir + "/provision-" + host + "." + timestamp
+                CMD = "sudo " + CMD
                 self.logger.debug(CMD) 
                 if self.verbose:
                     subprocess.check_call(CMD, shell=True)
@@ -454,6 +462,7 @@ class Teefaa():
             try:
                 # Reboot machine
                 CMD = "ssh -oBatchMode=yes " + info['mgmt'] + " ssh " + host + " reboot"
+                CMD = "sudo " + CMD
                 self.logger.debug(CMD)
                 if self.verbose:
                     print ""
