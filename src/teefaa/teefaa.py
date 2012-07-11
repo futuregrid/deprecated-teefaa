@@ -384,8 +384,12 @@ class Teefaa():
                     p = subprocess.Popen(CMD.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                     std = p.communicate()
                     if p.returncode != 0:
-			msg = "WORNING: Defailt Gateway doesn't exist. cmd= " + CMD + ". stderr= " + std[1]
+                        msg = "WARNING: Defailt Gateway doesn't exist. cmd= " + CMD + ". stderr= " + std[1]
                         self.logger.error(msg)
+            except subprocess.CalledProcessError:
+                msg = "ERROR: Deleting old default gateways information. cmd= " + CMD + ". sysexit= " + str(sys.exc_info())
+                self.logger.error(msg)
+                return msg
             try:
                 # Setup routing
                 CMD = "ssh -oBatchMode=yes " + info['mgmt'] + " ssh " + host + " route add default gw " + info['default-gw']
