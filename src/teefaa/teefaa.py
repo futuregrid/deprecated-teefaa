@@ -374,6 +374,19 @@ class Teefaa():
                 self.logger.error(msg)
                 return msg
             try:
+                # Delete Default gw if it have
+                CMD = "ssh -oBatchMode=yes " + info['mgmt'] + " ssh " + host + " route delete default"
+                CMD = "sudo " + CMD
+                self.logger.debug(CMD)
+                if self.verbose:
+                    subprocess.check_call(CMD, shell=True)
+                else:
+                    p = subprocess.Popen(CMD.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    std = p.communicate()
+                    if p.returncode != 0:
+			msg = "WORNING: Defailt Gateway doesn't exist. cmd= " + CMD + ". stderr= " + std[1]
+                        self.logger.error(msg)
+            try:
                 # Setup routing
                 CMD = "ssh -oBatchMode=yes " + info['mgmt'] + " ssh " + host + " route add default gw " + info['default-gw']
                 CMD = "sudo " + CMD
