@@ -187,8 +187,8 @@ class Teefaa():
             self.errorMsg("No default-if option found in section " + section + " file " + siteconfigfile)
             return 
         except ConfigParser.NoSectionError:
-            print "Error: no section " + section + " found in the " + siteconfigfile + " config file"
-            sys.exit(1)
+            self.errorMsg("Error: no section " + section + " found in the " + siteconfigfile + " config file")
+            return
         try:
             info['default-gw'] = siteinfo.get(section, 'default-gw', 0)
         except ConfigParser.NoOptionError:
@@ -218,8 +218,8 @@ class Teefaa():
             self.errorMsg("No " + host + " option found in section " + info['default-if'] + " file " + siteconfigfile)
             return
         except ConfigParser.NoSectionError:
-            print "Error: no section " + section + " found in the " + siteconfigfile + " config file"
-            sys.exit(1)
+            self.errorMsg("Error: no section " + section + " found in the " + siteconfigfile + " config file")
+            return 
         try: #NETMASK
             info['netmask'] = siteinfo.get(info['default-if'], 'netmask', 0)
         except ConfigParser.NoOptionError:
@@ -228,15 +228,15 @@ class Teefaa():
         
         
         #OS Image information        
-        section = 'Image-' + operatingsystem
+        section = 'Image-' + operatingsystem.lower()
         try: 
             info['rootimg'] = siteinfo.get(section, 'rootimg', 0)
         except ConfigParser.NoOptionError:
             self.errorMsg("No rootimg option found in section " + section + " file " + siteconfigfile)
             return
         except ConfigParser.NoSectionError:
-            print "Error: no section " + section + " found in the " + siteconfigfile + " config file"
-            sys.exit(1)
+            self.errorMsg("Error: no section " + section + " found in the " + siteconfigfile + " config file")
+            return
         try: 
             info['overwriting'] = siteinfo.get(section, 'overwriting', 0)
         except ConfigParser.NoOptionError:
