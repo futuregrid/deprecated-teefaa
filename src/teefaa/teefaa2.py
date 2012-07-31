@@ -405,25 +405,33 @@ def main():
     genimage.add_argument('--conf', dest="conf", metavar='config_file', default="/opt/teefaa/etc/teefaa2.conf", 
             help='Configuration file.')
 
-
     options = parser.parse_args()
     
-    print "Subparser is " + options.subparser_name
-
     conf = os.path.expandvars(os.path.expanduser(options.conf))
-    
+
+
     if not os.path.isfile(conf):
         print "ERROR: Configutarion file " + conf + " not found."
         sys.exit(1)
     
     teefaaobj = Teefaa(conf, options.verbose)
-    status = teefaaobj.provision(options.host, options.image)
-    if status != 'OK':
-        print status
-    else:
-        print ""
-        print " provisioning finished successfully. Host = " + options.host + ", Image = " + options.image + ""
-        print ""
-
+    if (options.subparser_name == 'provision'):
+        status = teefaaobj.provision(options.host, options.image)
+        if status != 'OK':
+            print status
+        else:
+            print ""
+            print " provisioning finished successfully. Host = " + options.host + ", Image = " + options.image + ""
+            print ""
+    
+    elif (options.subparser_name == 'genimage'):
+        status = teefaaobj.genimage(options.host, options.image)
+        if status != 'OK':
+            print status
+        else:
+            print ""
+            print " Image generation finished successfully. Host = " + options.host + ", Image = " + options.image + ""
+            print ""
+    
 if __name__ == "__main__":
     main()
