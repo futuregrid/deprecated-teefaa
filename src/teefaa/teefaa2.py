@@ -224,9 +224,9 @@ class Teefaa():
         info = self.loadSpecificConfig(host, image)
         
         #Test Begin
-        #print " Provisioning " + host + " with the image \"" + image + "\""
-        #print str(info)
-        #return 'OK'
+        print " Provisioning " + host + " with the image \"" + image + "\""
+        print str(info)
+        return 'OK'
         #Test End
         
         if info != None:
@@ -371,20 +371,45 @@ class Teefaa():
             self.logger.error(msg)
             return msg
 
+    def genimage(self, host, image):
+        
+        info = self.loadSpecificConfig(host, image)
+        
+        #Test Begin
+        print " Generating the image \"" + image + "\" from the host \"" + host + "\""
+        print str(info)
+        return 'OK'
+        #Test End
+        
 def main():
     parser = argparse.ArgumentParser(prog="teefaa", formatter_class=argparse.RawDescriptionHelpFormatter,
             description="FutureGrid Teefaa Dynamic Provisioning Help ")
-    parser.add_argument('--host', dest="host", required=True, metavar='hostname', 
-            help='Host that will be provisioned with a new OS.')
-    parser.add_argument('--conf', dest="conf", metavar='config_file', default="/opt/teefaa/etc/teefaa2.conf", 
+    subparser = parser.add_subparsers(dest='subparser_name', help='')
+    provision = subparser.add_parser('provision', help='Provision image to host')
+    provision.add_argument('--host', dest="host", required=True, metavar='hostname', 
+                help='Host that will be provisioned with a new OS.')
+    provision.add_argument('--conf', dest="conf", metavar='config_file', default="/opt/teefaa/etc/teefaa2.conf", 
             help='Configuration file.')
-    parser.add_argument('--image', dest="image", required=True, metavar='image', 
+    provision.add_argument('--image', dest="image", required=True, metavar='image', 
             help='Name of the OS image that will be provisioned.')
-    parser.add_argument('--verbose', dest="verbose", metavar='verbose', default=False,
+    provision.add_argument('--verbose', dest="verbose", metavar='verbose', default=False,
             help='Verbose mode True or False, default=False')
     
+    genimage = subparser.add_parser('genimage', help='Generate image from host')
+    genimage.add_argument('--host', dest="host", required=True, metavar='hostname', 
+		    help='Host that you want to create an image')
+    genimage.add_argument('--image', dest="image", required=True, metavar='image',
+		    help='Name of the image that you will create.')
+    genimage.add_argument('--verbose', dest="verbose", metavar='verbose', default=False,
+		    help='Verbose mode True or False, default=False')
+    genimage.add_argument('--conf', dest="conf", metavar='config_file', default="/opt/teefaa/etc/teefaa2.conf", 
+            help='Configuration file.')
+
+
     options = parser.parse_args()
     
+    print "Subparser is " + options.subparser_name
+
     conf = os.path.expandvars(os.path.expanduser(options.conf))
     
     if not os.path.isfile(conf):
