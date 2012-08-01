@@ -7,6 +7,8 @@ System requirements
 ------------------
 
 * python: version 2.7
+* pxeboot
+* IPMI enabled
 * virtualenv (optional, if you do not have sudo rights)
 
 Code Repository
