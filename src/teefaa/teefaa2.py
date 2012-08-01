@@ -174,7 +174,29 @@ class Teefaa():
             return
         
         return info
+
     
+    def loadGenimageConfig(self, host, image):
+        '''This load the configuration of the site, machine and image to provision.
+        Returns None or a dictionary.'''
+        
+        info = {}
+        
+        #Default configuraton
+        section = 'Genimage'
+        
+        try:
+            info['cloudimg_dir'] = self.generalconfig.get(section, 'cloudimg_dir', 0)
+        except ConfigParser.NoOptionError:
+            self.errorMsg("No cloudimg_dir option found in section " + section + " file " + self.configfile)
+            return
+        except ConfigParser.NoSectionError:
+            self.errorMsg("Error: no section " + section + " found in the " + self.configfile + " config file")
+            return
+       
+        return info
+
+
     def executeCMD(self, CMD, errormsg):
         
         try:
@@ -373,13 +395,51 @@ class Teefaa():
 
     def genimage(self, host, image):
         
-        info = self.loadSpecificConfig(host, image)
+        info = self.loadGenimageConfig(host, image)
         
         #Test Begin
         print " Generating the image \"" + image + "\" from the host \"" + host + "\""
         print str(info)
         return 'OK'
         #Test End
+
+        #
+	# cd /path/to/dir
+	#
+	CMD = "echo cd " + info['cloudimg_dir']
+        self.executeCMD(CMD, "ERROR: Failed to change directory")
+
+        #
+	# dd if=/dev/zero of=image.img bs=1M count=5120
+	#
+	# NOTE: add --size
+	CMD = "echo dd if=/dev/zero of=" + image + ".img bs=1M count=5120"
+        self.executeCMD(CMD, "ERROR: Failed to create image file.")
+        
+        #
+	# mkfs.ext4 image.img
+	#
+	CMD = "echo mkfs.ext4 " + image + ".img"
+        self.executeCMD(CMD, "ERROR: Failed to make file system.")
+        
+        #
+	# mkdir image
+	#
+	CMD = "echo mkdir " + image
+        self.executeCMD(CMD, "ERROR: Failed to make file system.")
+        
+        #
+	# sudo mount image.img image -o loop,rw
+	#
+	CMD = "echo sudo mount " + image + ".img " + image + " -o loop,rw"
+        self.executeCMD(CMD, "ERROR: Failed to mount image.")
+        
+        #
+	# rsync -av --one-file-system root@host:/ image
+	#
+	CMD = "echo rsync -av --one-file-system root@" + host + ":/ " + image
+        self.executeCMD(CMD, "ERROR: Failed to copy files from host to image directory. ")
+
         
 def main():
     parser = argparse.ArgumentParser(prog="teefaa", formatter_class=argparse.RawDescriptionHelpFormatter,
