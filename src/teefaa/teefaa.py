@@ -538,9 +538,10 @@ def main():
     subparsers = parser.add_subparsers(dest='subparser_name', help='Positional arguments group different options that can be' 
                                        ' displayed by specifying <positional_argument> -h')
     
+    parser.add_argument('-C', '--conf', dest="conf", metavar='config_file', default="/opt/teefaa/etc/teefaa.conf", help='Configuration file.')
+    
     subparser_provision = subparsers.add_parser('provision', help='Functionality to provision a machine with an OS.')
-    subparser_provision.add_argument('-H', '--host', dest="host", required=True, metavar='hostname', help='Host that will be provisioned with a new OS.')
-    subparser_provision.add_argument('-C', '--conf', dest="conf", metavar='config_file', default="/opt/teefaa/etc/teefaa.conf", help='Configuration file.')
+    subparser_provision.add_argument('-H', '--host', dest="host", required=True, metavar='hostname', help='Host that will be provisioned with a new OS.')    
     subparser_provision.add_argument('-O', '--os', dest="os", required=True, metavar='OS', help='Name of the OS image that will be provisioned.')
     subparser_provision.add_argument('--site', dest="site", required=True, metavar='site_name', help='Name of the site.')
     
@@ -549,13 +550,13 @@ def main():
     
     options = parser.parse_args()    
     
-    if (options.subparser_name == 'provision'):
-        conf = os.path.expandvars(os.path.expanduser(options.conf))
-        if not os.path.isfile(conf):
-            print "ERROR: Configutarion file " + conf + " not found."
-            sys.exit(1)    
-        
-        teefaaobj = Teefaa(conf, True)
+    conf = os.path.expandvars(os.path.expanduser(options.conf))
+    if not os.path.isfile(conf):
+        print "ERROR: Configutarion file " + conf + " not found."
+        sys.exit(1)    
+    teefaaobj = Teefaa(conf, True)
+    
+    if (options.subparser_name == 'provision'):        
         status = teefaaobj.provision(options.host, options.os, options.site)
         if status != 'OK':
             print status
