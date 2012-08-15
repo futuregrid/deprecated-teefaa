@@ -564,6 +564,11 @@ def main():
             print "Teefaa provisioned the host " + options.host + " of the site " + options.site + " with the os " + options.os + " successfully"
     elif (options.subparser_name == 'info'):
         status = teefaaobj.listImages(options.images)
+        print "Available images for the site: " + options.site
+        if status:
+            for i in status:
+                print i
+            
         
 if __name__ == "__main__":
     main()
