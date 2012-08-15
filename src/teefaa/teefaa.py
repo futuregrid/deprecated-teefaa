@@ -29,6 +29,7 @@ import logging.handlers
 import sys
 import string
 import time
+import re
 
 defaultconfigfile = "fg-server.conf"
 
@@ -134,7 +135,30 @@ class Teefaa():
         self.logger.error(msg)
         if self.verbose:
             print msg
-            
+    
+    def listImages(self, site):
+        section = 'Teefaa-' + site.lower() + '-config'
+        try:
+            siteconfigfile = os.path.expandvars(os.path.expanduser(self.generalconfig.get(section, 'siteconf', 0)))
+            if not os.path.isfile(siteconfigfile):
+                self.errorMsg("The configuration file " + siteconfigfile + " does not exists. Section " + section)
+                return
+        except ConfigParser.NoOptionError:
+            self.errorMsg("No siteconf option found in section " + section + " file " + self.configfile)
+            return 
+        except ConfigParser.NoSectionError:
+            self.errorMsg("Error: no section " + section + " found in the " + self.configfile + " config file")            
+            return
+        #Networking Site information.
+        siteinfo = ConfigParser.ConfigParser()
+        siteinfo.read(siteconfigfile)
+        
+        images=[]
+        for i in self._config.sections():
+            if re.search("^Image",i.lower()):
+                images.append(i.split("-")[1])
+        return images
+          
     def loadSpecificConfig(self, host, operatingsystem, site):
         '''This load the configuration of the site, machine and image to provision.
         Returns None or a dictionary.
@@ -510,24 +534,35 @@ class Teefaa():
 def main():
     parser = argparse.ArgumentParser(prog="teefaa", formatter_class=argparse.RawDescriptionHelpFormatter,
                                          description="FutureGrid Teefaa Dynamic Provisioning Help ")
-    parser.add_argument('-H', '--host', dest="host", required=True, metavar='hostname', help='Host that will be provisioned with a new OS.')
-    parser.add_argument('-C', '--conf', dest="conf", metavar='config_file', default="/opt/teefaa/etc/teefaa.conf", help='Configuration file.')
-    parser.add_argument('-O', '--os', dest="os", required=True, metavar='OS', help='Name of the OS image that will be provisioned.')
-    parser.add_argument('--site', dest="site", required=True, metavar='site_name', help='Name of the site.')
+    
+    subparsers = parser.add_subparsers(dest='subparser_name', help='Positional arguments group different options that can be' 
+                                       ' displayed by specifying <positional_argument> -h')
+    
+    subparser_provision = subparsers.add_parser('provision', help='Functionality to provision a machine with an OS.')
+    subparser_provision.add_argument('-H', '--host', dest="host", required=True, metavar='hostname', help='Host that will be provisioned with a new OS.')
+    subparser_provision.add_argument('-C', '--conf', dest="conf", metavar='config_file', default="/opt/teefaa/etc/teefaa.conf", help='Configuration file.')
+    subparser_provision.add_argument('-O', '--os', dest="os", required=True, metavar='OS', help='Name of the OS image that will be provisioned.')
+    subparser_provision.add_argument('--site', dest="site", required=True, metavar='site_name', help='Name of the site.')
+    
+    subparser_info = subparsers.add_parser('info', help='Consult Information of teefaa')
+    subparser_info.add_argument('-l', '--listimages', dest="images", metavar='site', help='List of images available for a site.')
     
     options = parser.parse_args()    
     
-    conf = os.path.expandvars(os.path.expanduser(options.conf))
-    if not os.path.isfile(conf):
-        print "ERROR: Configutarion file " + conf + " not found."
-        sys.exit(1)    
-    
-    teefaaobj = Teefaa(conf, True)
-    status = teefaaobj.provision(options.host, options.os, options.site)
-    if status != 'OK':
-        print status
-    else:
-        print "Teefaa provisioned the host " + options.host + " of the site " + options.site + " with the os " + options.os + " successfully"
+    if (options.subparser_name == 'provision'):
+        conf = os.path.expandvars(os.path.expanduser(options.conf))
+        if not os.path.isfile(conf):
+            print "ERROR: Configutarion file " + conf + " not found."
+            sys.exit(1)    
+        
+        teefaaobj = Teefaa(conf, True)
+        status = teefaaobj.provision(options.host, options.os, options.site)
+        if status != 'OK':
+            print status
+        else:
+            print "Teefaa provisioned the host " + options.host + " of the site " + options.site + " with the os " + options.os + " successfully"
+    elif (options.subparser_name == 'info'):
+        status = teefaaobj.listImages(options.images)
         
 if __name__ == "__main__":
     main()
