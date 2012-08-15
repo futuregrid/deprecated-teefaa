@@ -155,7 +155,7 @@ class Teefaa():
         
         images=[]
         for i in siteinfo.sections():
-            if re.search("^Image",i.lower()):
+            if re.search("^image",i.lower()):
                 images.append(i.split("-")[1])
         return images
           
