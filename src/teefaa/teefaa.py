@@ -154,7 +154,7 @@ class Teefaa():
         siteinfo.read(siteconfigfile)
         
         images=[]
-        for i in self._config.sections():
+        for i in siteinfo.sections():
             if re.search("^Image",i.lower()):
                 images.append(i.split("-")[1])
         return images
