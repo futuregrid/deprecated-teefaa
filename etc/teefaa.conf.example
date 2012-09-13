@@ -1,0 +1,46 @@
+#******************************************************************************
+# Teefaa General configuration 
+#------------------------------------------------------------------------------
+#  log: file where the fg-shell logs are stored
+#
+#  log_level: debug level. It can be debug, error, info, warning
+#
+#  log_dir: Directory that will store the log file of the script executed in the
+#  provisioned machine
+#
+#  command: Local directory where dynamic_provisioning_agent.py is
+#******************************************************************************
+
+[Teefaa]
+log: ~/teefaa.log
+log_level: debug
+log_dir: /var/tmp/
+command: dynamic_provisioning_agent.py
+
+#******************************************************************************
+# Teefaa PXE configuration 
+#------------------------------------------------------------------------------
+#  mgmt: PXEboot server 
+#
+#  pxelinux.cfg: Directory with the pxe config in the PXEboot server 
+#
+#  netboot: Netboot file located in pxelinux.cfg directory in the PXEboot server
+#
+#  localboot: localboot file located in pxelinux.cfg directory in the PXEboot server
+#
+#  siteconf: File with the information about images and machines of the site
+#******************************************************************************
+
+[Teefaa-india-config]
+mgmt: im1
+pxelinux.cfg: /tftpboot/pxelinux.cfg
+netboot: hoobaa
+localboot: localboot
+siteconf: ./indiainfo.conf
+
+[Teefaa-sierra-config]
+mgmt: sm1
+pxelinux.cfg: /tftpboot/pxelinux.cfg
+netboot: hoobaa
+localboot: localboot
+siteconf: ./sierrainfo.conf  
