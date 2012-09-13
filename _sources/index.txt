@@ -13,7 +13,8 @@ Contents:
 
    intro
    modules
-   futuregrid
+   download
+   support
 
 Indices and tables
 ==================
