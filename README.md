@@ -3,6 +3,6 @@ teefaa
 
 FutureGrid Software
 
-A set of tools named Teefaa which allows simplified provisioning from repository or dyrectly from runing virtual/baremetal machines.
+Teefaa is a set of tools that allows simplified provisioning from repository or directly from running virtual/baremetal machines.
 
 See http://futuregrid.github.com/teefaa for more details.
