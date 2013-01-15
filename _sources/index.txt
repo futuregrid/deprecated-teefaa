@@ -5,17 +5,17 @@
 
 Welcome to the teefaa documentation
 =========================================
-FutureGrid Teefaa Toolbox is a set of documented scripts which helps for 
-making snapshots of multiple Linux Distributions and provisioning them on 
-Bare-Metal machines. The goal is to provide the scripts and methods to build 
-a different type of cluster which provides the way for cluster users to run 
-their own unique os images on bare-metal nodes. 
+FutureGrid Teefaa Toolbox is a set of documented scripts which consists of Snapshot,
+Clouimg, Bootstrap and Torque Plugin.
 
-Get Started
-------------
-We installed the beta version on india so that FutureGrid users can use it soon.
-We have several basic OS images now and this is the instruction.
+* Snapshot - Makes a snapshot of your system and compresses.
+* Cloudimg - Makes a cloud image from a snapshot.
+* Bootstrap - Installs a system from snapshot, running system or running instance.
+* Torque Plugin - Allows cluster users to provision a image on cluster nodes.
 
+The goal of FG Teefaa is to provide the scripts and methods to easily provision multiple 
+systems at user's local enviromnent(Desktop, Laptop, VMs), at Cloud as instances and at 
+Bare-metal Cluster as bare-metal hosts.
 
 
 Contents:
