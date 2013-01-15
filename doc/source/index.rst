@@ -3,9 +3,9 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to the teefaa documentation
+Welcome to the FG Teefaa documentation
 =========================================
-FutureGrid Teefaa Toolbox is a set of documented scripts which consists of Snapshot,
+FutureGrid Teefaa is a set of scripts which consists of Snapshot,
 Clouimg, Bootstrap and Torque Plugin.
 
 * Snapshot - Makes a snapshot of your system and compresses it.
