@@ -15,7 +15,11 @@ Clouimg, Bootstrap and Torque Plugin.
 
 The goal of FG Teefaa is to provide the scripts and methods to easily provision multiple 
 Operation Systems at user's local enviromnent(Desktop, Laptop, VMs), at Cloud as instances and at 
-Bare-metal Cluster as bare-metal hosts.
+Bare-metal Cluster as bare-metal hosts. 
+
+The picture of FG Teefaa is like this. Users can start system development on 
+a Desktop/Laptop/VM and make a snapshot for backup, then make cloud image for 
+running the image on multiple instances, and then run it on bare-metal nodes.
 
 
 Contents:
