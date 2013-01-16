@@ -1,0 +1,12 @@
+# torquerc - configuration file for Teefaa Torque components.
+
+# Configuration for dispatcher
+dispatcher="i132"
+port="22"
+dispatch_admin="tfadmin"
+dispatch_teefaa="/home/tfadmin/teefaa"
+dispatch_nodes="/home/tfadmin/nodes"
+dispatch_jobs="/home/tfadmin/jobs"
+
+IPMI_USER="USERID"
+IPMI_PASSFILE=/home/tfadmin/.ipmipass

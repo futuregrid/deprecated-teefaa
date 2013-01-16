@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv='content-type' content='text/html;charset=utf-8'>
+    <title>functions</title>
+    <link rel=stylesheet href="http://jashkenas.github.com/docco/resources/docco.css">
+</head>
+<body>
+<div id=container>
+    <div id=background></div>
+    <table cellspacing=0 cellpadding=0>
+    <thead>
+      <tr>
+        <th class=docs><h1>functions</h1></th>
+        <th class=code></th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr><td class='docs'><p>functions - Common functions used by Teefaa components.</p>
+
+</td><td class=code><div class=highlight><pre>
+<span class="c">#!/usr/bin/env bash</span>
+
+</pre></div></td></tr><tr><td class=docs>
+
+<p>Save trace setting. This is needed beucase "set -o xtrace" is problematic when passing outputs.</p>
+
+</td><td class=code><div class=highlight><pre>
+<span class="nv">XTRACE</span><span class="o">=</span><span class="k">$(</span><span class="nb">set</span> +o | grep xtrace<span class="k">)</span>
+<span class="nb">set</span> +o xtrace
+
+</pre></div></td></tr><tr><td class=docs>
+
+<p>Create inputs for fdisk to partition the disk with mbr(Master Boot Recorder). 
+This function presumes <code>$TOP_DIR/localrc</code> is set properly.</p>
+
+</td><td class=code><div class=highlight><pre>
+<span class="k">function </span>fdisk_input<span class="o">()</span> <span class="o">{</span>
+</pre></div></td></tr><tr><td class=docs>
+
+<p>Delete existing partitions. If you have any lvm volumes, they can't be deleted.
+I'll add the deletion function for lvm later.</p>
+
+</td><td class=code><div class=highlight><pre>
+    <span class="k">for </span>i in <span class="o">{</span>7..1<span class="o">}</span>; <span class="k">do</span>
+<span class="k">        </span><span class="nb">echo </span>d
+        <span class="nb">echo</span> <span class="nv">$i</span>
+    <span class="k">done</span>
+
+</pre></div></td></tr><tr><td class=docs>
+
+<p>Set number of partitons.</p>
+
+</td><td class=code><div class=highlight><pre>
+    <span class="nv">pnum</span><span class="o">=</span><span class="k">$(</span>grep ^<span class="nv">$disk</span> <span class="nv">$TOP_DIR</span>/localrc|wc -l<span class="k">)</span>
+</pre></div></td></tr><tr><td class=docs>
+
+<p>Create partitions.</p>
+
+</td><td class=code><div class=highlight><pre>
+    <span class="nv">a</span><span class="o">=</span>1
+    <span class="k">while</span> <span class="o">[</span> ! <span class="nv">$a</span> -gt <span class="nv">$pnum</span> <span class="o">]</span>; <span class="k">do</span>
+<span class="k">        </span><span class="nv">size</span><span class="o">=</span><span class="k">$(</span><span class="nb">eval</span> <span class="s1">&#39;echo ${&#39;</span><span class="nv">$disk$a</span><span class="s1">&#39;[0]}&#39;</span><span class="k">)</span>
+        <span class="nb">echo </span>n
+        <span class="nb">echo </span>p
+        <span class="nb">echo</span> <span class="nv">$a</span>
+        <span class="nb">echo</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">if</span> <span class="o">[</span> <span class="s2">&quot;$size&quot;</span> !<span class="o">=</span> <span class="s2">&quot;-1&quot;</span> <span class="o">]</span>; <span class="k">then</span>
+<span class="k">            </span><span class="nb">echo</span> +<span class="k">${</span><span class="nv">size</span><span class="k">}</span>G
+        <span class="k">else</span>
+<span class="k">            </span><span class="nb">echo</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">fi</span>
+<span class="k">        </span><span class="nb">let </span>a+<span class="o">=</span>1
+    <span class="k">done</span>
+
+</pre></div></td></tr><tr><td class=docs>
+
+<p>Add the swap id on the swap partiton and the boot flag on the boot partition.</p>
+
+</td><td class=code><div class=highlight><pre>
+    <span class="nv">a</span><span class="o">=</span>1
+    <span class="k">while</span> <span class="o">[</span> ! <span class="nv">$a</span> -gt <span class="nv">$pnum</span> <span class="o">]</span>; <span class="k">do</span>
+<span class="k">        </span><span class="nb">type</span><span class="o">=</span><span class="k">$(</span><span class="nb">eval</span> <span class="s1">&#39;echo ${&#39;</span><span class="nv">$disk$a</span><span class="s1">&#39;[1]}&#39;</span><span class="k">)</span>
+        <span class="nv">mount</span><span class="o">=</span><span class="k">$(</span><span class="nb">eval</span> <span class="s1">&#39;echo ${&#39;</span><span class="nv">$disk$a</span><span class="s1">&#39;[2]}&#39;</span><span class="k">)</span>
+        <span class="k">if</span> <span class="o">[</span> <span class="s2">&quot;$type&quot;</span> <span class="o">==</span> <span class="s2">&quot;swap&quot;</span> <span class="o">]</span>; <span class="k">then</span>
+<span class="k">            </span><span class="nb">echo </span>t
+            <span class="nb">echo</span> <span class="nv">$a</span>
+            <span class="nb">echo </span>82
+        <span class="k">elif</span> <span class="o">[</span> <span class="s2">&quot;$mount&quot;</span> <span class="o">==</span> <span class="s2">&quot;/&quot;</span> <span class="o">]</span>; <span class="k">then</span>
+<span class="k">            </span><span class="nb">echo </span>a
+            <span class="nb">echo</span> <span class="nv">$a</span>
+        <span class="k">fi</span>
+<span class="k">        </span><span class="nb">let </span>a+<span class="o">=</span>1
+    <span class="k">done</span>
+<span class="k">    </span><span class="nb">echo </span>w
+<span class="o">}</span>
+
+</pre></div></td></tr><tr><td class=docs>
+
+<p>Create inputs for parted (gpt)</p>
+
+</td><td class=code><div class=highlight><pre>
+<span class="k">function </span>parted_input<span class="o">()</span> <span class="o">{</span>
+  <span class="nb">echo</span> <span class="s2">&quot;I will start writing this soon.&quot;</span>
+<span class="o">}</span>
+
+</pre></div></td></tr><tr><td class=docs>
+
+<p>Partition the disk.</p>
+
+</td><td class=code><div class=highlight><pre>
+Partitioning<span class="o">()</span> <span class="o">{</span>
+</pre></div></td></tr><tr><td class=docs>
+
+<p>Define the check point message. If the message is written on <code>LOGFILE</code>,
+it won't redo.</p>
+
+</td><td class=code><div class=highlight><pre>
+    <span class="nv">check_point</span><span class="o">=</span><span class="s2">&quot;Finished partitioning&quot;</span>
+    grep <span class="s2">&quot;$check_point&quot;</span> <span class="nv">$LOGFILE</span> 1&gt;/dev/null
+    <span class="k">if</span> <span class="o">[</span> <span class="s2">&quot;$?&quot;</span> !<span class="o">=</span> <span class="s2">&quot;0&quot;</span> <span class="o">]</span>; <span class="k">then</span>
+<span class="k">        case</span> <span class="s2">&quot;$PARTITION_TYPE&quot;</span> in
+          mbr <span class="o">)</span>
+              fdisk_input &gt; /tmp/fdisk_input
+              fdisk /dev/<span class="nv">$disk</span> &lt; /tmp/fdisk_input
+              <span class="nb">echo</span> <span class="k">$(</span>date<span class="k">)</span>:  <span class="nv">$check_point</span>
+              ;;
+          gpt <span class="o">)</span>
+              parted_input
+              <span class="nb">echo</span> <span class="k">$(</span>date<span class="k">)</span>:  <span class="nv">$check_point</span>
+              ;;
+          none <span class="o">)</span>
+              <span class="nb">echo</span> <span class="k">$(</span>date<span class="k">)</span>:  <span class="s2">&quot;PARTITION_TYPE=none is set. Don&#39;t partition.&quot;</span>
+              <span class="nb">echo</span> <span class="k">$(</span>date<span class="k">)</span>:  <span class="nv">$check_point</span>
+              ;;
+          * <span class="o">)</span>
+              <span class="nb">echo</span> <span class="k">$(</span>date<span class="k">)</span>:  <span class="s2">&quot;Error: PARTITION_TYPE isn&#39;t set correctly. Check your localrc.&quot;</span>
+              <span class="nb">exit </span>1
+              ;;
+        <span class="k">esac</span>
+<span class="k">    else</span>
+<span class="k">        </span><span class="nb">echo</span> <span class="k">$(</span>date<span class="k">)</span>:  <span class="s2">&quot;Partitioning is already done so it didn&#39;t partition this time.&quot;</span>
+    <span class="k">fi</span>
+<span class="o">}</span>
+
+</pre></div></td></tr><tr><td class=docs>
+
+<p>Make Filesystem(including Swap).</p>
+
+</td><td class=code><div class=highlight><pre>
+MakeFilesystem<span class="o">()</span> <span class="o">{</span>
+</pre></div></td></tr><tr><td class=docs>
+
+<p>Set number of partitons.</p>
+
+</td><td class=code><div class=highlight><pre>
+    <span class="nv">pnum</span><span class="o">=</span><span class="k">$(</span>grep ^<span class="nv">$disk</span> <span class="nv">$TOP_DIR</span>/localrc|wc -l<span class="k">)</span>
+
+    <span class="nv">a</span><span class="o">=</span>1
+    <span class="k">while</span> <span class="o">[</span> ! <span class="nv">$a</span> -gt <span class="nv">$pnum</span> <span class="o">]</span>; <span class="k">do</span>
+</pre></div></td></tr><tr><td class=docs>
+
+<p>Read the value from <code>array_FILESYSTEMS</code></p>
+
+</td><td class=code><div class=highlight><pre>
+        <span class="nv">fsys</span><span class="o">=</span><span class="k">$(</span><span class="nb">eval</span> <span class="s1">&#39;echo ${&#39;</span><span class="nv">$disk$a</span><span class="s1">&#39;[1]}&#39;</span><span class="k">)</span>
+        <span class="nv">mpoint</span><span class="o">=</span><span class="k">$(</span><span class="nb">eval</span> <span class="s1">&#39;echo ${&#39;</span><span class="nv">$disk$a</span><span class="s1">&#39;[2]}&#39;</span><span class="k">)</span>
+</pre></div></td></tr><tr><td class=docs>
+
+<p>Define the check point message.</p>
+
+</td><td class=code><div class=highlight><pre>
+        <span class="nv">check_point</span><span class="o">=</span><span class="s2">&quot;Finish making $fsys on /dev/$disk$a&quot;</span>
+</pre></div></td></tr><tr><td class=docs>
+
+<p>Check if the check_point message exists on the log.</p>
+
+</td><td class=code><div class=highlight><pre>
+        grep <span class="s2">&quot;$check_point&quot;</span> <span class="nv">$LOGFILE</span> 1&gt;/dev/null
+        <span class="k">if</span> <span class="o">[</span> <span class="nv">$?</span> !<span class="o">=</span> <span class="s2">&quot;0&quot;</span> <span class="o">]</span>; <span class="k">then</span>
+</pre></div></td></tr><tr><td class=docs>
+
+<p>Start Making Filesystem.</p>
+
+</td><td class=code><div class=highlight><pre>
+            <span class="k">case</span> <span class="s2">&quot;$fsys&quot;</span> in
+               swap <span class="o">)</span>
+                  mkswap /dev/<span class="nv">$disk$a</span>
+                  <span class="nb">echo</span> <span class="k">$(</span>date<span class="k">)</span>:  <span class="nv">$check_point</span>
+               ;;
+               ext4 <span class="o">)</span>
+                  mkfs.ext4 /dev/<span class="nv">$disk$a</span>
+                  <span class="nb">echo</span> <span class="k">$(</span>date<span class="k">)</span>:  <span class="nv">$check_point</span>
+               ;;
+               ext3 <span class="o">)</span>
+                  mkfs.ext3 /dev/<span class="nv">$disk$a</span>
+                  <span class="nb">echo</span> <span class="k">$(</span>date<span class="k">)</span>:  <span class="nv">$check_point</span>
+               ;;
+               xfs <span class="o">)</span>
+                  mkfs.xfs /dev/<span class="nv">$disk$a</span>
+                  <span class="nb">echo</span> <span class="k">$(</span>date<span class="k">)</span>:  <span class="nv">$check_point</span>
+               ;;
+               * <span class="o">)</span>
+                  <span class="nb">echo</span> <span class="k">$(</span>date<span class="k">)</span>:  <span class="s2">&quot;Error: The file system type $fsys isn&#39;t supported. The code supports making ext3, ext4, xfs and swap.&quot;</span>
+                  <span class="nb">exit </span>1
+               ;;
+            <span class="k">esac</span>
+</pre></div></td></tr><tr><td class=docs>
+
+<p>If the check point exists on the log, don't make filesystem.</p>
+
+</td><td class=code><div class=highlight><pre>
+        <span class="k">else</span>
+<span class="k">            </span><span class="nb">echo</span> <span class="k">$(</span>date<span class="k">)</span>:  <span class="s2">&quot;$fsys is already made on /dev/$disk${a}.&quot;</span>
+        <span class="k">fi</span>
+<span class="k">    </span><span class="nb">let </span>a+<span class="o">=</span>1
+    <span class="k">done</span>
+<span class="o">}</span>
+
+MountPertition<span class="o">()</span> <span class="o">{</span>
+</pre></div></td></tr><tr><td class=docs>
+
+<p>Set number of partitons.</p>
+
+</td><td class=code><div class=highlight><pre>
+    <span class="nv">pnum</span><span class="o">=</span><span class="k">$(</span>grep ^<span class="nv">$disk</span> <span class="nv">$TOP_DIR</span>/localrc|wc -l<span class="k">)</span>
+
+    <span class="nv">a</span><span class="o">=</span>1
+    <span class="k">while</span> <span class="o">[</span> ! <span class="nv">$a</span> -gt <span class="nv">$pnum</span> <span class="o">]</span>; <span class="k">do</span>
+<span class="k">        </span><span class="nv">fsys</span><span class="o">=</span><span class="k">$(</span><span class="nb">eval</span> <span class="s1">&#39;echo ${&#39;</span><span class="nv">$disk$a</span><span class="s1">&#39;[1]}&#39;</span><span class="k">)</span>
+        <span class="nv">mpoint</span><span class="o">=</span><span class="k">$(</span><span class="nb">eval</span> <span class="s1">&#39;echo ${&#39;</span><span class="nv">$disk$a</span><span class="s1">&#39;[2]}&#39;</span><span class="k">)</span>
+</pre></div></td></tr><tr><td class=docs>
+
+<p>Define the check point message.</p>
+
+</td><td class=code><div class=highlight><pre>
+        <span class="nv">check_point</span><span class="o">=</span><span class="s2">&quot;Finish mount /dev/$disk$a on $MNT_ROOT$mpoint&quot;</span>
+</pre></div></td></tr><tr><td class=docs>
+
+<p>Check if the check_point message exists on the log.</p>
+
+</td><td class=code><div class=highlight><pre>
+        grep <span class="s2">&quot;$check_point&quot;</span> <span class="nv">$LOGFILE</span> 1&gt;/dev/null
+        <span class="k">if</span> <span class="o">[</span> <span class="nv">$?</span> !<span class="o">=</span> <span class="s2">&quot;0&quot;</span> <span class="o">]</span>; <span class="k">then</span>
+</pre></div></td></tr><tr><td class=docs>
+
+<p>If it's rehearse mode, just rehearse making filesystem.</p>
+
+</td><td class=code><div class=highlight><pre>
+            <span class="k">if</span> <span class="o">[[</span> <span class="s2">&quot;$fsys&quot;</span> !<span class="o">=</span> <span class="s2">&quot;swap&quot;</span> <span class="o">&amp;&amp;</span> <span class="s2">&quot;$MODE&quot;</span> <span class="o">==</span> <span class="s2">&quot;rehearse&quot;</span> <span class="o">]]</span>; <span class="k">then</span>
+<span class="k">                </span><span class="nb">echo</span> <span class="k">$(</span>date<span class="k">)</span>:  Rehearse: mkdir -p <span class="nv">$MNT_ROOT$mpoint</span>
+                <span class="nb">echo</span> <span class="k">$(</span>date<span class="k">)</span>:  Rehearse: mount /dev/sda<span class="nv">$a</span> <span class="nv">$MNT_ROOT$mpoint</span>
+                <span class="nb">echo</span> <span class="k">$(</span>date<span class="k">)</span>:  Rehearse: <span class="nv">$check_point</span>
+</pre></div></td></tr><tr><td class=docs>
+
+<p>if it's perform mode and swap, make swap.</p>
+
+</td><td class=code><div class=highlight><pre>
+            <span class="k">elif</span> <span class="o">[[</span> <span class="s2">&quot;$mpoint&quot;</span> !<span class="o">=</span> <span class="s2">&quot;none&quot;</span> <span class="o">&amp;&amp;</span> <span class="s2">&quot;$MODE&quot;</span> <span class="o">==</span> <span class="s2">&quot;perform&quot;</span> <span class="o">]]</span>; <span class="k">then</span>
+<span class="k">                </span>mkdir -p <span class="nv">$MNT_ROOT$mpoint</span>
+                mount /dev/<span class="nv">$disk$a</span> <span class="nv">$MNT_ROOT$mpoint</span>
+                <span class="nb">echo</span> <span class="k">$(</span>date<span class="k">)</span>:  <span class="nv">$check_point</span>
+</pre></div></td></tr><tr><td class=docs>
+
+<p>if it's something else, output unknown error and exit.</p>
+
+</td><td class=code><div class=highlight><pre>
+            <span class="k">elif</span> <span class="o">[</span> <span class="s2">&quot;$fsys&quot;</span> <span class="o">==</span> <span class="s2">&quot;swap&quot;</span> <span class="o">]</span>; <span class="k">then</span>
+<span class="k">                </span><span class="nb">echo</span> <span class="k">$(</span>date<span class="k">)</span>:  <span class="s2">&quot;swap isn&#39;t mountable. This isn&#39;t error.&quot;</span>
+            <span class="k">else</span>
+<span class="k">                </span><span class="nb">echo</span> <span class="k">$(</span>date<span class="k">)</span>:  <span class="s2">&quot;Unknown error while making file system, $fsys, $disk$a&quot;</span>
+                <span class="nb">exit </span>1
+            <span class="k">fi</span>
+</pre></div></td></tr><tr><td class=docs>
+
+<p>If the check point exists on the log, don't make filesystem.</p>
+
+</td><td class=code><div class=highlight><pre>
+        <span class="k">else</span>
+<span class="k">            </span><span class="nb">echo</span> <span class="k">$(</span>date<span class="k">)</span>:  <span class="s2">&quot;/dev/$disk$a is already mounted on $MNT_ROOT$mpoint&quot;</span>
+        <span class="k">fi</span>
+<span class="k">    </span><span class="nb">let </span>a+<span class="o">=</span>1
+    <span class="k">done</span>
+<span class="o">}</span>
+
+CopyOSImage<span class="o">()</span> <span class="o">{</span>
+</pre></div></td></tr><tr><td class=docs>
+
+<p>Load the list of image source, and split the list.</p>
+
+</td><td class=code><div class=highlight><pre>
+    <span class="nv">list</span><span class="o">=</span><span class="k">$(</span><span class="nb">eval</span> <span class="s2">&quot;awk &#39;/$IMAGE_NAME/ {print $&#39;2&#39;}&#39; $IMAGE_LIST&quot;</span><span class="k">)</span>
+    <span class="nb">set</span> <span class="nv">$list</span>
+
+</pre></div></td></tr><tr><td class=docs>
+
+<p><code>lockfile</code> is for avoiding to use </p>
+
+</td><td class=code><div class=highlight><pre>
+    <span class="nv">lockfile</span><span class="o">=</span>lock.bootstrap
+    <span class="k">for </span>i; <span class="k">do</span>
+</pre></div></td></tr><tr><td class=docs>
+
+<p>Devide host and directory.</p>
+
+</td><td class=code><div class=highlight><pre>
+        <span class="nv">rhost</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span> <span class="nv">$i</span>|cut -d: -f1<span class="k">)</span>
+        <span class="nv">rdir</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span> <span class="nv">$i</span>|cut -d: -f2<span class="k">)</span>
+
+</pre></div></td></tr><tr><td class=docs>
+
+<p>Define the message for the check point.</p>
+
+</td><td class=code><div class=highlight><pre>
+        <span class="nv">check_point</span><span class="o">=</span><span class="s2">&quot;Finished copying the OS Image from&quot;</span>
+        grep <span class="s2">&quot;$check_point&quot;</span> <span class="nv">$LOGFILE</span> 1&gt;/dev/null
+        <span class="k">if</span> <span class="o">[</span> <span class="nv">$?</span> <span class="o">==</span> <span class="s2">&quot;0&quot;</span> <span class="o">]</span>; <span class="k">then</span>
+<span class="k">            </span><span class="nb">echo</span> <span class="k">$(</span>date<span class="k">)</span>:  <span class="s2">&quot;The image is already copied.&quot;</span>
+            <span class="nb">break</span>
+<span class="nb">        </span><span class="k">fi</span>
+<span class="k">        if</span> <span class="o">[</span> <span class="s2">&quot;$MODE&quot;</span> <span class="o">==</span> <span class="s2">&quot;perfome&quot;</span> <span class="o">]</span>; <span class="k">then</span>
+</pre></div></td></tr><tr><td class=docs>
+
+<p>Check if $rhost is available to login.</p>
+
+</td><td class=code><div class=highlight><pre>
+            ssh -n <span class="nv">$rhost</span> hostname
+            <span class="k">if</span> <span class="o">[</span> <span class="s2">&quot;$?&quot;</span> !<span class="o">=</span> <span class="s2">&quot;0&quot;</span> <span class="o">]</span>; <span class="k">then</span>
+<span class="k">                </span><span class="nb">echo</span> <span class="k">$(</span>date<span class="k">)</span>:  <span class="s2">&quot;Error: Can&#39;t ssh to ${rhost}. Exit.&quot;</span>
+                <span class="nb">exit </span>1
+            <span class="k">fi</span>
+</pre></div></td></tr><tr><td class=docs>
+
+<p>Check if $dir/$lockfile exists, then set <code>checklock</code> as 0 if yes.</p>
+
+</td><td class=code><div class=highlight><pre>
+            <span class="nv">checklock</span><span class="o">=</span><span class="s2">&quot;1&quot;</span>
+            ssh -n <span class="nv">$rhost</span> ls <span class="nv">$dir</span>/<span class="nv">$lockfile</span>
+            <span class="k">if</span> <span class="o">[</span> <span class="s2">&quot;$?&quot;</span> <span class="o">==</span> <span class="s2">&quot;0&quot;</span> <span class="o">]</span>; <span class="k">then</span>
+<span class="k">                </span><span class="nv">checklock</span><span class="o">=</span><span class="s2">&quot;0&quot;</span>
+            <span class="k">fi</span>
+<span class="k">        fi</span>
+
+</pre></div></td></tr><tr><td class=docs>
+
+<p>Check if the lockfile exists. If not, perform/rehearse the isntallation.</p>
+
+</td><td class=code><div class=highlight><pre>
+        <span class="k">if</span> <span class="o">[</span> <span class="s2">&quot;$checklock&quot;</span> !<span class="o">=</span> 0 <span class="o">]</span>; <span class="k">then</span>
+<span class="k">            if</span> <span class="o">[</span> <span class="s2">&quot;$MODE&quot;</span> <span class="o">==</span> <span class="s2">&quot;perform&quot;</span> <span class="o">]</span>; <span class="k">then</span>
+<span class="k">                </span><span class="nb">echo</span> <span class="k">$(</span>date<span class="k">)</span>:  <span class="s2">&quot;Start coping the OS Image from $rhost:$rdir&quot;</span>
+</pre></div></td></tr><tr><td class=docs>
+
+<p>create lock file so that another process not to start installation with the same image source.</p>
+
+</td><td class=code><div class=highlight><pre>
+                ssh -n <span class="nv">$rhost</span> touch <span class="nv">$rdir</span>/<span class="nv">$lockfile</span>
+</pre></div></td></tr><tr><td class=docs>
+
+<p>Copy the image.</p>
+
+</td><td class=code><div class=highlight><pre>
+                rsync -a --stats --exclude<span class="o">=</span><span class="s2">&quot;$lockfile&quot;</span> --exclude-from<span class="o">=</span><span class="nv">$EXCLUDE_LIST</span> <span class="nv">$rhost</span>:<span class="nv">$rdir</span>/ <span class="nv">$MNT_ROOT</span>
+</pre></div></td></tr><tr><td class=docs>
+
+<p>If rsync failed, exit.</p>
+
+</td><td class=code><div class=highlight><pre>
+                <span class="k">if</span> <span class="o">[</span> <span class="s2">&quot;$?&quot;</span> !<span class="o">=</span> <span class="s2">&quot;0&quot;</span> <span class="o">]</span>; <span class="k">then</span>
+<span class="k">                    </span><span class="nb">echo</span> <span class="k">$(</span>date<span class="k">)</span>:  <span class="s2">&quot;Copying the image failed for some reason. exit.&quot;</span>
+                    <span class="nb">exit </span>1
+                <span class="k">fi</span>
+</pre></div></td></tr><tr><td class=docs>
+
+<p>Delete the lockfile.</p>
+
+</td><td class=code><div class=highlight><pre>
+                ssh -n <span class="nv">$rhost</span> rm <span class="nv">$rdir</span>/<span class="nv">$lockfile</span>
+</pre></div></td></tr><tr><td class=docs>
+
+<p>Add log and break the loop.</p>
+
+</td><td class=code><div class=highlight><pre>
+                <span class="nb">echo</span> <span class="k">$(</span>date<span class="k">)</span>:  <span class="nv">$check_point</span> <span class="nv">$rhost</span>:<span class="nv">$rdir</span>
+                <span class="nb">break</span>
+<span class="nb">            </span><span class="k">elif</span> <span class="o">[</span> <span class="s2">&quot;$MODE&quot;</span> <span class="o">==</span> <span class="s2">&quot;rehearse&quot;</span> <span class="o">]</span>; <span class="k">then</span>
+<span class="k">                </span><span class="nb">echo</span> <span class="k">$(</span>date<span class="k">)</span>:  Rehearse copy image:  <span class="nb">command</span>: rsync -a --stats --exclude<span class="o">=</span><span class="s2">&quot;$lockfile&quot;</span> --exclude-from<span class="o">=</span><span class="nv">$EXCLUDE_LIST</span> <span class="nv">$rhost</span>:<span class="nv">$rdir</span>/ <span class="nv">$MNT_ROOT</span>
+                <span class="nb">echo</span> <span class="k">$(</span>date<span class="k">)</span>:  <span class="s2">&quot;Rehearse $check_point $i&quot;</span>
+                <span class="nb">break</span>
+<span class="nb">            </span><span class="k">else</span>
+<span class="k">                </span><span class="nb">echo</span> <span class="k">$(</span>date<span class="k">)</span>:  <span class="s2">&quot;error: function CopyOSImage() Failed.&quot;</span>
+            <span class="k">fi</span>
+<span class="k">        else</span>
+<span class="k">            </span><span class="nb">echo</span> <span class="k">$(</span>date<span class="k">)</span>: <span class="nv">$rhost</span>:<span class="nv">$rdir</span> is locked by another bootstrap script. Will try next source.
+        <span class="k">fi</span>
+<span class="k">    done</span>
+<span class="o">}</span>
+
+</pre></div></td></tr><tr><td class=docs>
+
+<p>GetDistro - determines OS and Version. Returns results in global variables:</p>
+
+</td><td class=code><div class=highlight><pre>
+<span class="c">#os_DISTRO - vendor name</span>
+<span class="c">#os_RELEASE - release</span>
+GetDistro<span class="o">()</span> <span class="o">{</span>
+</pre></div></td></tr><tr><td class=docs>
+
+<p>Figure out which vendor we are</p>
+
+</td><td class=code><div class=highlight><pre>
+    <span class="k">if</span> <span class="o">[[</span> -x <span class="k">$(</span>chroot <span class="nv">$MNT_ROOT</span> which lsb_release 2&gt;/dev/null<span class="k">)</span> <span class="o">]]</span>; <span class="k">then</span>
+<span class="k">        </span><span class="nv">os_VENDOR</span><span class="o">=</span><span class="k">$(</span>chroot <span class="nv">$MNT_ROOT</span> lsb_release -i -s<span class="k">)</span>
+        <span class="nv">os_RELEASE</span><span class="o">=</span><span class="k">$(</span>chroot <span class="nv">$MNT_ROOT</span> lsb_release -r -s<span class="k">)</span>
+        <span class="k">if</span> <span class="o">[[</span> <span class="s2">&quot;SUSE LINUX&quot;</span> <span class="o">=</span>~ <span class="nv">$os_VENDOR</span> <span class="o">]]</span>; <span class="k">then</span>
+<span class="k">            </span>chroot <span class="nv">$MNT_ROOT</span> lsb_release -d -s | grep -q openSUSE
+            <span class="k">if</span> <span class="o">[[</span> <span class="nv">$?</span> -eq 0 <span class="o">]]</span>; <span class="k">then</span>
+<span class="k">               </span><span class="nv">os_VENDOR</span><span class="o">=</span><span class="s2">&quot;openSUSE&quot;</span>
+            <span class="k">fi</span>
+<span class="k">        fi</span>
+<span class="k">    elif</span> <span class="o">[[</span> -f <span class="nv">$MNT_ROOT</span>/etc/redhat-release <span class="o">]]</span>; <span class="k">then</span>
+</pre></div></td></tr><tr><td class=docs>
+
+<p>Red Hat Enterprise Linux Server release 5.5 (Tikanga)
+CentOS release 5.5 (Final)
+CentOS Linux release 6.0 (Final)
+Fedora release 16 (Verne)</p>
+
+</td><td class=code><div class=highlight><pre>
+        <span class="nv">temp</span><span class="o">=</span><span class="k">$(</span>cat <span class="nv">$MNT_ROOT</span>/etc/redhat-release<span class="k">)</span>
+        <span class="nb">set</span> <span class="o">=</span> <span class="nv">$temp</span>
+        <span class="k">if</span> <span class="o">[[</span> <span class="s2">&quot;$1&quot;</span> <span class="o">==</span> <span class="s2">&quot;Red&quot;</span> <span class="o">||</span> <span class="s2">&quot;$1&quot;</span> <span class="o">==</span> <span class="s2">&quot;Scientific&quot;</span> <span class="o">]]</span>; <span class="k">then</span>
+<span class="k">            </span><span class="nv">os_DISTRO</span><span class="o">=</span><span class="nv">$1$2</span>
+        <span class="k">else</span>
+<span class="k">            </span><span class="nv">os_DISTRO</span><span class="o">=</span><span class="nv">$1</span>
+        <span class="k">fi</span>
+<span class="k">        for </span>i; <span class="k">do</span>
+<span class="k">            if</span> <span class="o">[</span> <span class="s2">&quot;$i&quot;</span> <span class="o">==</span> <span class="s2">&quot;release&quot;</span> <span class="o">]</span>; <span class="k">then</span>
+<span class="k">                </span><span class="nb">shift</span>
+<span class="nb">                </span><span class="nv">os_RELEASE</span><span class="o">=</span><span class="nv">$1</span>
+            <span class="k">fi</span>
+<span class="k">            </span><span class="nb">shift</span>
+<span class="nb">        </span><span class="k">done        </span>
+<span class="k">    fi</span>
+<span class="k">    </span><span class="nv">os_DISTRO</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span> <span class="nv">$os_DISTRO</span>|tr <span class="s1">&#39;[A-Z]&#39;</span> <span class="s1">&#39;[a-z]&#39;</span><span class="k">)</span>
+    <span class="nb">export </span>os_DISTRO os_RELEASE
+<span class="o">}</span>
+
+UpdateDiff<span class="o">()</span> <span class="o">{</span>
+
+    rsync -av <span class="nv">$DIFF_DIR</span>/ <span class="nv">$MNT_ROOT</span>
+   
+</pre></div></td></tr><tr><td class=docs>
+
+<p>If <code>DIFF_TYPE</code> isn't <code>general</code>, replace certain items to proper values.</p>
+
+</td><td class=code><div class=highlight><pre>
+    <span class="k">if</span> <span class="o">[</span> <span class="s2">&quot;$DIFF_TYPE&quot;</span> !<span class="o">=</span> <span class="s2">&quot;general&quot;</span> <span class="o">]</span>; <span class="k">then</span>
+</pre></div></td></tr><tr><td class=docs>
+
+<p>Get IP address on the external interface by presuming <code>GATEWAY</code> is on
+the external network. This isn't a smart way so I'll rethink on this later.</p>
+
+</td><td class=code><div class=highlight><pre>
+        <span class="nv">gw_split</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span> <span class="nv">$GATEWAY</span> |tr <span class="s1">&#39;.&#39;</span> <span class="s1">&#39; &#39;</span><span class="k">)</span>
+        <span class="nb">set</span> <span class="nv">$gw_split</span>
+        <span class="nv">tf_ipaddr</span><span class="o">=</span><span class="k">$(</span>ifconfig -a |grep <span class="s2">&quot;inet addr:$1.$2.&quot;</span>|awk <span class="s1">&#39;{print $2}&#39;</span>|cut -d: -f2<span class="k">)</span>
+</pre></div></td></tr><tr><td class=docs>
+
+<p>Check if the IP address($ip_addr) is on the address list.</p>
+
+</td><td class=code><div class=highlight><pre>
+        <span class="nv">temp</span><span class="o">=(</span><span class="k">$(</span>grep <span class="nv">$tf_ipaddr</span> <span class="nv">$ADDR_LIST</span><span class="k">)</span><span class="o">)</span>
+        <span class="k">if</span> <span class="o">[</span> <span class="s2">&quot;$?&quot;</span> <span class="o">==</span> <span class="s2">&quot;0&quot;</span> <span class="o">]</span>; <span class="k">then</span>
+<span class="k">            </span><span class="nv">items</span><span class="o">=</span><span class="k">$(</span>head -1 <span class="nv">$ADDR_LIST</span><span class="k">)</span>
+            <span class="nb">set</span> <span class="nv">$items</span>
+            <span class="nv">a</span><span class="o">=</span>0
+            <span class="k">for </span>i; <span class="k">do</span>
+<span class="k">                </span><span class="nb">eval</span> <span class="nv">$i</span><span class="o">=</span><span class="s1">&#39;${temp[&#39;</span><span class="nv">$a</span><span class="s1">&#39;]}&#39;</span>
+            <span class="k">done</span>
+</pre></div></td></tr><tr><td class=docs>
+
+<p>If the IP address($ip_addr) is on the list, set the hostname.</p>
+
+</td><td class=code><div class=highlight><pre>
+        <span class="k">else</span>
+</pre></div></td></tr><tr><td class=docs>
+
+<p>If not, just set the hostname as localhost as the hostname.</p>
+
+</td><td class=code><div class=highlight><pre>
+            <span class="nb">echo</span> <span class="k">$(</span>date<span class="k">)</span>:  <span class="s2">&quot;Error: the IP address is $tf_ipaddr, but it&#39;s not on ${ADDR_LIST} ...&quot;</span>
+            <span class="nb">exit </span>1
+        <span class="k">fi</span>
+</pre></div></td></tr><tr><td class=docs>
+
+<p>Move to the root of DIFF_DIR and get the file list.</p>
+
+</td><td class=code><div class=highlight><pre>
+        <span class="nb">cd</span> <span class="nv">$DIFF_DIR</span>
+        <span class="nv">diff_list</span><span class="o">=</span><span class="k">$(</span>tree -if<span class="k">)</span>
+</pre></div></td></tr><tr><td class=docs>
+
+<p>For each one on the list, check if it is file, and then replace the words to what it should be.</p>
+
+</td><td class=code><div class=highlight><pre>
+        <span class="nb">set</span> <span class="nv">$diff_list</span>
+        <span class="nb">cd</span> <span class="nv">$MNT_ROOT</span>
+        <span class="k">for </span>i; <span class="k">do</span>
+<span class="k">            if</span> <span class="o">[</span> -f <span class="s2">&quot;$i&quot;</span> <span class="o">]</span>; <span class="k">then</span>
+<span class="k">                </span><span class="nv">temp</span><span class="o">=</span><span class="k">$(</span>head -1 <span class="nv">$ADDR_LIST</span><span class="k">)</span>
+                <span class="nb">set</span> <span class="nv">$temp</span>
+                <span class="k">for </span>f; <span class="k">do</span>
+<span class="k">                </span><span class="nb">eval</span> <span class="s1">&#39;sed -i -e &quot;s/$DIFF$f/$&#39;</span><span class="nv">$f</span><span class="s1">&#39;/&quot; $i&#39;</span>
+                <span class="k">done</span>
+<span class="k">            fi</span>
+<span class="k">        done</span>
+<span class="k">    fi</span>
+    
+</pre></div></td></tr><tr><td class=docs>
+
+<p>OK, let's update /etc/fstab.</p>
+
+</td><td class=code><div class=highlight><pre>
+    <span class="nv">pnum</span><span class="o">=</span><span class="k">$(</span>grep ^<span class="nv">$disk</span> <span class="nv">$TOP_DIR</span>/localrc|wc -l<span class="k">)</span>
+    <span class="k">if</span> <span class="o">[</span> <span class="s2">&quot;$?&quot;</span> !<span class="o">=</span> <span class="s2">&quot;0&quot;</span> <span class="o">]</span>; <span class="k">then</span>
+<span class="k">        </span><span class="nb">echo</span> <span class="k">$(</span>date<span class="k">)</span>:  <span class="s2">&quot;Error: Command failed: grep ^$disk|wc -l&quot;</span>
+        <span class="nb">exit </span>1
+    <span class="k">fi</span>
+<span class="k">    </span><span class="nv">a</span><span class="o">=</span>1
+    <span class="k">while</span> <span class="o">[</span> ! <span class="s2">&quot;$a&quot;</span> -gt <span class="s2">&quot;$pnum&quot;</span> <span class="o">]</span>; <span class="k">do</span>
+<span class="k">        </span><span class="nb">unset </span>temp
+        <span class="nv">temp</span><span class="o">=(</span><span class="k">$(</span><span class="nb">eval echo</span> <span class="s1">&#39;${&#39;</span><span class="nv">$disk$a</span><span class="s1">&#39;[*]}&#39;</span><span class="k">)</span><span class="o">)</span>
+        <span class="nb">echo</span> <span class="k">$(</span>date<span class="k">)</span>:  <span class="nv">temp</span><span class="o">=</span><span class="s2">&quot;${temp[*]}&quot;</span>
+        <span class="k">if</span> <span class="o">[</span> <span class="s2">&quot;${temp[1]}&quot;</span> <span class="o">==</span> <span class="s2">&quot;swap&quot;</span> <span class="o">]</span>; <span class="k">then</span>
+<span class="k">            </span><span class="nb">echo</span> <span class="s2">&quot;/dev/$disk$a   none   swap   sw   0   0&quot;</span> &gt;&gt; <span class="nv">$MNT_ROOT</span>/etc/fstab
+        <span class="k">elif</span> <span class="o">[[</span> <span class="s2">&quot;${temp[1]}&quot;</span> <span class="o">==</span> <span class="s2">&quot;ext4&quot;</span> <span class="o">&amp;&amp;</span> <span class="s2">&quot;${temp[2]}&quot;</span> !<span class="o">=</span> <span class="s2">&quot;none&quot;</span> <span class="o">]]</span> ; <span class="k">then</span>
+<span class="k">            </span><span class="nb">echo</span> <span class="s2">&quot;/dev/$disk$a   ${temp[2]}   ${temp[1]}   errors=remount-ro   0   1&quot;</span> &gt;&gt; <span class="nv">$MNT_ROOT</span>/etc/fstab
+        <span class="k">elif</span> <span class="o">[[</span> <span class="s2">&quot;${temp[1]}&quot;</span> <span class="o">==</span> <span class="s2">&quot;ext3&quot;</span> <span class="o">&amp;&amp;</span> <span class="s2">&quot;${temp[2]}&quot;</span> !<span class="o">=</span> <span class="s2">&quot;none&quot;</span> <span class="o">]]</span> ; <span class="k">then</span>
+<span class="k">            </span><span class="nb">echo</span> <span class="s2">&quot;/dev/$disk$a   ${temp[2]}   ${temp[1]}    defaults   1   1&quot;</span> &gt;&gt; <span class="nv">$MNT_ROOT</span>/etc/fstab
+        <span class="k">elif</span> <span class="o">[[</span> <span class="s2">&quot;${temp[1]}&quot;</span> <span class="o">==</span> <span class="s2">&quot;xfs&quot;</span> <span class="o">&amp;&amp;</span> <span class="s2">&quot;${temp[2]}&quot;</span> !<span class="o">=</span> <span class="s2">&quot;none&quot;</span> <span class="o">]]</span> ; <span class="k">then</span>
+<span class="k">            </span><span class="nb">echo</span> <span class="s2">&quot;/dev/$disk$a   ${temp[2]}   ${temp[1]}    defaults,noatime   0   0&quot;</span> &gt;&gt; <span class="nv">$MNT_ROOT</span>/etc/fstab
+        <span class="k">else</span>
+<span class="k">            </span><span class="nb">echo</span> <span class="k">$(</span>date<span class="k">)</span>:  <span class="s2">&quot;Worning:  unknown file system. didn&#39;t write it on /etc/fstab... $disk$a   ${temp[2]}   ${temp[1]} ???&quot;</span>
+        <span class="k">fi</span>
+<span class="k">        </span><span class="nb">let </span>a+<span class="o">=</span>1
+    <span class="k">done</span>
+
+</pre></div></td></tr><tr><td class=docs>
+
+<p>If password need to be reset at the first login, go through this process.</p>
+
+</td><td class=code><div class=highlight><pre>
+    <span class="k">if</span> <span class="o">[</span> <span class="s2">&quot;$PASS_CHANGE&quot;</span> <span class="o">==</span> <span class="s2">&quot;yes&quot;</span> <span class="o">]</span>; <span class="k">then</span>
+<span class="k">        </span>chroot <span class="nv">$MNT_ROOT</span> usermod -p <span class="s2">&quot;&quot;</span> root
+        chroot <span class="nv">$MNT_ROOT</span> chage -d 0 root
+    <span class="k">fi</span>
+<span class="o">}</span>
+
+InstallGrub<span class="o">()</span> <span class="o">{</span>
+</pre></div></td></tr><tr><td class=docs>
+
+<p>Write different process os<em>DISTRO os</em>RELEASE   </p>
+
+</td><td class=code><div class=highlight><pre>
+    <span class="nv">pnum</span><span class="o">=</span><span class="k">$(</span>grep ^<span class="nv">$disk</span> <span class="nv">$TOP_DIR</span>/localrc|wc -l<span class="k">)</span>
+    <span class="k">if</span> <span class="o">[</span> <span class="s2">&quot;$?&quot;</span> !<span class="o">=</span> <span class="s2">&quot;0&quot;</span> <span class="o">]</span>; <span class="k">then</span>
+<span class="k">        </span><span class="nb">echo</span> <span class="k">$(</span>date<span class="k">)</span>:  <span class="s2">&quot;Error: Command failed: grep ^$disk|wc -l&quot;</span>
+        <span class="nb">exit </span>1
+    <span class="k">fi</span>
+<span class="k">    </span><span class="nv">a</span><span class="o">=</span>1
+    <span class="k">while</span> <span class="o">[</span> ! <span class="s2">&quot;$a&quot;</span> -gt <span class="s2">&quot;$pnum&quot;</span> <span class="o">]</span>; <span class="k">do</span>
+<span class="k">        </span><span class="nb">unset </span>temp
+        <span class="nv">temp</span><span class="o">=(</span><span class="k">$(</span><span class="nb">eval echo</span> <span class="s1">&#39;${&#39;</span><span class="nv">$disk$a</span><span class="s1">&#39;[*]}&#39;</span><span class="k">)</span><span class="o">)</span>
+        <span class="k">if</span> <span class="o">[</span> <span class="s2">&quot;${temp[2]}&quot;</span> <span class="o">==</span> <span class="s2">&quot;/&quot;</span> <span class="o">]</span>; <span class="k">then</span>
+<span class="k">              </span><span class="nv">ROOT_PTR</span><span class="o">=</span><span class="nv">$disk$a</span>
+        <span class="k">fi</span>
+<span class="k">        </span><span class="nb">let </span>a+<span class="o">=</span>1
+    <span class="k">done</span>
+<span class="k">    if</span> <span class="o">[[</span> <span class="s2">&quot;$os_DISTRO&quot;</span> <span class="o">==</span> <span class="s2">&quot;ubuntu&quot;</span> <span class="o">||</span> <span class="s2">&quot;$os_DISTRO&quot;</span> <span class="o">==</span> <span class="s2">&quot;debian&quot;</span> <span class="o">]]</span>; <span class="k">then</span>
+<span class="k">        </span><span class="nv">temp</span><span class="o">=(</span><span class="k">$(</span>ls -la /dev/disk/by-uuid/ |grep <span class="nv">$ROOT_PTR</span><span class="k">)</span><span class="o">)</span>
+        <span class="nv">newuuid</span><span class="o">=</span><span class="k">${</span><span class="nv">temp</span><span class="p">[8]</span><span class="k">}</span>
+        <span class="nb">echo</span> <span class="k">$(</span>date<span class="k">)</span>:  <span class="s2">&quot;newuuid=${temp[8]}&quot;</span>
+        <span class="nv">temp</span><span class="o">=(</span><span class="k">$(</span>grep <span class="s2">&quot;root=UUID=&quot;</span> <span class="nv">$MNT_ROOT</span>/boot/grub/grub.cfg|head -1|tr <span class="s1">&#39;=&#39;</span> <span class="s1">&#39; &#39;</span><span class="k">)</span><span class="o">)</span>
+        <span class="nv">wnum</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span> <span class="k">${</span><span class="nv">temp</span><span class="p">[*]</span><span class="k">}</span>|wc -w<span class="k">)</span>
+        <span class="nv">a</span><span class="o">=</span>0
+        <span class="k">while</span> <span class="o">[</span> ! <span class="nv">$a</span> -gt <span class="nv">$wnum</span> <span class="o">]</span>; <span class="k">do</span>
+<span class="k">            if</span> <span class="o">[</span> <span class="s2">&quot;${temp[$a]}&quot;</span> <span class="o">==</span> <span class="s2">&quot;UUID&quot;</span> <span class="o">]</span>; <span class="k">then</span>
+<span class="k">                </span><span class="nv">olduuid</span><span class="o">=</span><span class="k">${</span><span class="nv">temp</span><span class="p">[</span><span class="k">$(</span>expr <span class="nv">$a</span> + 1<span class="k">)</span><span class="p">]</span><span class="k">}</span>
+                <span class="nb">echo</span> <span class="k">$(</span>date<span class="k">)</span>:  <span class="s2">&quot;olduuid=${temp[$(expr $a + 1)]}&quot;</span>
+            <span class="k">fi</span>
+<span class="k">            </span><span class="nb">let </span>a+<span class="o">=</span>1
+        <span class="k">done</span>
+<span class="k">        </span>sed -i -e <span class="s2">&quot;s/$olduuid/$newuuid/&quot;</span> <span class="nv">$MNT_ROOT</span>/boot/grub/grub.cfg
+        mount -t proc proc <span class="nv">$MNT_ROOT</span>/proc
+        mount -t sysfs sys <span class="nv">$MNT_ROOT</span>/sys
+        mount -o <span class="nb">bind</span> /dev <span class="nv">$MNT_ROOT</span>/dev
+        chroot <span class="nv">$MNT_ROOT</span> update-grub
+        chroot <span class="nv">$MNT_ROOT</span> grub-install /dev/<span class="nv">$disk</span>
+    <span class="k">elif</span> <span class="o">[[</span> <span class="s2">&quot;$os_DISTRO&quot;</span> <span class="o">==</span> <span class="s2">&quot;redhat&quot;</span> <span class="o">||</span> <span class="s2">&quot;$os_DISTRO&quot;</span> <span class="o">==</span> <span class="s2">&quot;centos&quot;</span> <span class="o">||</span> <span class="s2">&quot;$os_DISTRO&quot;</span> <span class="o">==</span> <span class="s2">&quot;scientificlinux&quot;</span> <span class="o">]]</span>; <span class="k">then</span>
+</pre></div></td></tr><tr><td class=docs>
+
+<p>Take "hdX,X" and store as old.</p>
+
+</td><td class=code><div class=highlight><pre>
+        <span class="nv">old</span><span class="o">=</span><span class="k">$(</span>grep <span class="s2">&quot;root (hd&quot;</span> <span class="nv">$MNT_ROOT</span>/boot/grub/grub.conf|head -1<span class="k">)</span>
+        <span class="nv">old</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span> <span class="k">${</span><span class="nv">old</span><span class="p">#*(</span><span class="k">})</span>
+        <span class="nv">old</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span> <span class="k">${</span><span class="nv">old</span><span class="p">%*)</span><span class="k">})</span>
+</pre></div></td></tr><tr><td class=docs>
+
+<p>Create new from $ROOT_PTR and $disk. sda=hd0, sdb=hd1...</p>
+
+</td><td class=code><div class=highlight><pre>
+        <span class="nv">a</span><span class="o">=</span>0; <span class="nv">b</span><span class="o">=</span>1; <span class="nv">c</span><span class="o">=</span>2; <span class="nv">d</span><span class="o">=</span>3; <span class="nv">e</span><span class="o">=</span>4;
+        <span class="nv">new</span><span class="o">=</span>hd<span class="k">$(</span><span class="nb">eval echo</span> <span class="s1">&#39;$&#39;</span><span class="k">${</span><span class="nv">disk</span><span class="p">#*d</span><span class="k">})</span>
+        <span class="nv">part</span><span class="o">=</span><span class="k">$(</span>expr <span class="k">$(</span><span class="nb">eval</span> <span class="s1">&#39;echo ${ROOT_PTR#&#39;</span><span class="nv">$disk</span><span class="s1">&#39;}&#39;</span><span class="k">)</span> - 1 <span class="k">)</span>
+        <span class="nv">new</span><span class="o">=</span><span class="s2">&quot;$new,$part&quot;</span>
+</pre></div></td></tr><tr><td class=docs>
+
+<p>Replace $old to $new.</p>
+
+</td><td class=code><div class=highlight><pre>
+        sed -i -e <span class="s2">&quot;s/$old/$new/&quot;</span> <span class="nv">$MNT_ROOT</span>/boot/grub/grub.conf
+</pre></div></td></tr><tr><td class=docs>
+
+<ol>
+<li>Install Grub
+</td><td class=code><div class=highlight><pre>
+        mount -t proc proc <span class="nv">$MNT_ROOT</span>/proc
+        mount -t sysfs sys <span class="nv">$MNT_ROOT</span>/sys
+        mount -o <span class="nb">bind</span> /dev <span class="nv">$MNT_ROOT</span>/dev
+        chroot <span class="nv">$MNT_ROOT</span> grub-install /dev/<span class="nv">$disk</span>
+    <span class="k">fi</span>
+
+</pre></div></td></tr><tr><td class=docs></li>
+</ol>
+
+<p>Reboot if REBOOT is yes.</p>
+
+</td><td class=code><div class=highlight><pre>
+    <span class="k">if</span> <span class="o">[</span> <span class="s2">&quot;$REBOOT&quot;</span> <span class="o">==</span> <span class="s2">&quot;yes&quot;</span> <span class="o">]</span>; <span class="k">then</span>
+<span class="k">        </span>reboot
+    <span class="k">fi</span>
+<span class="o">}</span>
+
+</pre></div></td></tr><tr><td class=docs>
+
+<p>Restore xtrace</p>
+
+</td><td class=code><div class=highlight><pre>
+<span class="nv">$XTRACE</span>
+
+
+</pre></div></td></tr><tr><td class=docs>
+
+</td><td class=code><div class=highlight><pre>
+
+</pre></div></td></tr><tr><td class=docs></td><td class='code'></td></tr>
+    </tbody>
+    </table>
+</div>
+</body>
+</html>

@@ -1,0 +1,20 @@
+# bootstraprc - load common valuables.
+#
+
+# Define logfile.
+LOGFILE=/tmp/bootstrap.log
+
+# I started with perform mode and rehearse mode but rehearse mode isn't needed
+# anymore, so I'll close rehearse mode soon.
+MODE=perform # Perform the bootstrap installation.
+#MODE="rehearse" # Just rehearse the bootstrap installation.
+
+# Choose reboot or not after the installation.
+#REBOOT="yes"
+REBOOT="no"
+
+# force change password after the installation. yes or no.
+PASS_CHANGE="no"
+
+# Define the path to the exclude list, which defines not-to-copy list when the code copies the image from image source.
+EXCLUDE_LIST=$TOP_DIR/exclude.list

@@ -1,0 +1,30 @@
+#!/bin/bash
+# epilogue-example - set this on torque_mom's /path/to/mom_priv/epilogue
+
+# Define number of processors.
+max_ppn=8
+
+# Define name of provisioning queue
+provq="provision"
+
+echo $6 |grep "ppn=$max_ppn" > /dev/null 2>&1
+if [ "$8" == "$provq" ]&&[ "$?" = "0" ]; then
+
+    USERNAME=$2
+    mom_teefaa=/root/teefaa
+
+    # Load Teefaa Torque configuration.
+    source $mom_teefaa/torque/torquerc
+
+    # Load Teefaa Torque functions.
+    source $mom_teefaa/torque/torque_functions
+
+    # Setup userrc and send it to dispather.
+    SetSendUserConf
+
+    # Reboot
+    reboot
+
+fi
+
+exit 0

@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+# localrc is a user maintained settings file that is sourced at the beginning of bootstrap.sh.
+# This gives the user's local valuables.
+
+# Which image do you want to install? This name has to be listed on ``IMAGE_LIST``.
+IMAGE_NAME="scientificlinux-6.3"
+
+# Define where you mount root partition.
+MNT_ROOT=/mnt
+
+# Define logfile.
+LOGFILE=/tmp/bootstrap.log
+
+# Define the path to image list.
+IMAGE_LIST=$TOP_DIR/image.list
+
+# Define ssh public key.
+SSH_PUBKEYS="put your key here."
+
+# Define the partitioning type.
+#mbr: Master Boot Recorder
+#gpt: GUID Partition Table
+#none: Don't partition use existing partitions
+PARTITION_TYPE="mbr"
+
+# Define the disk to install the sytem.
+disk=sda
+# Define Size[GB], Type and Mount Point, pertition_id=(size[GB] type mount). If size is set as "-1", it means the size is the rest of the disk.
+sda1=(1 bios_grub none)
+sda2=(2 swap none)
+sda3=(50 ext4 "/")
+sda4=(-1 xfs "/data")
+
+# If you want to setup static IP Addresses and hostnames in the 
+# installation process, these ``ADDR_LIST``, ``DIFF_PREFIX`` and ``INTERFACES``
+# Need to be difined.
+DIFF_TYPE=general
+DIFF_DIR=$TOP_DIR/diffs/$DIFF_TYPE/$os_DISTRO/$os_RELEASE
+
+# If ``DIFF_TYPE`` isn't general, these will be needed.
+INTERFACES="eth0 eth1 ib0"
+GATEWAY="149.165.146.254"
+ADDR_LIST=$TOP_DIR/address.list
+DIFF_PREFIX="DIFF"

@@ -1,0 +1,10 @@
+# snapshotrc
+
+
+SNAPSHOT_DIR="/var/lib/teefaa/snapshot"
+
+# Define logfile.
+LOGFILE=/tmp/snapshot.log
+
+# Define the file of exclude list.
+EXCLUDE_LIST=$TOP_DIR/exclude.list

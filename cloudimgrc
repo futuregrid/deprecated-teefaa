@@ -1,0 +1,8 @@
+# snapshotrc
+
+
+CLOUDIMG_DIR="/var/lib/teefaa/cloudimg"
+
+# Define logfile.
+LOGFILE=/tmp/cloudimg.log
+

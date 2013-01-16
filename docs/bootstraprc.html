@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv='content-type' content='text/html;charset=utf-8'>
+    <title>bootstraprc</title>
+    <link rel=stylesheet href="http://jashkenas.github.com/docco/resources/docco.css">
+</head>
+<body>
+<div id=container>
+    <div id=background></div>
+    <table cellspacing=0 cellpadding=0>
+    <thead>
+      <tr>
+        <th class=docs><h1>bootstraprc</h1></th>
+        <th class=code></th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr><td class='docs'><p>bootstraprc - load common valuables.</p>
+
+<p>Define logfile.</p>
+
+</td><td class=code><div class=highlight><pre>
+
+<span class="nv">LOGFILE</span><span class="o">=</span>/tmp/bootstrap.log
+
+</pre></div></td></tr><tr><td class=docs>
+
+<p>I started with perform mode and rehearse mode but rehearse mode isn't needed
+anymore, so I'll close rehearse mode soon.</p>
+
+</td><td class=code><div class=highlight><pre>
+<span class="nv">MODE</span><span class="o">=</span>perform <span class="c"># Perform the bootstrap installation.</span>
+<span class="c">#MODE=&quot;rehearse&quot; # Just rehearse the bootstrap installation.</span>
+
+</pre></div></td></tr><tr><td class=docs>
+
+<p>Choose reboot or not after the installation.</p>
+
+</td><td class=code><div class=highlight><pre>
+<span class="nv">REBOOT</span><span class="o">=</span><span class="s2">&quot;yes&quot;</span> - Reboot the machine after the installation.
+<span class="c">#REBOOT=&quot;no&quot; # Don&#39;t reboot.</span>
+
+</pre></div></td></tr><tr><td class=docs>
+
+<p>yes: force change password after the installation.</p>
+
+</td><td class=code><div class=highlight><pre>
+<span class="nv">PASS_CHANGE</span><span class="o">=</span><span class="s2">&quot;yes&quot;</span>
+
+</pre></div></td></tr><tr><td class=docs>
+
+<p>Define the path to the exclude list, which defines not-to-copy list when the code copies the image from image source.</p>
+
+</td><td class=code><div class=highlight><pre>
+<span class="nv">EXCLUDE_LIST</span><span class="o">=</span><span class="nv">$TOP_DIR</span>/exclude.list
+
+
+
+</pre></div></td></tr><tr><td class=docs>
+
+</td><td class=code><div class=highlight><pre>
+
+</pre></div></td></tr><tr><td class=docs></td><td class='code'></td></tr>
+    </tbody>
+    </table>
+</div>
+</body>
+</html>

@@ -1,0 +1,17 @@
+#!/bin/sh
+#
+# This is an example job script.
+#
+#PBS -N PROVISIONING
+#PBS -l nodes=1:ppn=8
+#PBS -q porvision
+#PBS -M teefaa@example.com
+#PBS -m abe
+
+PROVISIONRC=~/job/tfconf
+
+#####  DON'T CHANGE BELOW  #####
+sleep 10
+cp $PROVISIONRC /tmp/tfconf
+sleep 10
+

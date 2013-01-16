@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+# torque_functions - Common functions used by Teefaa torque components.
+
+# Save trace setting. This is needed beucase "set -o xtrace" is problematic when passing outputs.
+XTRACE=$(set +o | grep xtrace)
+set +o xtrace
+
+SetSendUserConf() {
+
+    # Add HOSTNAME and USERNAME on config /tmp/userrc
+    echo "# Add HOSTNAME and USERNAME" >> /tmp/userrc
+    echo "NODENAME=$HOSTNAME" >> /tmp/userrc
+    echo "USERNAME=$USERNAME" >> /tmp/userrc
+    # Copy config file.
+    scp -P $port /tmp/userrc $dispatch_admin@$dispatcher:$dispatch_nodes/$HOSTNAME/userrc
+
+    # Setup netboot.
+    ssh -p $port $dispatch_admin@$dispatcher "cat $dispatch_nodes/$HOSTNAME/messenger > $dispatch_nodes/$HOSTNAME/pxeconf"
+
+}
+
+SetJobDispatch() {
+
+   USERNAME=$1
+   NODENAME=$2
+   HOURS=$3
+   DATE=$(date +%Y%m%d)
+
+   mkdir -p $dispatch_jobs
+   cd $dispatch_jobs
+
+cat <<EOF > ${NODENAME}_${USERNAME}_${DATE}.pbs
+#PBS -N ${NODENAME}_${USERNAME}
+#PBS -q dispatch
+
+IPMI_PASSFILE=$IPMI_PASSFILE
+nodes_dir=$dispatch_nodes
+
+# Date
+date
+
+# Sleep while it's reserved.
+sleep ${HOURS}h
+
+# Reboot the node.
+ipmitool -I lanplus -U $IPMI_USER -f \$IPMI_PASSFILE -E -H bmc-${NODENAME} power off
+sleep 10
+ipmitool -I lanplus -U $IPMI_USER -f \$IPMI_PASSFILE -E -H bmc-${NODENAME} power on
+
+# Update pxeconf to reset node.
+cat \$nodes_dir/${NODENAME}/reset > \$nodes_dir/${NODENAME}/pxeconf
+
+EOF
+
+  qsub ${NODENAME}_${USERNAME}_${DATE}.pbs
+
+}
+
+RunBootstrapSetJob() {
+
+   # Copy userrc to dispatcher.
+   scp -P $port $dispatch_admin@$dispatcher:$dispatch_nodes/$HOSTNAME/userrc .
+   # Overwrite localrc by torque/localrc-torque
+   cp teefaa/torque/localrc-torque teefaa/localrc
+   # Add userrc on localrc
+   cat userrc >> teefaa/localrc
+   # Run Bootstrap.
+   ./teefaa/bootstrap.sh
+   # Load bootstrap config.
+   source teefaa/localrc
+   # Set local boot 
+   ssh -p $port $dispatch_admin@$dispatcher "cat $dispatch_nodes/$HOSTNAME/localboot > $dispatch_nodes/$HOSTNAME/pxeconf"
+   # Generate job for reprovisioning.
+   ssh -p $port $dispatch_admin@$dispatcher "$dispatch_teefaa/torque/genjob.sh $USERNAME $NODENAME $HOURS"
+
+   # Reboot
+   sync
+   reboot
+}
+
+# Restore xtrace
+$XTRACE
