@@ -1,6 +1,6 @@
-# teefaa/pythonize - attempt for object-oriented scripting in Python
+# teefaa/pythonize - attempt for porting the scripts into Python
 # 
 # Currently, I don't have strong need of making bootstrap script in python. However, 
-# I think it is beneficial to make snapshot and cloudimg scripts in object-oriented
-# programing. And it's great to provide commands which are sensible and easy to use.
+# It is beneficial to make the scripts of Snapshot and Cloudimg in python so that 
+# FG Teefaa provides functional and sensible commands.
 # I'll start this section soon.

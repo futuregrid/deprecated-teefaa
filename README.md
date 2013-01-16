@@ -7,8 +7,8 @@ Cloudimg, Bootstrap and Torque Plugin.
 * Snapshot - Makes a snapshot of an OS and compresses it.
 * Cloudimg - Makes a cloud image from a snapshot.
 * Bootstrap - Installs a system from a snapshot, a running system or a running instance.
-* Torque Plugin - Provides scripts and config files for Torque Resource Manager to let
-cluster users to provision OS images on compute nodes.
+* Torque Plugin - Provides the interface for making Teefaa works with Torque Resource Manager 
+to let cluster users to provision OS images on compute nodes.
 
 The goal of FG Teefaa is to provide the scripts and methods to easily provision multiple 
 Operation Systems on multiple machines in users local enviromnent(Desktop, Laptop, VMs) and
