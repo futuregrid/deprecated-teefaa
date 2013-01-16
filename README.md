@@ -13,6 +13,6 @@ cluster users to provision OS images on compute nodes.
 The goal of FG Teefaa is to provide the scripts and methods to easily provision multiple 
 Operation Systems on multiple machines in users local enviromnent(Desktop, Laptop, VMs) and
 Bare-metal Cluster machines. In the use of FG Teefaa, Cloud is used as an important bridge
-between HPC Cluster and users tiny machines for passing OS images.
+between HPC Cluster and users Laptop/Desktop for passing OS images.
 
 Project website: http://futuregrid.github.com/teefaa/
