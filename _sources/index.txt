@@ -6,7 +6,7 @@
 Welcome to the FG Teefaa documentation
 =========================================
 FutureGrid Teefaa is a set of scripts which consists of Snapshot,
-Clouimg, Bootstrap and Torque Plugin.
+Cloudimg, Bootstrap and Torque Plugin.
 
 * Snapshot - Makes a snapshot of an OS and compresses it.
 * Cloudimg - Makes a cloud image from a snapshot.
