@@ -39,7 +39,7 @@ providing here a simple example and assume the file is located in teefaa_userrc 
  #IMAGE_NAME=centos-6.3
  
  # specify your public key
- SSH_PUBKEYS="ssh-dss AAAAB....3NzaC.....1k/c..3MAGA...ACGEGAMlk you@macbook"
+ SSH_PUBKEYS="ssh-dss AAAAB....3NzaC.....1k/c..3MAGA...ACGEGAMlk sampleuser@example.edu"
  
  # Define a partitioning type.
  PARTITION_TYPE="mbr"
@@ -95,7 +95,7 @@ check the status of your activities as follows::
  [sampleuser@i136 jobs]$ qstat @i132
  Job id                    Name             User            Time Use S Queue
  ------------------------- ---------------- --------------- -------- - -----
- 28.i132                    i6_sampleuser       tfadmin         00:00:00 R dispatch       
+ 28.i132                    i6_sampleuser      tfadmin         00:00:00 R dispatch       
  29.i132                    i51_sampleuser     tfadmin         00:00:00 R dispatch
 
 In this example, teh user *sampleuser* got i6 and i51. Now the user
