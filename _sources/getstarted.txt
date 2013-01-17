@@ -2,11 +2,11 @@ Get Started
 =====
 
 The beta version of FG Teefaa is installed on india. If you have your FutureGrid account,
-you can get bare-metal nodes like you get instance on Cloud. We use Torque Resource Manager
-to schedule the provisioning. 
+you can get bare-metal nodes just like you get instance on Cloud. We use Torque Resource 
+Manager to schedule the provisioning. So if you are familar with qsub, it easy to understand
+this tutorial.
 
-Here's an example which provision Ubuntu-12.10 on two bare-metal nodes in india for 5 hours
-as if you get 2 instances on Cloud.
+Here's an example which provision Ubuntu-12.10 on two bare-metal nodes in india for 5 hours.
 
 Login to india.futuregrid.org ::
 
@@ -73,7 +73,7 @@ Then, submit the job. ::
 The job will get two nodes, setup the provisioning configuration and then reboot the machines.
 After the job finishes, the nodes will boot with Teefaa Messenger(customized netboot image.), then
 install Ubuntu-12.10 then reboot. It will take about 10 to 15 minutes to finish the installation.
-Once the nodes are ready, they will show up on Dispather queue. Now the queue is on the node i132,
+Once the nodes are ready, they will show up on Dispather queue which is on the node i132 right now.
 You can check it with this command. ::
 
  qstat @i132
