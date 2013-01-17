@@ -8,9 +8,9 @@ We use the resource manager torque to manage and schedule a
 provisioning. Thus a resource can be easily reprovisioned with the
 qsub command.
 
-To illustrate the use of FG teefaa we have chosen a simple example::
-
-  Provision Ubuntu-12.10 on two nodes of india for 5 hours.
+To illustrate the use of FG teefaa we have chosen a simple example
+that provisions the OS Ubuntu-12.10 on two nodes of india for 5
+hours. 
 
 To achieve this, you must first login to india.futuregrid.org ::
 
@@ -24,28 +24,28 @@ providing here a simple example and assume the file is located in teefaa_userrc 
 
  # Provide the FG project_id. 
  PROJECT_ID="fg-296"
-
+ 
  # Define the reservation period in hours. 
 # Currently 168 (e.g. 7 days) is the maximum.
  HOURS=5
-
+ 
  # If you have your own costom image source, provide it next.
  # If not, pick a image type from the choise and uncomment it.
  #IMAGE_LIST=$HOME/teefaa/image.list
  #IMAGE_NAME=your-custome on your image.list
-
+ 
  # The list of sample images includes.
  IMAGE_NAME=ubuntu-12.10
  #IMAGE_NAME=centos-6.3
-
+ 
  # specify your public key
  SSH_PUBKEYS="ssh-dss AAAAB....3NzaC.....1k/c..3MAGA...ACGEGAMlk you@macbook"
-
+ 
  # Define a partitioning type.
  PARTITION_TYPE="mbr"
  # GPT in Teefaa is only available for Ubuntu and Debian right now.
  #PARTITION_TYPE="gpt" 
-
+ 
  # Define the disk device partitioning
  disk=sda
  sda1=(2 swap none)
