@@ -151,35 +151,36 @@ hours.</p>
 <h2>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline">¶</a></h2>
 <p>Next you need to define a FG teefa configuration file. We are
 providing here a simple example and assume the file is located in teefaa_userrc</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c"># Provide the FG project_id.</span>
-<span class="n">PROJECT_ID</span><span class="o">=</span><span class="s">&quot;fg-296&quot;</span>
+<div class="highlight-python"><pre># Provide the FG project_id.
+PROJECT_ID="fg-296"
 
-<span class="c"># Define the reservation period in hours.</span>
-</pre></div>
-</div>
-<dl class="docutils">
-<dt># Currently 168 (e.g. 7 days) is the maximum.</dt>
-<dd><p class="first">HOURS=5</p>
-<p># If you have your own costom image source, provide it next.
+# Define the reservation period in hours.
+# Currently 168 (e.g. 7 days) is the maximum.
+HOURS=5
+
+# If you have your own costom image source, provide it next.
 # If not, pick a image type from the choise and uncomment it.
 #IMAGE_LIST=$HOME/teefaa/image.list
-#IMAGE_NAME=your-custome on your image.list</p>
-<p># The list of sample images includes.
+#IMAGE_NAME=your-custome on your image.list
+
+# The list of sample images includes.
 IMAGE_NAME=ubuntu-12.10
-#IMAGE_NAME=centos-6.3</p>
-<p># specify your public key
-SSH_PUBKEYS=&#8221;ssh-dss AAAAB....3NzaC.....1k/c..3MAGA...ACGEGAMlk <a class="reference external" href="mailto:you&#37;&#52;&#48;macbook">you<span>&#64;</span>macbook</a>&#8220;</p>
-<p># Define a partitioning type.
-PARTITION_TYPE=&#8221;mbr&#8221;
+#IMAGE_NAME=centos-6.3
+
+# specify your public key
+SSH_PUBKEYS="ssh-dss AAAAB....3NzaC.....1k/c..3MAGA...ACGEGAMlk you@macbook"
+
+# Define a partitioning type.
+PARTITION_TYPE="mbr"
 # GPT in Teefaa is only available for Ubuntu and Debian right now.
-#PARTITION_TYPE=&#8221;gpt&#8221;</p>
-<p class="last"># Define the disk device partitioning
+#PARTITION_TYPE="gpt"
+
+# Define the disk device partitioning
 disk=sda
 sda1=(2 swap none)
-sda2=(50 ext4 &#8220;/&#8221;)
-sda3=(-1 xfs &#8220;/data&#8221;)</p>
-</dd>
-</dl>
+sda2=(50 ext4 "/")
+sda3=(-1 xfs "/data")</pre>
+</div>
 </div>
 <div class="section" id="provisioning">
 <h2>Provisioning<a class="headerlink" href="#provisioning" title="Permalink to this headline">¶</a></h2>
