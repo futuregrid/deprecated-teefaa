@@ -26,7 +26,7 @@ providing here a simple example and assume the file is located in teefaa_userrc 
  PROJECT_ID="fg-296"
  
  # Define the reservation period in hours. 
-# Currently 168 (e.g. 7 days) is the maximum.
+ # Currently 168 (e.g. 7 days) is the maximum.
  HOURS=5
  
  # If you have your own costom image source, provide it next.
