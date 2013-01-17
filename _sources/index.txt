@@ -11,6 +11,7 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
+   LICENSE
    intro
    getstarted
    modules
