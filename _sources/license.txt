@@ -19,11 +19,11 @@ limitations under the License.
 
 Authors
 -------
-Koji Tanaka <kj.tanaka@gmail.com>
-Javier Diaz <javier.diazmontes@gmail.com>
+* Koji Tanaka <kj.tanaka@gmail.com>
+* Javier Diaz <javier.diazmontes@gmail.com>
 
 Contributors
 ------------
-Gregor von Laszewski <laszewski@gmail.com>
-Fugang Wang <kevinwangfg@gmail.com>
-Allan Streib <astreib@indiana.edu>
+* Gregor von Laszewski <laszewski@gmail.com>
+* Fugang Wang <kevinwangfg@gmail.com>
+* Allan Streib <astreib@indiana.edu>
