@@ -1,5 +1,5 @@
-Get Started
-=====
+GETTING STARTED
+============
 
 The beta version of FG Teefaa is installed on india. If you have your FutureGrid account,
 you can get bare-metal nodes just like you get instance on Cloud. We use Torque Resource 
@@ -14,7 +14,7 @@ Login to india.futuregrid.org ::
 
 Write your teefaa_userrc ::
 
- # Provide project_id and token.
+ # Provide project_id and token. 
  PROJECT_ID="fg-296"
 
  # Define reservation period in hours. 168(7days) is the maximum.
