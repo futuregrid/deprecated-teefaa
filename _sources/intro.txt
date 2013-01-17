@@ -1,8 +1,6 @@
 INTRODUCTION
 ============
 
-Welcome to the FG Teefaa documentation
-=========================================
 FutureGrid Teefaa is a set of scripts which consists of Snapshot,
 Cloudimg, Bootstrap and Torque Plugin.
 
@@ -34,21 +32,5 @@ Our code and web page is maintained in github
 
 * Source: https://github.com/futuregrid/teefa
 * Documentation: http://futuregrid.github.com/teefaa
-
-Introduction
-------------
-
-TBD
-
-HOW TO INSTALL
-==============
-
-TBD
-
-
-HOW TO RUN
-==========
-
-TBD
 
 
