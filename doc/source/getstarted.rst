@@ -3,10 +3,11 @@ Get Started
 
 The beta version of FG Teefaa is installed on india. If you have your FutureGrid account,
 you can get bare-metal nodes just like you get instance on Cloud. We use Torque Resource 
-Manager to schedule the provisioning. So if you are familar with qsub, it easy to understand
+Manager to schedule the provisioning. So if you are familar with qsub, it is easy to understand
 this tutorial.
 
-Here's an example which provision Ubuntu-12.10 on two bare-metal nodes in india for 5 hours.
+Here's an example which provision Ubuntu-12.10 on two bare-metal nodes in india for 5 hours,
+and then install OpenStack Folsom.
 
 Login to india.futuregrid.org ::
 
@@ -110,4 +111,28 @@ If you want to check how long you spent, you can check the time with this comman
 This example shows the used-time of Job id 29 on Dispatcher queue. 
 I spent 2 hours 16 minutes 8 seconds. These nodes are available for 5 hours.
 
-In the next section, I'll explain how to create your custom images and the list.
+Install OpenStack Folsom
+------------------------
+Download the installation script from github. ::
+
+  module load git
+  git clone https://github.com/kjtanaka/deploy_folsom.git
+
+Then, modify deploy_folsom/setuprc. In this example, I got i6 and i51 so I'll make
+i6 as controller node and i51 as nova-compute node. The deploy_folsom/setuprc becomes
+like this. ::
+
+  # setuprc - configuration file for deploying OpenStack
+  PASSWORD="DoNotMakeThisEasy"
+  export ADMIN_PASSWORD=$PASSWORD
+  export SERVICE_PASSWORD=$PASSWORD
+  export ENABLE_ENDPOINTS=1
+  MYSQLPASS=$PASSWORD
+  RABBIT_PASS=$PASSWORD
+  CONTROLLER="149.156.146.6"
+  FIXED_RANGE="192.168.201.0/24"
+  MYSQL_ACCESS="149.156.146.%"
+  PUBLIC_INTERFACE="eth1"
+  FLAT_INTERFACE="eth0"
+
+
