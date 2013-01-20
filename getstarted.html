@@ -92,6 +92,7 @@
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Get Started</a><ul>
+<li><a class="reference internal" href="#provision-ubuntu-12-10-on-two-nodes">Provision Ubuntu-12.10 on two nodes</a></li>
 <li><a class="reference internal" href="#install-openstack-folsom">Install OpenStack Folsom</a></li>
 </ul>
 </li>
@@ -138,6 +139,8 @@
 you can get bare-metal nodes just like you get instance on Cloud. We use Torque Resource
 Manager to schedule the provisioning. So if you are familar with qsub, it is easy to understand
 this tutorial.</p>
+<div class="section" id="provision-ubuntu-12-10-on-two-nodes">
+<h2>Provision Ubuntu-12.10 on two nodes<a class="headerlink" href="#provision-ubuntu-12-10-on-two-nodes" title="Permalink to this headline">¶</a></h2>
 <p>Here&#8217;s an example which provision Ubuntu-12.10 on two bare-metal nodes in india for 5 hours,
 and then install OpenStack Folsom.</p>
 <p>Login to india.futuregrid.org</p>
@@ -163,15 +166,17 @@ IMAGE_NAME=ubuntu-12.10
 SSH_PUBKEYS="ssh-dss AAAAB....3NzaC.....1k/c..3MAGA...ACGEGAMlk you@macbook"
 
 # Define partitioning type.
-PARTITION_TYPE="mbr"
+#PARTITION_TYPE="mbr"
 # GPT in Teefaa is only available for Ubuntu and Debian right now.
-#PARTITION_TYPE="gpt"
+PARTITION_TYPE="gpt"
 
 # Define disk setting.
 disk=sda
-sda1=(2 swap none)
-sda2=(50 ext4 "/")
-sda3=(-1 xfs "/data")</pre>
+sda1=(1 bios_grub none)
+sda2=(2 swap none)
+sda3=(50 ext4 "/")
+sda4=(900 xfs "/var/lib/nova")
+sda5=(-1 none none)</pre>
 </div>
 <p>Write your provision job file. Here&#8217;s example, I name the file as provision.pbs</p>
 <div class="highlight-python"><pre>#!/bin/sh
@@ -234,6 +239,7 @@ root@i6:~#</pre>
 </div>
 <p>This example shows the used-time of Job id 29 on Dispatcher queue.
 I spent 2 hours 16 minutes 8 seconds. These nodes are available for 5 hours.</p>
+</div>
 <div class="section" id="install-openstack-folsom">
 <h2>Install OpenStack Folsom<a class="headerlink" href="#install-openstack-folsom" title="Permalink to this headline">¶</a></h2>
 <p>Download the installation script from github.</p>
