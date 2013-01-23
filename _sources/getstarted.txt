@@ -9,8 +9,8 @@ provisioning. Thus a resource can be easily reprovisioned with the
 qsub command.
 
 To illustrate the use of FG teefaa we have chosen a simple example
-that provisions the OS Ubuntu-12.10 on two nodes of india for 5
-hours. 
+that provisions the Ubuntu-12.10 on two nodes of india for 5
+hours.
 
 To achieve this, you must first login to india.futuregrid.org ::
 
@@ -19,8 +19,8 @@ To achieve this, you must first login to india.futuregrid.org ::
 Configuration
 -----------
 
-Next you need to define a FG teefa configuration file. We are
-providing here a simple example and assume the file is located in teefaa_userrc ::
+Next you need to define a FG teefaa configuration file. We are
+providing here a simple example and assume the file is named as teefaa_userrc ::
 
  # Provide the FG project_id. 
  PROJECT_ID="fg-296"
@@ -42,15 +42,17 @@ providing here a simple example and assume the file is located in teefaa_userrc 
  SSH_PUBKEYS="ssh-dss AAAAB....3NzaC.....1k/c..3MAGA...ACGEGAMlk sampleuser@example.edu"
  
  # Define a partitioning type.
- PARTITION_TYPE="mbr"
- # GPT in Teefaa is only available for Ubuntu and Debian right now.
- #PARTITION_TYPE="gpt" 
+ #PARTITION_TYPE="mbr"
+ # NOTE: GPT in Teefaa is only available for Ubuntu and Debian right now.
+ PARTITION_TYPE="gpt" 
  
- # Define the disk device partitioning
+ # Define disk setting.
  disk=sda
- sda1=(2 swap none)
- sda2=(50 ext4 "/")
- sda3=(-1 xfs "/data")
+ sda1=(1 bios_grub none)
+ sda2=(2 swap none)
+ sda3=(50 ext4 "/")
+ sda4=(900 xfs "/var/lib/nova")
+ sda5=(-1 none none)
 
 Provisioning 
 ------------
@@ -64,13 +66,17 @@ the help of the queing system. For this example we name the file provision.pbs :
  #PBS -N PROVISIONING
  #PBS -l nodes=2:ppn=8
  #PBS -q provision
- #PBS -M username@example.edu
+ #PBS -M sampleuser@example.edu
  #PBS -m abe
 
  module load torque
 
  # Set the path to your teefaa_localrc
  USERRC=~/jobs/teefaa_userrc
+
+ # Tell if you need a subnet for building your Cloud Infrastructure.
+ # (yes/no)
+ NEED_SUBNET=yes
 
  #####  PLEASE DO NOT CAHANGE THE FOLLOWING LINES  #####
  sleep 10
@@ -80,7 +86,7 @@ the help of the queing system. For this example we name the file provision.pbs :
 
 This file is used to submit the job. ::
  
- qsub provision.pbs
+ [sampleuser@i136]$ qsub provision.pbs
 
 The job will reserve two nodes, setup the provisioning configuration
 and then reboot the machines according to the information from our
@@ -92,7 +98,7 @@ dispather queue which is installed on the node i132 on india.  You can
 check the status of your activities as follows::
 
  qstat @i132
- [sampleuser@i136 jobs]$ qstat @i132
+ [sampleuser@i136]$ qstat @i132
  Job id                    Name             User            Time Use S Queue
  ------------------------- ---------------- --------------- -------- - -----
  28.i132                    i6_sampleuser      tfadmin         00:00:00 R dispatch       
@@ -101,7 +107,7 @@ check the status of your activities as follows::
 In this example, teh user *sampleuser* got i6 and i51. Now the user
 can login to them as root. ::
 
- [sampleuser@i136 jobs]$ ssh root@i6
+ [sampleuser@i136]$ ssh root@i6 # or i6r.idp.iu.futuregrid.org if you access from external.
  Welcome to Ubuntu 12.10 (GNU/Linux 3.5.0-21-generic x86_64)
 
   * Documentation:  https://help.ubuntu.com/
@@ -120,11 +126,24 @@ can login to them as root. ::
 
 If you want to check how long you used your instances, you can check the time with this command. ::
 
-  [sampleuser@i136 jobs]$ qstat -f 29.i132 | grep resources_used.walltime
+  [sampleuser@i136]$ qstat -f 29.i132 | grep resources_used.walltime
     resources_used.walltime = 02:16:08
 
 This example shows the used-time of Job id 29 on Dispatcher
 queue. Here it indicates that it spent 2 hours 16 minutes 8
 seconds. Remember that the nodes are available for 5 hours.
 
-In the next section, we explain how to create your custom images.
+Now you can test your software or some opensource system on the two bare-metal nodes.
+
+The next section shows how to build OpenStack Folsom, and then shows how to clone 
+the nova-compute to another bare-metal node.
+
+Build OpenStack Folsom on the two nodes
+---------------------------------------------------
+
+To make this section shorter, let us use scripts to install openstack controller node,
+and compute node. ::
+
+  [sampleuser@i136]$ git clone https://github.com/kjtanaka/deploy_folsom.git
+  [sampleuser@i136]$ cd deploy_folsom
+
