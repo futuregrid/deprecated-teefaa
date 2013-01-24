@@ -141,9 +141,77 @@ the nova-compute to another bare-metal node.
 Build OpenStack Folsom on the two nodes
 ---------------------------------------------------
 
-To make this section shorter, let us use scripts to install openstack controller node,
-and compute node. ::
+First of all, please check the output file of your provisioning.pbs. If you used my
+template the output is on PROVISIONING.oxxxx. This time I got PROVISIONING.o564346. ::
+
+  [sampleuser@i136]$ cat PROVISIONING.o564346
+  ncpus=1,neednodes=2:ppn=8,nodes=2:ppn=8,walltime=00:30:00
+
+  You can use 192.168.101/24 for your Cloud instances
+
+So you can use 192.168.101/24 for your OpenStack instances.
+
+To make this section shorter, let us use scripts to install openstack controller.
+Thi example build controller on node i6 ::
 
   [sampleuser@i136]$ git clone https://github.com/kjtanaka/deploy_folsom.git
-  [sampleuser@i136]$ cd deploy_folsom
+  [sampleuser@i136]$ cp deploy_folsom/setuprc-example deploy_folsom/setuprc
+  [sampleuser@i136]$ vi deploy_folsom/setuprc
+  # setuprc - configuration file for deploying OpenStack
+
+  # 
+  # 1. Change The password.
+  #
+  PASSWORD="DoNotMakeThisEasy"
+  export ADMIN_PASSWORD=$PASSWORD
+  export SERVICE_PASSWORD=$PASSWORD
+  export ENABLE_ENDPOINTS=1
+  MYSQLPASS=$PASSWORD
+  QPID_PASS=$PASSWORD
+  #
+  # 2. Set your controller IP Address. In this example, 
+  #    it's node i6's IP Address.
+  CONTROLLER="149.165.146.6"
+  #
+  # 3. Set The subnet you got on PROVISIONING.oxxxx
+  #    This example I got 192.168.101.0/24 as showen
+  #    above.
+  FIXED_RANGE="192.168.101.0/24"
+  #
+  # 4. Many example of OpenStack put this as "%",
+  #    but I think it's too open, so please set it
+  #    as "149.165.146.%".
+  MYSQL_ACCESS="149.165.146.%"
+  PUBLIC_INTERFACE="eth1"
+  FLAT_INTERFACE="eth0"
+
+Then, copy the folder to node i6 and execute setup_controller.sh, and copy it to 
+node i51 and execute setup_compute.sh ::
+
+  [sampleuser@i136]$ scp -r deploy_folsom i6:deploy_folsom
+  [sampleuser@i136]$ ssh root@i6 "cd deploy_folsom; bash -ex setup_controller.sh"
+  [sampleuser@i136]$ scp -r deploy_folsom i52:deploy_folsom
+  [sampleuser@i136]$ ssh root@i51 "cd deploy_folsom; bash -ex setup_controller.sh"
+
+The nodes are rebooted at the end. So login to the controller node i6 when the machine
+is up online. Then run your first instance. ::
+
+   [sampleuser@i136]$ ssh root@i6
+   root@i6:~# cd deploy_folsom
+   root@i6:~# . admin_credential
+   root@i6:~# nova boot --image ubuntu-12.10 --flavor 1 --key-name key1 vm001
+   root@i6:~# nova list
+   +--------------------------------------+-------+--------+-----------------------+
+   | ID                                   | Name  | Status | Networks              |
+   +--------------------------------------+-------+--------+-----------------------+
+   | 1183b8ea-253e-4c03-afe6-6df2a66854fd | vm001 | ACTIVE | private=192.168.101.2 |
+   +--------------------------------------+-------+--------+-----------------------+
+
+Somehow first one or two instance(s) tend to end up with "ERROR" Status. If it happens
+to you too, please delete them and run new instance. Once your instance become "ACTIVE"
+you should be able to login as "ubuntu" like this. ::
+   
+   root@i6:~# ssh -i key1.pem ubuntu@192.168.201.2
+
+
 
