@@ -213,5 +213,7 @@ you should be able to login as "ubuntu" like this. ::
    
    root@i6:~# ssh -i key1.pem ubuntu@192.168.201.2
 
-
+Create another nova-compute node from existing node
+----------------------------------------------------
+(Under construction. and should be ready by 26th Jan.)
 
