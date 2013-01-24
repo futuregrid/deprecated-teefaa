@@ -95,7 +95,7 @@
 <li><a class="reference internal" href="#configuration">Configuration</a></li>
 <li><a class="reference internal" href="#provisioning">Provisioning</a></li>
 <li><a class="reference internal" href="#build-openstack-folsom-on-the-two-nodes">Build OpenStack Folsom on the two nodes</a></li>
-<li><a class="reference internal" href="#create-another-nova-compute-node-from-existing-node">Create another nova-compute node from existing node</a></li>
+<li><a class="reference internal" href="#create-another-nova-compute-from-running-node">Create another nova-compute from running node</a></li>
 </ul>
 </li>
 </ul>
@@ -281,7 +281,7 @@ Thi example build controller on node i6</p>
 # setuprc - configuration file for deploying OpenStack
 
 #
-# 1. Change The password.
+# 1. Set the password.
 #
 PASSWORD="DoNotMakeThisEasy"
 export ADMIN_PASSWORD=$PASSWORD
@@ -329,12 +329,21 @@ root@i6:~# nova list
 <p>Somehow first one or two instance(s) tend to end up with &#8220;ERROR&#8221; Status. If it happens
 to you too, please delete them and run new instance. Once your instance become &#8220;ACTIVE&#8221;
 you should be able to login as &#8220;ubuntu&#8221; like this.</p>
-<div class="highlight-python"><pre>root@i6:~# ssh -i key1.pem ubuntu@192.168.201.2</pre>
+<div class="highlight-python"><pre>root@i6:~# ssh -i key1.pem ubuntu@192.168.101.2</pre>
 </div>
 </div>
-<div class="section" id="create-another-nova-compute-node-from-existing-node">
-<h2>Create another nova-compute node from existing node<a class="headerlink" href="#create-another-nova-compute-node-from-existing-node" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="create-another-nova-compute-from-running-node">
+<h2>Create another nova-compute from running node<a class="headerlink" href="#create-another-nova-compute-from-running-node" title="Permalink to this headline">¶</a></h2>
 <p>(Under construction. and should be ready by 26th Jan.)</p>
+<p>First of all, please make sure you delete running instances on nova compute i51.
+It&#8217;s probably better to disable the nova-compute on i51.</p>
+<div class="highlight-python"><pre>root@i6:~# nova delete vm001
+root@i6:~# nova delete vm002
+  :
+root@i6:~# nova-manage service disable --host i51 --service nova-compute
+root@i6:~# nova-manage service list</pre>
+</div>
+<p>Then, create your image.list and exclude.list.</p>
 </div>
 </div>
 

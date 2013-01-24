@@ -160,7 +160,7 @@ Thi example build controller on node i6 ::
   # setuprc - configuration file for deploying OpenStack
 
   # 
-  # 1. Change The password.
+  # 1. Set the password.
   #
   PASSWORD="DoNotMakeThisEasy"
   export ADMIN_PASSWORD=$PASSWORD
@@ -211,9 +211,19 @@ Somehow first one or two instance(s) tend to end up with "ERROR" Status. If it h
 to you too, please delete them and run new instance. Once your instance become "ACTIVE"
 you should be able to login as "ubuntu" like this. ::
    
-   root@i6:~# ssh -i key1.pem ubuntu@192.168.201.2
+   root@i6:~# ssh -i key1.pem ubuntu@192.168.101.2
 
-Create another nova-compute node from existing node
+Create another nova-compute from running node
 ----------------------------------------------------
 (Under construction. and should be ready by 26th Jan.)
 
+First of all, please make sure you delete running instances on nova compute i51.
+It's probably better to disable the nova-compute on i51. ::
+   
+   root@i6:~# nova delete vm001
+   root@i6:~# nova delete vm002
+     :
+   root@i6:~# nova-manage service disable --host i51 --service nova-compute
+   root@i6:~# nova-manage service list
+
+Then, create your image.list and exclude.list.
