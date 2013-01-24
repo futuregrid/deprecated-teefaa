@@ -223,6 +223,8 @@ It's probably better to disable the nova-compute on i51. ::
    root@i6:~# nova delete vm001
    root@i6:~# nova delete vm002
      :
+     : Delete instances on i51...
+     :
    root@i6:~# nova-manage service disable --host i51 --service nova-compute
    root@i6:~# nova-manage service list
 
