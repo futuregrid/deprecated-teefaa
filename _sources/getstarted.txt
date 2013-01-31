@@ -227,8 +227,10 @@ The process is a bit a lot so here's description of the process.
 
 Here I begin with i51 which is my compute node.
 
-First of all, please make sure you delete running instances on nova compute i51.
-It's probably better to disable the nova-compute on i51. ::
+**Delete your instances and disable the nova-compute service.**
+
+First of all, make sure you delete running instances, and disable the 
+nova-compute service on i51. ::
    
    root@i6:~# nova delete vm001
    root@i6:~# nova delete vm002
@@ -238,4 +240,38 @@ It's probably better to disable the nova-compute on i51. ::
    root@i6:~# nova-manage service disable --host i51 --service nova-compute
    root@i6:~# nova-manage service list
 
-Then, create your image.list and exclude.list.
+**Create a snapshot.**
+
+Download Teefaa. ::
+   
+   root@i51:~# git clone https://github.com/futuregrid/teefaa.git
+   root@i51:~# cd teefaa
+
+Create your snapshotrc. ::
+
+   root@i51:~# cp snapshotrc-example snapshotrc
+   root@i51:~# vi snapshotrc
+   # snapshotrc
+
+   SNAPSHOT_DIR="/var/lib/teefaa/snapshot"
+
+   # Define logfile.
+   LOGFILE=/tmp/snapshot.log
+
+   # Define the file of exclude list.
+   EXCLUDE_LIST=$TOP_DIR/exclude.list
+
+Create your exclude.list and add var/lib/nova/instances ::
+
+   root@i51:~# cp exclude.list-example exclude.list
+   root@i51:~# vi exclude.list
+
+Execute snapshot.sh. ::
+
+   root@i51:~# ./snapshot.sh
+
+If you get error because of necessary package, install tree, xfsprogs and squashfs-tools like this. ::
+
+   root@i51:~# apt-get install tree xfsprogs squashfs-tools
+
+The snapshot will be created in /var/lib/teefaa/snapshot .
