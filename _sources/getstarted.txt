@@ -284,6 +284,6 @@ If you get error because of necessary package, install tree, xfsprogs and squash
 
 The snapshot will be created in /var/lib/teefaa/snapshot .
 
-** [Create a host(VM on OpenStack) for your image repository. ] **
+**[Create a host(VM on OpenStack) for your image repository. ]**
 
 
