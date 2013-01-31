@@ -261,7 +261,7 @@ Create your snapshotrc. ::
    # Define the file of exclude list.
    EXCLUDE_LIST=$TOP_DIR/exclude.list
 
-Create your exclude.list and add "var/lib/nova/instances/*" ::
+Create your exclude.list and add "var/lib/nova/instances/" ::
 
    root@i51:~# cp exclude.list-example exclude.list
    root@i51:~# vi exclude.list
@@ -283,3 +283,7 @@ If you get error because of necessary package, install tree, xfsprogs and squash
    root@i51:~# apt-get install tree xfsprogs squashfs-tools
 
 The snapshot will be created in /var/lib/teefaa/snapshot .
+
+** [Create a host(VM on OpenStack) for your image repository. ] **
+
+
