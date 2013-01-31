@@ -373,7 +373,7 @@ LOGFILE=/tmp/snapshot.log
 # Define the file of exclude list.
 EXCLUDE_LIST=$TOP_DIR/exclude.list</pre>
 </div>
-<p>Create your exclude.list and add &#8220;var/lib/nova/instances/<a href="#id1"><span class="problematic" id="id2">*</span></a>&#8220;</p>
+<p>Create your exclude.list and add &#8220;var/lib/nova/instances/&#8221;</p>
 <div class="highlight-python"><pre>root@i51:~# cp exclude.list-example exclude.list
 root@i51:~# vi exclude.list
 proc/*
@@ -392,6 +392,7 @@ var/lib/nova/instances/*</pre>
 <div class="highlight-python"><pre>root@i51:~# apt-get install tree xfsprogs squashfs-tools</pre>
 </div>
 <p>The snapshot will be created in /var/lib/teefaa/snapshot .</p>
+<p>** [Create a host(VM on OpenStack) for your image repository. ] **</p>
 </div>
 </div>
 
