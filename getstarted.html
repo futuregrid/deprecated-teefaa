@@ -334,11 +334,22 @@ you should be able to login as &#8220;ubuntu&#8221; like this.</p>
 </div>
 <div class="section" id="create-another-nova-compute-from-running-node">
 <h2>Create another nova-compute from running node<a class="headerlink" href="#create-another-nova-compute-from-running-node" title="Permalink to this headline">¶</a></h2>
-<p>(Under construction. and should be ready by 26th Jan.)</p>
+<p>This section shows you how to create a snapshot of nova-compute node, and copy it to another node.
+The process is a bit a lot so here&#8217;s description of the process.</p>
+<ol class="arabic simple">
+<li>Delete your instances and disable the nova-compute service.</li>
+<li>Create a snapshot.</li>
+<li>Create a host(VM on OpenStack) for your image repository.</li>
+<li>Upload your snapshot and mount it.</li>
+<li>Modify your provisioning job and submit it.</li>
+</ol>
+<p>Here I begin with i51 which is my compute node.</p>
 <p>First of all, please make sure you delete running instances on nova compute i51.
 It&#8217;s probably better to disable the nova-compute on i51.</p>
 <div class="highlight-python"><pre>root@i6:~# nova delete vm001
 root@i6:~# nova delete vm002
+  :
+  : Delete instances on i51...
   :
 root@i6:~# nova-manage service disable --host i51 --service nova-compute
 root@i6:~# nova-manage service list</pre>
