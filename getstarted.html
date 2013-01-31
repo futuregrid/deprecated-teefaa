@@ -373,9 +373,17 @@ LOGFILE=/tmp/snapshot.log
 # Define the file of exclude list.
 EXCLUDE_LIST=$TOP_DIR/exclude.list</pre>
 </div>
-<p>Create your exclude.list and add var/lib/nova/instances</p>
+<p>Create your exclude.list and add &#8220;var/lib/nova/instances/<a href="#id1"><span class="problematic" id="id2">*</span></a>&#8220;</p>
 <div class="highlight-python"><pre>root@i51:~# cp exclude.list-example exclude.list
-root@i51:~# vi exclude.list</pre>
+root@i51:~# vi exclude.list
+proc/*
+sys/*
+dev/*
+tmp/*
+mnt/*
+media/*
+lost+found
+var/lib/nova/instances/*</pre>
 </div>
 <p>Execute snapshot.sh.</p>
 <div class="highlight-python"><pre>root@i51:~# ./snapshot.sh</pre>

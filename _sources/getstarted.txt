@@ -261,10 +261,18 @@ Create your snapshotrc. ::
    # Define the file of exclude list.
    EXCLUDE_LIST=$TOP_DIR/exclude.list
 
-Create your exclude.list and add var/lib/nova/instances ::
+Create your exclude.list and add "var/lib/nova/instances/*" ::
 
    root@i51:~# cp exclude.list-example exclude.list
    root@i51:~# vi exclude.list
+   proc/*
+   sys/*
+   dev/*
+   tmp/*
+   mnt/*
+   media/*
+   lost+found
+   var/lib/nova/instances/*
 
 Execute snapshot.sh. ::
 
