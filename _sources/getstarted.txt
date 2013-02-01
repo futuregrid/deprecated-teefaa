@@ -227,7 +227,7 @@ The process is a bit a lot so here's description of the process.
 
 Here I begin with i51 which is my compute node.
 
-**Delete your instances and disable the nova-compute service.**
+**[ Delete your instances and disable the nova-compute service. ]**
 
 First of all, make sure you delete running instances, and disable the 
 nova-compute service on i51. ::
@@ -240,7 +240,7 @@ nova-compute service on i51. ::
    root@i6:~# nova-manage service disable --host i51 --service nova-compute
    root@i6:~# nova-manage service list
 
-**Create a snapshot.**
+**[ Create a snapshot. ]**
 
 Download Teefaa. ::
    
@@ -272,18 +272,48 @@ Create your exclude.list and add "var/lib/nova/instances/" ::
    mnt/*
    media/*
    lost+found
+   var/lib/teefaa/snapshot/*
    var/lib/nova/instances/*
 
 Execute snapshot.sh. ::
 
    root@i51:~# ./snapshot.sh
 
-If you get error because of necessary package, install tree, xfsprogs and squashfs-tools like this. ::
+If you get an error because of missing necessary packages, install tree, xfsprogs and squashfs-tools like this. ::
 
    root@i51:~# apt-get install tree xfsprogs squashfs-tools
 
 The snapshot will be created in /var/lib/teefaa/snapshot .
 
-**[Create a host(VM on OpenStack) for your image repository. ]**
+**[ Create a host(VM on OpenStack) for your image repository. ]**
 
+Go backup to india login node, and create an instance of teefaa_repo. ::
 
+   [sampleuser@i136]$ euca-describe-images |grep teefaa_repo
+   IMAGE	ami-000000d6	common/teefaa_repo.img.manifest.xml		available	private		x86_64	machineaki-000000d5			instance-store
+   [sampleuser@i136]$ euca-run-instances ami-000000d6 -k <your_key>
+
+Create a keypair on the teefaa_repo instance, and register the pubric key on i51's
+authorized_keys. ::
+
+   [sampleuser@i136]$ ssh -i path/to/your/private_key root@<ip address> \
+                      ssh-keygen -f .ssh/id_rsa -N "" -C "root@teefaa_repo"
+   [sampleuser@i136]$ key=$(ssh -i path/to/your/private_key root@<ip address> \
+                      cat .ssh/id_rsa.pub)
+   [sampleuser@i136]$ ssh root@i51 "echo $key >> .ssh/authorized_keys"
+
+And right now, for accessing OpenStack instance vlan from india nodes, you have to add routing
+to 149.165.146.50 which is the management node of OpenStack. ::
+
+   [sampleuser@i136]$ ssh root@i51 route add -net 149.165.158.0 netmask 255.255.255.0 gw 149.165.146.50
+
+**[ Upload your snapshot and mount it. ]**
+
+Login to your instance, and copy your snapshot and mount it. ::
+
+   [sampleuser@i136]$ ssh -i /path/to/your/key <ip address>
+   root@server-3608:~# scp 149.165.146.51:/var/lib/teefaa/snapshot/i75-20130201.squashfs .
+   root@server-3608:~# mkdir nova-compute
+   root@server-3608:~# mount -o loop i75-20130201.squashfs nova-compute
+
+**[ Modify your provisioning job and submit it. ]**
