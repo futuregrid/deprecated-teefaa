@@ -3,14 +3,15 @@ GETTING STARTED
 
 The current version of FG Teefaa is installed on the FutureGrid
 resource india.futureGrid.org. If you have your FutureGrid account,
-you can get bare-metal nodes just like you get instance on Cloud. At
-We use the resource manager torque to manage and schedule a
+you can get bare-metal nodes like you get instance on the Cloud.
+We use the Torque Resource Manager to manage and schedule
 provisioning. Thus a resource can be easily reprovisioned with the
 qsub command.
 
-To illustrate the use of FG teefaa we have chosen a simple example
-that provisions the Ubuntu-12.10 on two nodes of india for 5
-hours.
+To illustrate the use of FG Teefaa we have chosen a simple example
+that provisions Ubuntu-12.10 on two nodes of india for 5
+hours. And also, if you interested in testing OpenStack Folsom, 
+please follow the next section.
 
 To achieve this, you must first login to india.futuregrid.org ::
 
