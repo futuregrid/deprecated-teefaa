@@ -217,15 +217,15 @@ Create another nova-compute from running node
 ----------------------------------------------------
 
 This section shows you how to create a snapshot of nova-compute node, and copy it to another node.
-The process is a bit a lot so here's description of the process.
+The process is a bit long so here's description of the process.
 
 #. Delete your instances and disable the nova-compute service.
 #. Create a snapshot.
 #. Create a host(VM on OpenStack) for your image repository.
 #. Upload your snapshot and mount it.
-#. Modify your provisioning job and submit it.
+#. Modify your provisioning job, image list and exclude list, and then submit the job.
 
-Here I begin with i51 which is my compute node.
+Here I begin it with i51 which is my compute node.
 
 **[ Delete your instances and disable the nova-compute service. ]**
 
@@ -247,7 +247,7 @@ Download Teefaa. ::
    root@i51:~# git clone https://github.com/futuregrid/teefaa.git
    root@i51:~# cd teefaa
 
-Create your snapshotrc. ::
+Create your snapshotrc(configuration file for snapshot). ::
 
    root@i51:~# cp snapshotrc-example snapshotrc
    root@i51:~# vi snapshotrc
@@ -316,4 +316,61 @@ Login to your instance, and copy your snapshot and mount it. ::
    root@server-3608:~# mkdir nova-compute
    root@server-3608:~# mount -o loop i75-20130201.squashfs nova-compute
 
-**[ Modify your provisioning job and submit it. ]**
+**[ Modify your provisioning job, image list and exclude list, and then submit the job. ]**
+
+Go back to india login node, and add your image repository on your image.list. ::
+
+   [sampleuser@i136]$ cd ~/teefaa
+   [sampleuser@i136]$ cp image.list-example image.list
+   [sampleuser@i136]$ vi image.list
+   #<image name> <ip address of your instance>:/path/to/image/directory
+   # here's example
+   nova-compute 149.165.158.112:/root/nova-compute
+
+Create your exclude list. You can use the default. ::
+
+   [sampleuser@i136]$ cp exclude.list-example exclude.list
+   [sampleuser@i136]$ vi exclude.list
+   proc/*
+   sys/*
+   dev/*
+   tmp/*
+   mnt/*
+   media/*
+   lost+found
+
+Then, add your image list and exclude list on your provisioning.pbs. ::
+
+   [sampleuser@i136]$ vi provisoning.pbs
+     :
+     :
+   # Define the path of your image list.
+   IMAGE_LIST=/path/to/your/image.list
+   
+   # Define the path of your exclude list.
+   EXCLUDE_LIST=/path/to/your/exclude.list
+     :
+     :
+   # Change NEED_SUBNET from yes to no, because you already have one.
+   NEED_SUBNET=no
+     :
+     :
+
+And also, you have to change the image name on your userrc. ::
+
+   [sampleuser@i136]$ vi userrc
+    :
+    :
+   IMAGE_NAME=nova-compute
+    :
+    :
+
+Then, submit the new job. ::
+
+   [sampleuser@i136]$ qsub provisioning.pbs
+
+You will get another nova-compute in 10~15 minutes.
+
+**[ P.S. ]**
+Teefaa is still on the early stage, so that I'm polishing/changing a lot. The code will be switched to Python from Bash, and the CLI(Command-line Interface) will be improved soon.
+

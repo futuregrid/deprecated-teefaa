@@ -335,15 +335,15 @@ you should be able to login as &#8220;ubuntu&#8221; like this.</p>
 <div class="section" id="create-another-nova-compute-from-running-node">
 <h2>Create another nova-compute from running node<a class="headerlink" href="#create-another-nova-compute-from-running-node" title="Permalink to this headline">¶</a></h2>
 <p>This section shows you how to create a snapshot of nova-compute node, and copy it to another node.
-The process is a bit a lot so here&#8217;s description of the process.</p>
+The process is a bit long so here&#8217;s description of the process.</p>
 <ol class="arabic simple">
 <li>Delete your instances and disable the nova-compute service.</li>
 <li>Create a snapshot.</li>
 <li>Create a host(VM on OpenStack) for your image repository.</li>
 <li>Upload your snapshot and mount it.</li>
-<li>Modify your provisioning job and submit it.</li>
+<li>Modify your provisioning job, image list and exclude list, and then submit the job.</li>
 </ol>
-<p>Here I begin with i51 which is my compute node.</p>
+<p>Here I begin it with i51 which is my compute node.</p>
 <p><strong>[ Delete your instances and disable the nova-compute service. ]</strong></p>
 <p>First of all, make sure you delete running instances, and disable the
 nova-compute service on i51.</p>
@@ -360,7 +360,7 @@ root@i6:~# nova-manage service list</pre>
 <div class="highlight-python"><pre>root@i51:~# git clone https://github.com/futuregrid/teefaa.git
 root@i51:~# cd teefaa</pre>
 </div>
-<p>Create your snapshotrc.</p>
+<p>Create your snapshotrc(configuration file for snapshot).</p>
 <div class="highlight-python"><pre>root@i51:~# cp snapshotrc-example snapshotrc
 root@i51:~# vi snapshotrc
 # snapshotrc
@@ -418,7 +418,56 @@ root@server-3608:~# scp 149.165.146.51:/var/lib/teefaa/snapshot/i75-20130201.squ
 root@server-3608:~# mkdir nova-compute
 root@server-3608:~# mount -o loop i75-20130201.squashfs nova-compute</pre>
 </div>
-<p><strong>[ Modify your provisioning job and submit it. ]</strong></p>
+<p><strong>[ Modify your provisioning job, image list and exclude list, and then submit the job. ]</strong></p>
+<p>Go back to india login node, and add your image repository on your image.list.</p>
+<div class="highlight-python"><pre>[sampleuser@i136]$ cd ~/teefaa
+[sampleuser@i136]$ cp image.list-example image.list
+[sampleuser@i136]$ vi image.list
+#&lt;image name&gt; &lt;ip address of your instance&gt;:/path/to/image/directory
+# here's example
+nova-compute 149.165.158.112:/root/nova-compute</pre>
+</div>
+<p>Create your exclude list. You can use the default.</p>
+<div class="highlight-python"><pre>[sampleuser@i136]$ cp exclude.list-example exclude.list
+[sampleuser@i136]$ vi exclude.list
+proc/*
+sys/*
+dev/*
+tmp/*
+mnt/*
+media/*
+lost+found</pre>
+</div>
+<p>Then, add your image list and exclude list on your provisioning.pbs.</p>
+<div class="highlight-python"><pre>[sampleuser@i136]$ vi provisoning.pbs
+  :
+  :
+# Define the path of your image list.
+IMAGE_LIST=/path/to/your/image.list
+
+# Define the path of your exclude list.
+EXCLUDE_LIST=/path/to/your/exclude.list
+  :
+  :
+# Change NEED_SUBNET from yes to no, because you already have one.
+NEED_SUBNET=no
+  :
+  :</pre>
+</div>
+<p>And also, you have to change the image name on your userrc.</p>
+<div class="highlight-python"><pre>[sampleuser@i136]$ vi userrc
+ :
+ :
+IMAGE_NAME=nova-compute
+ :
+ :</pre>
+</div>
+<p>Then, submit the new job.</p>
+<div class="highlight-python"><pre>[sampleuser@i136]$ qsub provisioning.pbs</pre>
+</div>
+<p>You will get another nova-compute in 10~15 minutes.</p>
+<p><strong>[ P.S. ]</strong>
+Teefaa is still on the early stage, so that I&#8217;m polishing/changing a lot. The code will be switched to Python from Bash, and the CLI(Command-line Interface) will be improved soon.</p>
 </div>
 </div>
 
