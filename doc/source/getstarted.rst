@@ -11,7 +11,7 @@ qsub command.
 To illustrate the use of FG Teefaa we have chosen a simple example
 that provisions Ubuntu-12.10 on two nodes of india for 5
 hours. And also, if you interested in testing OpenStack Folsom, 
-please follow the next section.
+please follow the next section as well.
 
 To achieve this, you must first login to india.futuregrid.org ::
 
@@ -49,7 +49,7 @@ providing here a simple example and assume the file is named as userrc ::
    
    # Define disk setting.
    disk=sda
-   sda1=(1 bios_grub none)
+   sda1=(1 bios_grub none) # This partition is only needed for gpt, not mbr.
    sda2=(2 swap none)
    sda3=(50 ext4 "/")
    sda4=(900 xfs "/var/lib/nova")
@@ -79,9 +79,8 @@ the help of the queing system. For this example we name the file provision.pbs :
  # (yes/no)
  NEED_SUBNET=yes
 
- #####  PLEASE DO NOT CAHANGE THE FOLLOWING LINES  #####
  #############################################################
- ## DON'T CHANGE BELOW
+ ## DO NOT CHANGE THE FOLLOWING LINES
  #############################################################
  sleep 10
 
