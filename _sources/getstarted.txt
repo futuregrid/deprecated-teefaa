@@ -397,5 +397,6 @@ Then, submit the new job. ::
 You will get another nova-compute in 10~15 minutes.
 
 **6. P.S.**
-Teefaa is still on the early stage, so that I'm polishing/changing a lot. The code will be switched to Python from Bash, and the CLI(Command-line Interface) will be improved soon.
+
+FG Teefaa is still on the early stage. In the near future, the code will be switched to Python, and the CLI(Command-line Interface) will be improved.
 
