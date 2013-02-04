@@ -177,7 +177,7 @@ MakeFilesystem() {
                   mkfs.xfs -f /dev/$disk$a
                   echo $(date):  $check_point
                ;;
-               bios_grub )
+               bios_grub|none )
                   echo $(date):  Ignore $fsys and do nothing... This is not error.
                ;;
                * )
@@ -206,22 +206,25 @@ MountPertition() {
         # Check if the check_point message exists on the log.
         grep "$check_point" $LOGFILE 1>/dev/null
         if [ $? != "0" ]; then
-            # If it's rehearse mode, just rehearse making filesystem.
-            if [[ "$fsys" != "swap" && "$MODE" == "rehearse" ]]; then
-                echo $(date):  Rehearse: mkdir -p $MNT_ROOT$mpoint
-                echo $(date):  Rehearse: mount /dev/sda$a $MNT_ROOT$mpoint
-                echo $(date):  Rehearse: $check_point
-            # if it's perform mode and swap, make swap.
-            elif [[ "$mpoint" != "none" && "$MODE" == "perform" ]]; then
+            case $fsys in
+               swap|bios_grub|xfs|ext3|ext4 )
+               echo $(date):  "$fsys rocks!!!"
+               ;;
+               none )
+               echo $(date):  "Uhh... Ok."
+               ;;
+               * )
+               echo $(date):  "Error:  $sys is unkown."
+               exit 1
+               ;;
+            esac
+            if [[ "$mpoint" != "none" ]]; then
                 mkdir -p $MNT_ROOT$mpoint
                 mount /dev/$disk$a $MNT_ROOT$mpoint
                 echo $(date):  $check_point
             # if it's something else, output unknown error and exit.
-            elif [[ "$fsys" == "swap" || "$fsys" == "bios_grub" ]]; then
-                echo $(date):  "swap isn't mountable. This isn't error."
             else
-                echo $(date):  "Unknown error while making file system, $fsys, $disk$a"
-                exit 1
+                echo $(date):  "/dev/$disk$a is not mounted. This is not error."
             fi
         # If the check point exists on the log, don't make filesystem.
         else
@@ -411,8 +414,10 @@ UpdateDiff() {
             fi
         elif [[ "${temp[1]}" == "xfs" && "${temp[2]}" != "none" ]] ; then
             echo "/dev/$disk$a   ${temp[2]}   ${temp[1]}    defaults,noatime   0   0" >> $MNT_ROOT/etc/fstab
+        elif [[ "${temp[1]}" == "none"  ]]; then
+            echo $(date):  "Worning: You set filesystem as none. So we don't put /dev/$disk$a in /etc/fstab."
         else
-            echo $(date):  "Worning:  unknown file system. didn't write it on /etc/fstab... $disk$a   ${temp[2]}   ${temp[1]} ???"
+            echo $(date):  "Error:  unknown file system. didn't write it on /etc/fstab... $disk$a   ${temp[2]}   ${temp[1]} ???"
         fi
         let a+=1
     done

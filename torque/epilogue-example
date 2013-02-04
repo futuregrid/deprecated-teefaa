@@ -1,6 +1,7 @@
 #!/bin/bash
 # epilogue-example - set this on torque_mom's /path/to/mom_priv/epilogue
 
+
 # Define number of processors.
 max_ppn=8
 
@@ -13,6 +14,9 @@ if [ "$8" == "$provq" ]&&[ "$?" = "0" ]; then
     USERNAME=$2
     mom_teefaa=/root/teefaa
 
+    # source    
+    source /tmp/userrc
+
     # Load Teefaa Torque configuration.
     source $mom_teefaa/torque/torquerc
 
@@ -22,6 +26,11 @@ if [ "$8" == "$provq" ]&&[ "$?" = "0" ]; then
     # Setup userrc and send it to dispather.
     SetSendUserConf
 
+    # Setup Cloud subnet.
+    need_subnet=$(cat /tmp/need_subnet 2>/dev/null)
+    if [[ "$need_subnet" == "yes" ]]; then
+        ResSubnet
+    fi
     # Reboot
     reboot
 

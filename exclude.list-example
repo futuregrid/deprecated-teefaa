@@ -5,3 +5,4 @@ tmp/*
 mnt/*
 media/*
 lost+found
+var/lib/teefaa/snapshot/*

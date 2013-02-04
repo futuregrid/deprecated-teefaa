@@ -11,11 +11,54 @@ SetSendUserConf() {
     echo "# Add HOSTNAME and USERNAME" >> /tmp/userrc
     echo "NODENAME=$HOSTNAME" >> /tmp/userrc
     echo "USERNAME=$USERNAME" >> /tmp/userrc
+    
+    # Load userrc
+    source /tmp/userrc
+
+    # Check $HOURS is right.
+    if [[ ! $HOURS -le $MAX_HOURS  ]]; then
+        echo "HOURS in your config is higher than $MAX_HOURS or not right. "
+        echo "So correct it, please."
+        exit 1
+    fi
+    
     # Copy config file.
-    scp -P $port /tmp/userrc $dispatch_admin@$dispatcher:$dispatch_nodes/$HOSTNAME/userrc
+    scp -P $port /tmp/userrc $dispatch_admin@$dispatcher:$dispatch_nodes/$HOSTNAME/userrc 2>/dev/null
+
+    # Copy image list if it exists.
+    if [[ -f /tmp/image.list ]]; then
+        scp -P $port /tmp/image.list $dispatch_admin@$dispatcher:$dispatch_nodes/$HOSTNAME/image.list 2>/dev/null
+    fi
+
+    # Copy exclude list if it exists.
+    if [[ -f /tmp/exclude.list ]]; then
+        scp -P $port /tmp/exclude.list $dispatch_admin@$dispatcher:$dispatch_nodes/$HOSTNAME/exclude.list 2>/dev/null
+    fi
 
     # Setup netboot.
-    ssh -p $port $dispatch_admin@$dispatcher "cat $dispatch_nodes/$HOSTNAME/messenger > $dispatch_nodes/$HOSTNAME/pxeconf"
+    ssh -p $port $dispatch_admin@$dispatcher "cat $dispatch_nodes/$HOSTNAME/messenger > $dispatch_nodes/$HOSTNAME/pxeconf" 2>/dev/null
+
+}
+
+ResSubnet() {
+   
+   # Note: This function assume that $USERNAME is defined on parental process(or previous process).
+   
+   # Get an available subnet.
+   subnet=$(ssh -p $port $dispatch_admin@$dispatcher "awk '/free/ {print \$1}' $cloud_subnet |head -1")
+
+   # Print the subnet.
+   echo ""
+   echo "You can use $subnet for your cloud instances."
+   echo ""
+
+   #
+   # Reserve the subnet.
+   #
+   # Cut "/24" so that make sed easy to modify the list.
+   subnet=${subnet%/*}
+   # Change the subnet from free to reserved.
+   ssh -p $port $dispatch_admin@$dispatcher $dispatch_teefaa/torque/genjob_reserve_subnet.sh $USERNAME $subnet $HOURS > /dev/null 2>&1
 
 }
 
@@ -24,7 +67,7 @@ SetJobDispatch() {
    USERNAME=$1
    NODENAME=$2
    HOURS=$3
-   DATE=$(date +%Y%m%d)
+   DATE=$(date +%Y%m%d%H%M)
 
    mkdir -p $dispatch_jobs
    cd $dispatch_jobs
@@ -47,8 +90,10 @@ ipmitool -I lanplus -U $IPMI_USER -f \$IPMI_PASSFILE -E -H bmc-${NODENAME} power
 sleep 10
 ipmitool -I lanplus -U $IPMI_USER -f \$IPMI_PASSFILE -E -H bmc-${NODENAME} power on
 
-# Update pxeconf to reset node.
+# Reset nodes
 cat \$nodes_dir/${NODENAME}/reset > \$nodes_dir/${NODENAME}/pxeconf
+cp $default_image \$nodes_dir/${NODENAME}/image.list
+cp $default_exclude \$nodes_dir/${NODENAME}/exclude.list
 
 EOF
 
@@ -56,20 +101,67 @@ EOF
 
 }
 
+SetJobResSubnet() {
+
+   USERNAME=$1
+   SUBNET=$2
+   HOURS=$3
+   DATE=$(date +%Y%m%d%H%M)
+
+   mkdir -p $dispatch_jobs
+   cd $dispatch_jobs
+
+cat <<EOF > ${USERNAME}_res_subnet_${DATE}.pbs
+#PBS -N ${USERNAME}_$(echo $SUBNET|tr '.' '_')
+#PBS -q dispatch
+
+# Date
+date
+
+# Reserve the subnet.
+echo "$SUBNET\/24 reserved $USERNAME $DATE $HOURS"
+sed -i "s/$SUBNET.*/$SUBNET\/24 reserved $USERNAME $DATE $HOURS/" $cloud_subnet
+
+# Sleep while it's reserved.
+sleep ${HOURS}h
+sleep 1h
+
+# Release the subnet
+echo "$SUBNET\/24 free"
+sed -i "s/$SUBNET.*/$SUBNET\/24 free/" $cloud_subnet
+
+EOF
+
+   qsub ${USERNAME}_res_subnet_${DATE}.pbs
+
+}
+
 RunBootstrapSetJob() {
 
    # Copy userrc to dispatcher.
    scp -P $port $dispatch_admin@$dispatcher:$dispatch_nodes/$HOSTNAME/userrc .
+
+   # Copy image.list to dispatcher.
+   scp -P $port $dispatch_admin@$dispatcher:$dispatch_nodes/$HOSTNAME/image.list teefaa/
+
+   # Copy exclude.list to dispatcher.
+   scp -P $port $dispatch_admin@$dispatcher:$dispatch_nodes/$HOSTNAME/exclude.list teefaa/
+
    # Overwrite localrc by torque/localrc-torque
    cp teefaa/torque/localrc-torque teefaa/localrc
+
    # Add userrc on localrc
    cat userrc >> teefaa/localrc
+
    # Run Bootstrap.
    ./teefaa/bootstrap.sh
+
    # Load bootstrap config.
    source teefaa/localrc
+
    # Set local boot 
    ssh -p $port $dispatch_admin@$dispatcher "cat $dispatch_nodes/$HOSTNAME/localboot > $dispatch_nodes/$HOSTNAME/pxeconf"
+
    # Generate job for reprovisioning.
    ssh -p $port $dispatch_admin@$dispatcher "$dispatch_teefaa/torque/genjob.sh $USERNAME $NODENAME $HOURS"
 

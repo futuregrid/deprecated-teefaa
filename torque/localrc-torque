@@ -11,6 +11,10 @@ LOGFILE=/tmp/bootstrap.log
 # Define the path to image list.
 IMAGE_LIST=$TOP_DIR/image.list
 
+# Define the path to the exclude list, which defines not-to-copy list when 
+# the code copies the image from image source.
+EXCLUDE_LIST=$TOP_DIR/exclude.list
+
 # If you want to setup static IP Addresses and hostnames in the 
 # installation process, these ``ADDR_LIST``, ``DIFF_PREFIX`` and ``INTERFACES``
 # Need to be difined.

@@ -15,6 +15,3 @@ REBOOT="no"
 
 # force change password after the installation. yes or no.
 PASS_CHANGE="no"
-
-# Define the path to the exclude list, which defines not-to-copy list when the code copies the image from image source.
-EXCLUDE_LIST=$TOP_DIR/exclude.list
