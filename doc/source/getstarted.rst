@@ -219,15 +219,15 @@ Create another nova-compute from running node
 This section shows you how to create a snapshot of nova-compute node, and copy it to another node.
 The process is a bit long so here's description of the process.
 
-#. Delete your instances and disable the nova-compute service.
-#. Create a snapshot.
-#. Create a host(VM on OpenStack) for your image repository.
-#. Upload your snapshot and mount it.
-#. Modify your provisioning job, image list and exclude list, and then submit the job.
+1. Delete your instances and disable the nova-compute service.
+2. Create a snapshot.
+3. Create a host(VM on OpenStack) for your image repository.
+4. Upload your snapshot and mount it.
+5. Modify your provisioning job, image list and exclude list, and then submit the job.
 
 Here I begin it with i51 which is my compute node.
 
-**[ Delete your instances and disable the nova-compute service. ]**
+**1. Delete your instances and disable the nova-compute service.**
 
 First of all, make sure you delete running instances, and disable the 
 nova-compute service on i51. ::
