@@ -355,7 +355,7 @@ root@i6:~# nova delete vm002
 root@i6:~# nova-manage service disable --host i51 --service nova-compute
 root@i6:~# nova-manage service list</pre>
 </div>
-<p><strong>[ Create a snapshot. ]</strong></p>
+<p><strong>2. Create a snapshot.</strong></p>
 <p>Download Teefaa.</p>
 <div class="highlight-python"><pre>root@i51:~# git clone https://github.com/futuregrid/teefaa.git
 root@i51:~# cd teefaa</pre>
@@ -393,7 +393,7 @@ var/lib/nova/instances/*</pre>
 <div class="highlight-python"><pre>root@i51:~# apt-get install tree xfsprogs squashfs-tools</pre>
 </div>
 <p>The snapshot will be created in /var/lib/teefaa/snapshot .</p>
-<p><strong>[ Create a host(VM on OpenStack) for your image repository. ]</strong></p>
+<p><strong>3. Create a host(VM on OpenStack) for your image repository.</strong></p>
 <p>Go backup to india login node, and create an instance of teefaa_repo.</p>
 <div class="highlight-python"><pre>[sampleuser@i136]$ euca-describe-images |grep teefaa_repo
 IMAGE        ami-000000d6    common/teefaa_repo.img.manifest.xml             available       private         x86_64  machineaki-000000d5                     instance-store
@@ -411,14 +411,14 @@ authorized_keys.</p>
 to 149.165.146.50 which is the management node of OpenStack.</p>
 <div class="highlight-python"><pre>[sampleuser@i136]$ ssh root@i51 route add -net 149.165.158.0 netmask 255.255.255.0 gw 149.165.146.50</pre>
 </div>
-<p><strong>[ Upload your snapshot and mount it. ]</strong></p>
+<p><strong>4. Upload your snapshot and mount it.</strong></p>
 <p>Login to your instance, and copy your snapshot and mount it.</p>
 <div class="highlight-python"><pre>[sampleuser@i136]$ ssh -i /path/to/your/key &lt;ip address&gt;
 root@server-3608:~# scp 149.165.146.51:/var/lib/teefaa/snapshot/i75-20130201.squashfs .
 root@server-3608:~# mkdir nova-compute
 root@server-3608:~# mount -o loop i75-20130201.squashfs nova-compute</pre>
 </div>
-<p><strong>[ Modify your provisioning job, image list and exclude list, and then submit the job. ]</strong></p>
+<p><strong>5. Modify your provisioning job, image list and exclude list, and then submit the job.</strong></p>
 <p>Go back to india login node, and add your image repository on your image.list.</p>
 <div class="highlight-python"><pre>[sampleuser@i136]$ cd ~/teefaa
 [sampleuser@i136]$ cp image.list-example image.list
@@ -466,7 +466,7 @@ IMAGE_NAME=nova-compute
 <div class="highlight-python"><pre>[sampleuser@i136]$ qsub provisioning.pbs</pre>
 </div>
 <p>You will get another nova-compute in 10~15 minutes.</p>
-<p><strong>[ P.S. ]</strong>
+<p><strong>6. P.S.</strong>
 Teefaa is still on the early stage, so that I&#8217;m polishing/changing a lot. The code will be switched to Python from Bash, and the CLI(Command-line Interface) will be improved soon.</p>
 </div>
 </div>
