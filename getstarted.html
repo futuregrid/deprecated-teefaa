@@ -153,7 +153,7 @@ please follow the next section.</p>
 <div class="section" id="configuration">
 <h2>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline">¶</a></h2>
 <p>Next you need to define a FG teefaa configuration file. We are
-providing here a simple example and assume the file is named as teefaa_userrc</p>
+providing here a simple example and assume the file is named as userrc</p>
 <div class="highlight-python"><pre># Provide the FG project_id.
 PROJECT_ID="fg-296"
 
@@ -211,9 +211,33 @@ USERRC=~/jobs/teefaa_userrc
 NEED_SUBNET=yes
 
 #####  PLEASE DO NOT CAHANGE THE FOLLOWING LINES  #####
+#############################################################
+## DON'T CHANGE BELOW
+#############################################################
 sleep 10
-# Pass your rc file to Teefaa Messenger via /tmp
-pbsdsh cp $USERRC /tmp/userrc
+
+# Load your config.
+source $USERRC
+
+# Pass your rc file to Teefaa Messenger.
+if [[ -f $USERRC ]]; then
+    pbsdsh cp $USERRC /tmp/userrc
+    echo $NEED_SUBNET &gt; /tmp/need_subnet
+else
+    echo "$USERRC is not a file or does not exist."
+    exit 1
+fi
+
+# Pass your image list to Teefaa Dispatcher.
+if [[ -f $IMAGE_LIST ]]; then
+    pbsdsh cp $IMAGE_LIST /tmp/image.list
+    # Register onetime key on the iamge repository.
+fi
+
+# Pass your exclude list to Teefaa Dispatcher.
+if [[ -f $EXCLUDE_LIST ]]; then
+    pbsdsh cp $EXCLUDE_LIST /tmp/exclude.list
+fi
 sleep 10</pre>
 </div>
 <p>This file is used to submit the job.</p>

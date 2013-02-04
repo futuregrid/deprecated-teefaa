@@ -21,39 +21,39 @@ Configuration
 -----------
 
 Next you need to define a FG teefaa configuration file. We are
-providing here a simple example and assume the file is named as teefaa_userrc ::
+providing here a simple example and assume the file is named as userrc ::
 
- # Provide the FG project_id. 
- PROJECT_ID="fg-296"
- 
- # Define the reservation period in hours. 
- # Currently 168 (e.g. 7 days) is the maximum.
- HOURS=5
- 
- # If you have your own costom image source, provide it next.
- # If not, pick a image type from the choise and uncomment it.
- #IMAGE_LIST=$HOME/teefaa/image.list
- #IMAGE_NAME=your-custome on your image.list
- 
- # The list of sample images includes.
- IMAGE_NAME=ubuntu-12.10
- #IMAGE_NAME=centos-6.3
- 
- # specify your public key
- SSH_PUBKEYS="ssh-dss AAAAB....3NzaC.....1k/c..3MAGA...ACGEGAMlk sampleuser@example.edu"
- 
- # Define a partitioning type.
- #PARTITION_TYPE="mbr"
- # NOTE: GPT in Teefaa is only available for Ubuntu and Debian right now.
- PARTITION_TYPE="gpt" 
- 
- # Define disk setting.
- disk=sda
- sda1=(1 bios_grub none)
- sda2=(2 swap none)
- sda3=(50 ext4 "/")
- sda4=(900 xfs "/var/lib/nova")
- sda5=(-1 none none)
+   # Provide the FG project_id. 
+   PROJECT_ID="fg-296"
+   
+   # Define the reservation period in hours. 
+   # Currently 168 (e.g. 7 days) is the maximum.
+   HOURS=5
+   
+   # If you have your own costom image source, provide it next.
+   # If not, pick a image type from the choise and uncomment it.
+   #IMAGE_LIST=$HOME/teefaa/image.list
+   #IMAGE_NAME=your-custome on your image.list
+   
+   # The list of sample images includes.
+   IMAGE_NAME=ubuntu-12.10
+   #IMAGE_NAME=centos-6.3
+   
+   # specify your public key
+   SSH_PUBKEYS="ssh-dss AAAAB....3NzaC.....1k/c..3MAGA...ACGEGAMlk sampleuser@example.edu"
+   
+   # Define a partitioning type.
+   #PARTITION_TYPE="mbr"
+   # NOTE: GPT in Teefaa is only available for Ubuntu and Debian right now.
+   PARTITION_TYPE="gpt" 
+   
+   # Define disk setting.
+   disk=sda
+   sda1=(1 bios_grub none)
+   sda2=(2 swap none)
+   sda3=(50 ext4 "/")
+   sda4=(900 xfs "/var/lib/nova")
+   sda5=(-1 none none)
 
 Provisioning 
 ------------
@@ -80,9 +80,33 @@ the help of the queing system. For this example we name the file provision.pbs :
  NEED_SUBNET=yes
 
  #####  PLEASE DO NOT CAHANGE THE FOLLOWING LINES  #####
+ #############################################################
+ ## DON'T CHANGE BELOW
+ #############################################################
  sleep 10
- # Pass your rc file to Teefaa Messenger via /tmp
- pbsdsh cp $USERRC /tmp/userrc
+
+ # Load your config.
+ source $USERRC
+
+ # Pass your rc file to Teefaa Messenger.
+ if [[ -f $USERRC ]]; then
+     pbsdsh cp $USERRC /tmp/userrc
+     echo $NEED_SUBNET > /tmp/need_subnet
+ else
+     echo "$USERRC is not a file or does not exist."
+     exit 1
+ fi
+ 
+ # Pass your image list to Teefaa Dispatcher.
+ if [[ -f $IMAGE_LIST ]]; then
+     pbsdsh cp $IMAGE_LIST /tmp/image.list
+     # Register onetime key on the iamge repository.
+ fi
+
+ # Pass your exclude list to Teefaa Dispatcher.
+ if [[ -f $EXCLUDE_LIST ]]; then
+     pbsdsh cp $EXCLUDE_LIST /tmp/exclude.list
+ fi
  sleep 10
 
 This file is used to submit the job. ::
