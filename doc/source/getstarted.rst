@@ -49,6 +49,7 @@ providing here a simple example and assume the file is named as userrc ::
    
    # Define disk setting.
    disk=sda
+   #sdaX=(size[GB] type mount_dir)
    sda1=(1 bios_grub none) # This partition is only needed for gpt, not mbr.
    sda2=(2 swap none)
    sda3=(50 ext4 "/")
