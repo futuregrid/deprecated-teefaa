@@ -240,7 +240,7 @@ nova-compute service on i51. ::
    root@i6:~# nova-manage service disable --host i51 --service nova-compute
    root@i6:~# nova-manage service list
 
-**[ Create a snapshot. ]**
+**2. Create a snapshot.**
 
 Download Teefaa. ::
    
@@ -285,7 +285,7 @@ If you get an error because of missing necessary packages, install tree, xfsprog
 
 The snapshot will be created in /var/lib/teefaa/snapshot .
 
-**[ Create a host(VM on OpenStack) for your image repository. ]**
+**3. Create a host(VM on OpenStack) for your image repository.**
 
 Go backup to india login node, and create an instance of teefaa_repo. ::
 
@@ -307,7 +307,7 @@ to 149.165.146.50 which is the management node of OpenStack. ::
 
    [sampleuser@i136]$ ssh root@i51 route add -net 149.165.158.0 netmask 255.255.255.0 gw 149.165.146.50
 
-**[ Upload your snapshot and mount it. ]**
+**4. Upload your snapshot and mount it.**
 
 Login to your instance, and copy your snapshot and mount it. ::
 
@@ -316,7 +316,7 @@ Login to your instance, and copy your snapshot and mount it. ::
    root@server-3608:~# mkdir nova-compute
    root@server-3608:~# mount -o loop i75-20130201.squashfs nova-compute
 
-**[ Modify your provisioning job, image list and exclude list, and then submit the job. ]**
+**5. Modify your provisioning job, image list and exclude list, and then submit the job.**
 
 Go back to india login node, and add your image repository on your image.list. ::
 
@@ -371,6 +371,6 @@ Then, submit the new job. ::
 
 You will get another nova-compute in 10~15 minutes.
 
-**[ P.S. ]**
+**6. P.S.**
 Teefaa is still on the early stage, so that I'm polishing/changing a lot. The code will be switched to Python from Bash, and the CLI(Command-line Interface) will be improved soon.
 
