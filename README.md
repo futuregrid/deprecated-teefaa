@@ -1,5 +1,4 @@
-FutureGrid Teefaa
+FutureGrid Teefaa Toolbox
 =================
 
-The project Documentation is located at
-http://futuregrid.github.com/teefaa/
+The project Documentation is located at http://futuregrid.github.com/teefaa/

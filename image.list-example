@@ -1,4 +1,0 @@
-ubuntu-1204 localhost:/var/lib/teefaa/images/ubuntu-1204/current
-hpc-image 192.168.10.1:/image/ubuntu/20121211
-hpc-image 172.20.1.1:/mnt/image
-hpc-image 10.1.1.10:/
