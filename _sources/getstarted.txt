@@ -398,5 +398,5 @@ You will get another nova-compute in 10~15 minutes.
 
 **6. P.S.**
 
-FG Teefaa is still on the early stage. In the near future, the code will be switched to Python, and the CLI(Command-line Interface) will be improved.
+FG Teefaa is still on the early stage. In the near future, the code will be switched to Python, and some CLI(Command-line Interface) will be added.
 

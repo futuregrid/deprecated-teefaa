@@ -10,7 +10,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Support &mdash; teefaa 0.1 documentation</title>
+    <title>GETTING STARTED &mdash; teefaa 0.1 documentation</title>
     
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -28,7 +28,6 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="teefaa 0.1 documentation" href="index.html" />
-    <link rel="prev" title="Download" href="download.html" />
  
 
 <script type="text/javascript">
@@ -70,13 +69,10 @@
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="download.html" title="Download"
-             accesskey="P">previous</a> |</li>
         <li><a href="index.html">Home</a>|&nbsp;</li>
         <li><a href="intro.html">Documentation </a>|&nbsp;</li>
         <li><a href="download.html">Download</a>|&nbsp;</li>
-        <li><a href="#">Support</a>|&nbsp;</li>
+        <li><a href="support.html">Support</a>|&nbsp;</li>
         <li><a href="http://futuregrid.github.com/doc/">Dev</a>|&nbsp;</li>
         <li><a href="https://portal.futuregrid.org/">FutureGrid Home</a>|&nbsp;</li>
  
@@ -85,12 +81,20 @@
 
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="download.html"
-                        title="previous chapter">Download</a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">GETTING STARTED</a><ul>
+<li><a class="reference internal" href="#install">Install</a></li>
+<li><a class="reference internal" href="#create-a-snapshot-of-your-machine">Create a snapshot of your machine</a></li>
+<li><a class="reference internal" href="#create-a-repository-of-your-machine">Create a repository of your machine</a></li>
+<li><a class="reference internal" href="#boot-your-image">Boot your image</a></li>
+</ul>
+</li>
+</ul>
+
   <h3>This Page</h3>
   <ul class="this-page-menu">
-    <li><a href="_sources/support.txt"
+    <li><a href="_sources/getstarted2.txt"
            rel="nofollow">Show Source</a></li>
   </ul>
 <div id="searchbox" style="display: none">
@@ -117,10 +121,62 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="support">
-<h1>Support<a class="headerlink" href="#support" title="Permalink to this headline">¶</a></h1>
-<p>If you run into problems when using the cloud metric framework, please use our
-help form at <a class="reference external" href="https://portal.futuregrid.org/help">https://portal.futuregrid.org/help</a>.</p>
+  <div class="section" id="getting-started">
+<h1>GETTING STARTED<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="install">
+<h2>Install<a class="headerlink" href="#install" title="Permalink to this headline">¶</a></h2>
+<p>Download from github, install and create config file:</p>
+<div class="highlight-python"><pre>[root@yourhost]# git clone git@github.com:futuregrid/teefaa.git
+[root@yourhost]# python setup.py install
+[root@yourhost]# mkdir ~/.teefaa
+[root@yourhost]# cp etc/teefaa.conf-example ~/.teefaa/teefaa.conf</pre>
+</div>
+</div>
+<div class="section" id="create-a-snapshot-of-your-machine">
+<h2>Create a snapshot of your machine<a class="headerlink" href="#create-a-snapshot-of-your-machine" title="Permalink to this headline">¶</a></h2>
+<p>To make snapshot:</p>
+<div class="highlight-python"><pre>[root@yourhost]# teefaa create-snapshot</pre>
+</div>
+<p>The snapshot will be created on /var/lib/teefaa/snapshots.
+If you want to change the directory, modify your teefaa.conf</p>
+</div>
+<div class="section" id="create-a-repository-of-your-machine">
+<h2>Create a repository of your machine<a class="headerlink" href="#create-a-repository-of-your-machine" title="Permalink to this headline">¶</a></h2>
+<p>To create repository on india, send your snapshot to india.futuregrid.org,
+and then login to india.:</p>
+<div class="highlight-python"><pre>scp /var/lib/teefaa/snapshots/your-snapshot.squashfs youraccount@india.futuregrid.org:
+ssh youraccount@india.futuregrid.org</pre>
+</div>
+<p>Then, load python module, make sure you have access to our OpenStack,
+and then execute teefaa create repo, like this.:</p>
+<div class="highlight-python"><pre>module load teefaa
+euca-describe-instances
+teefaa create-repo --snapshot your-snapshot.squashfs</pre>
+</div>
+<p>You will get output like this.:</p>
+<div class="highlight-python"><pre>here's output.</pre>
+</div>
+</div>
+<div class="section" id="boot-your-image">
+<h2>Boot your image<a class="headerlink" href="#boot-your-image" title="Permalink to this headline">¶</a></h2>
+<p>To boot your image, execute this command:</p>
+<div class="highlight-python"><pre>teefaa boot --repo &lt;your repository&gt; \
+            --number &lt;number of nodes&gt; \
+            --queue &lt;name of queue&gt; \
+            --hours &lt;reservation hours(&lt;168)&gt;</pre>
+</div>
+<p>Here&#8217;s an example to reserve 2 nodes on india for 48 hours(2 days):</p>
+<div class="highlight-python"><pre>teefaa boot --repo 10.1.2.129:/mnt/tikgjE9g8 \
+            --number 2
+            --queue provision
+            --hours 48</pre>
+</div>
+<p>In about 10~15 minutes, your reservation show up on dispatcher&#8217;s queue, which is i132 on india.
+You can check it by this command.:</p>
+<div class="highlight-python"><pre>qsub @i132</pre>
+</div>
+<p>If your nodes are on the list, you should be able to login the nodes as root.</p>
+</div>
 </div>
 
 
@@ -136,13 +192,10 @@ help form at <a class="reference external" href="https://portal.futuregrid.org/h
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              >index</a></li>
-        <li class="right" >
-          <a href="download.html" title="Download"
-             >previous</a> |</li>
         <li><a href="index.html">Home</a>|&nbsp;</li>
         <li><a href="intro.html">Documentation </a>|&nbsp;</li>
         <li><a href="download.html">Download</a>|&nbsp;</li>
-        <li><a href="#">Support</a>|&nbsp;</li>
+        <li><a href="support.html">Support</a>|&nbsp;</li>
         <li><a href="http://futuregrid.github.com/doc/">Dev</a>|&nbsp;</li>
         <li><a href="https://portal.futuregrid.org/">FutureGrid Home</a>|&nbsp;</li>
  
