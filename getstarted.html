@@ -1,7 +1,4 @@
 
-<!-- This layout has been taken from http://globus.org/provision/ -->
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -10,10 +7,14 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>GETTING STARTED &mdash; teefaa 0.1 documentation</title>
+    <title>GETTING STARTED &mdash; FutureGrid teefaa 0.1 documentation</title>
     
-    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/basic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/jquery.hoverscroll.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bootstrap.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bootstrap-responsive.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
@@ -27,114 +28,78 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="teefaa 0.1 documentation" href="index.html" />
+    <script type="text/javascript" src="_static/jquery.ba-hashchange.js"></script>
+    <script type="text/javascript" src="_static/jquery.hoverscroll.js"></script>
+    <script type="text/javascript" src="_static/bootstrap.js"></script>
+    <script type="text/javascript" src="_static/bootstrap.scrollspy.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="FutureGrid teefaa 0.1 documentation" href="index.html" />
     <link rel="next" title="Modules" href="modules.html" />
     <link rel="prev" title="INTRODUCTION" href="intro.html" />
- 
-
-<script type="text/javascript">
-
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-11111']);
-  _gaq.push(['_trackPageview']);
-
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-
-</script>
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
   </head>
   <body>
-
-<div style="background-image:url('_static/header_bg.png');background-color: black; text-align: left; padding: 10px 10px 15px 35px">
-<table>
-  <tr>
-    <td>
-      <a href="index.html"><img src="http://futuregrid.github.com/doc/_static/fg-logo-grid-glow.png" border="0" alt="FutureGrid teefaa"/></a>
-    </td>
-    <td>
-      <font size="5" color="white"><b><i>FutureGrid</i></b></font><br><br>
-      <font size="10" color="white" face="Comic Sans MS"><b><i>teefaa</i></b></font>
-    </td>
-  </tr>
-</table>
-
-</div>
-
-    <div class="related">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="modules.html" title="Modules"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="intro.html" title="INTRODUCTION"
-             accesskey="P">previous</a> |</li>
-        <li><a href="index.html">Home</a>|&nbsp;</li>
-        <li><a href="intro.html">Documentation </a>|&nbsp;</li>
-        <li><a href="download.html">Download</a>|&nbsp;</li>
-        <li><a href="support.html">Support</a>|&nbsp;</li>
-        <li><a href="http://futuregrid.github.com/doc/">Dev</a>|&nbsp;</li>
-        <li><a href="https://portal.futuregrid.org/">FutureGrid Home</a>|&nbsp;</li>
- 
-      </ul>
-    </div>
-
-      <div class="sphinxsidebar">
-        <div class="sphinxsidebarwrapper">
-  <h3><a href="index.html">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">GETTING STARTED</a><ul>
-<li><a class="reference internal" href="#configuration">Configuration</a></li>
-<li><a class="reference internal" href="#provisioning">Provisioning</a></li>
-<li><a class="reference internal" href="#build-openstack-folsom-on-the-two-nodes">Build OpenStack Folsom on the two nodes</a></li>
-<li><a class="reference internal" href="#create-another-nova-compute-from-running-node">Create another nova-compute from running node</a></li>
+  <div id="navbar" class="navbar navbar-inverse no-js">
+    <div class="navbar-inner">
+      <div class="container-fluid">
+        <a class="brand" href="index.html">FutureGrid teefaa</a>
+        <span class="navbar-text pull-left"></span>
+        <ul class="nav">
+          <li class="divider-vertical"></li>
+          <li><b class="navbar-text">0.1</b></li>
+          
+            <li class="dropdown">
+  <a href="index.html" class="dropdown-toggle" data-toggle="dropdown">Site <b class="caret"></b></a>
+  <ul class="current dropdown-menu">
+<li class="toctree-l1"><a class="reference internal" href="license.html">LICENSE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro.html">INTRODUCTION</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="">GETTING STARTED</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="download.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="support.html">Support</a></li>
 </ul>
+
 </li>
-</ul>
-
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="intro.html"
-                        title="previous chapter">INTRODUCTION</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="modules.html"
-                        title="next chapter">Modules</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="_sources/getstarted.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
-  <h3>Quick search</h3>
-    <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
-        </div>
-      </div>
-
-    <div class="document">
-<body style="background-image:url('_static/header_bg.png');background-color: grey;">
-</body>
-
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          <div class="body">
             
+          
+          
+            
+  <li class="hidden-phone"><a href="intro.html"
+         title="previous chapter">&laquo; INTRODUCTION</a></li>
+  <li class="hidden-phone"><a href="modules.html"
+         title="next chapter">Modules &raquo;</a></li>
+          
+          
+            <li>
+  <a href="_sources/getstarted.txt"
+         rel="nofollow">Source</a></li>
+          
+        </ul>
+        
+          
+<form class="navbar-search pull-right hidden-phone" style="margin-bottom:-3px;" action="search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+        
+      </div>
+    </div>
+  </div>
+
+ <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+  <script src="http://code.jquery.com/ui/1.10.1/jquery-ui.js"></script>
+  <script>
+  $(function() {
+    $( "#accordion" ).accordion();
+  });
+  </script>
+  <div class="body container-fluid">
+  <div class="row-fluid">
+    <div class="content span9">
+      
+      
   <div class="section" id="getting-started">
 <h1>GETTING STARTED<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
 <p>The current version of FG Teefaa is installed on the FutureGrid
@@ -351,16 +316,16 @@ root@i6:~# nova list
 | 1183b8ea-253e-4c03-afe6-6df2a66854fd | vm001 | ACTIVE | private=192.168.101.2 |
 +--------------------------------------+-------+--------+-----------------------+</pre>
 </div>
-<p>Somehow first one or two instance(s) tend to end up with &#8220;ERROR&#8221; Status. If it happens
-to you too, please delete them and run new instance. Once your instance become &#8220;ACTIVE&#8221;
-you should be able to login as &#8220;ubuntu&#8221; like this.</p>
+<p>Somehow first one or two instance(s) tend to end up with &quot;ERROR&quot; Status. If it happens
+to you too, please delete them and run new instance. Once your instance become &quot;ACTIVE&quot;
+you should be able to login as &quot;ubuntu&quot; like this.</p>
 <div class="highlight-python"><pre>root@i6:~# ssh -i key1.pem ubuntu@192.168.101.2</pre>
 </div>
 </div>
 <div class="section" id="create-another-nova-compute-from-running-node">
 <h2>Create another nova-compute from running node<a class="headerlink" href="#create-another-nova-compute-from-running-node" title="Permalink to this headline">¶</a></h2>
 <p>This section shows you how to create a snapshot of nova-compute node, and copy it to another node.
-The process is a bit long so here&#8217;s description of the process.</p>
+The process is a bit long so here's description of the process.</p>
 <ol class="arabic simple">
 <li>Delete your instances and disable the nova-compute service.</li>
 <li>Create a snapshot.</li>
@@ -398,7 +363,7 @@ LOGFILE=/tmp/snapshot.log
 # Define the file of exclude list.
 EXCLUDE_LIST=$TOP_DIR/exclude.list</pre>
 </div>
-<p>Create your exclude.list and add &#8220;var/lib/nova/instances/&#8221;</p>
+<p>Create your exclude.list and add &quot;var/lib/nova/instances/&quot;</p>
 <div class="highlight-python"><pre>root@i51:~# cp exclude.list-example exclude.list
 root@i51:~# vi exclude.list
 proc/*
@@ -424,7 +389,7 @@ var/lib/nova/instances/*</pre>
 IMAGE        ami-000000d6    common/teefaa_repo.img.manifest.xml             available       private         x86_64  machineaki-000000d5                     instance-store
 [sampleuser@i136]$ euca-run-instances ami-000000d6 -k &lt;your_key&gt;</pre>
 </div>
-<p>Create a keypair on the teefaa_repo instance, and register the pubric key on i51&#8217;s
+<p>Create a keypair on the teefaa_repo instance, and register the pubric key on i51's
 authorized_keys.</p>
 <div class="highlight-python"><pre>[sampleuser@i136]$ ssh -i path/to/your/private_key root@&lt;ip address&gt; \
                    ssh-keygen -f .ssh/id_rsa -N "" -C "root@teefaa_repo"
@@ -497,36 +462,28 @@ IMAGE_NAME=nova-compute
 </div>
 
 
-          </div>
-        </div>
+    </div>
+      <div class="page-toc page-sidebar span3 visible-desktop">
+        <div class="well"><ul class="nav nav-list">
+<li class="nav-header"><a class="reference internal" href="#">GETTING STARTED</a></li>
+<li><a class="reference internal" href="#configuration">Configuration</a></li>
+<li><a class="reference internal" href="#provisioning">Provisioning</a></li>
+<li><a class="reference internal" href="#build-openstack-folsom-on-the-two-nodes">Build OpenStack Folsom on the two nodes</a></li>
+<li><a class="reference internal" href="#create-another-nova-compute-from-running-node">Create another nova-compute from running node</a></li>
+</ul>
+</div>
       </div>
-
-      <div class="clearer"></div>
-    </div>
-    <div class="related">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="modules.html" title="Modules"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="intro.html" title="INTRODUCTION"
-             >previous</a> |</li>
-        <li><a href="index.html">Home</a>|&nbsp;</li>
-        <li><a href="intro.html">Documentation </a>|&nbsp;</li>
-        <li><a href="download.html">Download</a>|&nbsp;</li>
-        <li><a href="support.html">Support</a>|&nbsp;</li>
-        <li><a href="http://futuregrid.github.com/doc/">Dev</a>|&nbsp;</li>
-        <li><a href="https://portal.futuregrid.org/">FutureGrid Home</a>|&nbsp;</li>
- 
-      </ul>
-    </div>
-    <div class="footer">
-        &copy; Copyright 2012, Koji Tanaka, Gregor von Laszewski, Fugang Wang, Hyungro Lee, Javier Diaz.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
-    </div>
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+    </p>
+    <p>
+        &copy; Created as part of FutureGrid 2012, Developed as part of FutureGrid by Koji Tanaka, Gregor von Laszewski, Fugang Wang, Javier Diaz<br/>
+    </p>
+  </div>
+</footer>
   </body>
 </html>
