@@ -1,4 +1,4 @@
-LICENSE
+License
 =======
 
 Please do not remove this file

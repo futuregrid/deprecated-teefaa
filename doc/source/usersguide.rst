@@ -1,4 +1,4 @@
-GETTING STARTED
+Users Guide
 ============
 
 The current version of FG Teefaa is installed on the FutureGrid
@@ -30,10 +30,10 @@ providing here a simple example and assume the file is named as userrc ::
    # Currently 168 (e.g. 7 days) is the maximum.
    HOURS=5
    
-   # If you have your own costom image source, provide it next.
-   # If not, pick a image type from the choise and uncomment it.
+   # If you have your own custom image source, provide it next.
+   # If not, pick a image type from the choice and uncomment it.
    #IMAGE_LIST=$HOME/teefaa/image.list
-   #IMAGE_NAME=your-custome on your image.list
+   #IMAGE_NAME=your-custom on your image.list
    
    # The list of sample images includes.
    IMAGE_NAME=ubuntu-12.10
@@ -59,7 +59,7 @@ providing here a simple example and assume the file is named as userrc ::
 Provisioning 
 ------------
 Next you need to define a provisioning script that gets scheduled with
-the help of the queing system. For this example we name the file provision.pbs ::
+the help of the queuing system. For this example we name the file provision.pbs ::
 
  #!/bin/sh
  #
@@ -100,7 +100,7 @@ the help of the queing system. For this example we name the file provision.pbs :
  # Pass your image list to Teefaa Dispatcher.
  if [[ -f $IMAGE_LIST ]]; then
      pbsdsh cp $IMAGE_LIST /tmp/image.list
-     # Register onetime key on the iamge repository.
+     # Register onetime key on the image repository.
  fi
 
  # Pass your exclude list to Teefaa Dispatcher.
@@ -119,7 +119,7 @@ configuration file. During the execution of this job, the nodes will
 boot with a customized netboot image, then install Ubuntu-12.10, and
 then reboot. It will take about 10 to 15 minutes to finish the
 installation.  Once the nodes are ready, they will show up on our FG
-dispather queue which is installed on the node i132 on india.  You can
+dispatcher queue which is installed on the node i132 on india.  You can
 check the status of your activities as follows::
 
  qstat @i132
@@ -129,7 +129,7 @@ check the status of your activities as follows::
  28.i132                    i6_sampleuser      tfadmin         00:00:00 R dispatch       
  29.i132                    i51_sampleuser     tfadmin         00:00:00 R dispatch
 
-In this example, teh user *sampleuser* got i6 and i51. Now the user
+In this example, the user *sampleuser* got i6 and i51. Now the user
 can login to them as root. ::
 
  [sampleuser@i136]$ ssh root@i6 # or i6r.idp.iu.futuregrid.org if you access from external.
@@ -158,16 +158,16 @@ This example shows the used-time of Job id 29 on Dispatcher
 queue. Here it indicates that it spent 2 hours 16 minutes 8
 seconds. Remember that the nodes are available for 5 hours.
 
-Now you can test your software or some opensource system on the two bare-metal nodes.
+Now you can test your software or some open source system on the two bare-metal nodes.
 
 The next section shows how to build OpenStack Folsom, and then shows how to clone 
 the nova-compute to another bare-metal node.
 
-Build OpenStack Folsom on the two nodes
----------------------------------------------------
+Build Two OpenStack nodes
+-----------------------------------
 
-First of all, please check the output file of your provisioning.pbs. If you used my
-template the output is on PROVISIONING.oxxxx. This time I got PROVISIONING.o564346. ::
+First, please check the output file of your provisioning.pbs. If you used my
+template the output is on PROVISIONING.oxxxx. This time we provide PROVISIONING.o564346. ::
 
   [sampleuser@i136]$ cat PROVISIONING.o564346
   ncpus=1,neednodes=2:ppn=8,nodes=2:ppn=8,walltime=00:30:00
@@ -176,8 +176,8 @@ template the output is on PROVISIONING.oxxxx. This time I got PROVISIONING.o5643
 
 So you can use 192.168.101/24 for your OpenStack instances.
 
-To make this section shorter, let us use scripts to install openstack controller.
-Thi example build controller on node i6 ::
+To make this section shorter, let us use scripts to install OpenStack controller.
+The example build controller on node i6 ::
 
   [sampleuser@i136]$ git clone https://github.com/kjtanaka/deploy_folsom.git
   [sampleuser@i136]$ cp deploy_folsom/setuprc-example deploy_folsom/setuprc
@@ -238,8 +238,8 @@ you should be able to login as "ubuntu" like this. ::
    
    root@i6:~# ssh -i key1.pem ubuntu@192.168.101.2
 
-Create another nova-compute from running node
-----------------------------------------------------
+Clone a running node
+------------------------
 
 This section shows you how to create a snapshot of nova-compute node, and copy it to another node.
 The process is a bit long so here's description of the process.
@@ -318,7 +318,7 @@ Go backup to india login node, and create an instance of teefaa_repo. ::
    IMAGE	ami-000000d6	common/teefaa_repo.img.manifest.xml		available	private		x86_64	machineaki-000000d5			instance-store
    [sampleuser@i136]$ euca-run-instances ami-000000d6 -k <your_key>
 
-Create a keypair on the teefaa_repo instance, and register the pubric key on i51's
+Create a keypair on the teefaa_repo instance, and register the public key on i51's
 authorized_keys. ::
 
    [sampleuser@i136]$ ssh -i path/to/your/private_key root@<ip address> \

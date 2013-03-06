@@ -1,3 +1,14 @@
+Instalation
+========
+
+System requirements
+------------------
+
+* python: version 2.7
+* pxeboot
+* IPMI 
+
+
 Download
 --------
 

@@ -5,6 +5,7 @@ import sys
 sys.path.insert(0, './src')
 from teefaa import RELEASE
 
+version = open("VERSION.txt").read()
 
 classifiers = """\
 Intended Audience :: Developers
@@ -27,7 +28,7 @@ Topic :: System :: Distributed Computing
 
 setup(
     name='teefaa',
-    version=RELEASE,
+    version=version,
     description = "Futuregrid Teefaa is a set of tools that enables simplified provisioning from repository or directly from running virtual/baremetal machines.",
     classifiers = filter(None, classifiers.split("\n")),
     keywords='FutureGrid, Teefaa',
