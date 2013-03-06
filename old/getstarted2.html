@@ -1,0 +1,191 @@
+
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>GETTING STARTED &mdash; FutureGrid teefaa  documentation</title>
+    
+    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-2.3.0/css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-2.3.0/css/bootstrap-responsive.min.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-2.3.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="FutureGrid teefaa  documentation" href="../index.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body>
+<div class="container">
+  
+  <div id="navbar" class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar-inner">
+      <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+      <button class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+
+      <a class="brand" href="../index.html">FutureGrid teefaa</a>
+      <span class="navbar-text pull-left"><b>v0.2</b></span>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+          <li class="divider-vertical"></li>
+          
+            <li class="dropdown globaltoc-container">
+  <a href="../index.html"
+     class="dropdown-toggle"
+     data-toggle="dropdown">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+    ><ul>
+<li class="toctree-l1"><a class="reference internal" href="../usersguide.html">Users Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../usersguide.html#configuration">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../usersguide.html#provisioning">Provisioning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../usersguide.html#build-two-openstack-nodes">Build Two OpenStack nodes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../usersguide.html#clone-a-running-node">Clone a running node</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../adminguide.html">Instalation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../adminguide.html#system-requirements">System requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../adminguide.html#download">Download</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../license.html#authors">Authors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../license.html#contributors">Contributors</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+            <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"><ul>
+<li><a class="reference internal" href="#">GETTING STARTED</a><ul>
+<li><a class="reference internal" href="#install">Install</a></li>
+<li><a class="reference internal" href="#create-a-snapshot-of-your-machine">Create a snapshot of your machine</a></li>
+<li><a class="reference internal" href="#create-a-repository-of-your-machine">Create a repository of your machine</a></li>
+<li><a class="reference internal" href="#boot-your-image">Boot your image</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+          
+          
+            
+          
+          
+        </ul>
+
+        
+          
+<form class="navbar-search pull-right" style="margin-bottom:-3px;" action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+        
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="section" id="getting-started">
+<h1>GETTING STARTED<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="install">
+<h2>Install<a class="headerlink" href="#install" title="Permalink to this headline">¶</a></h2>
+<p>Download from github, install and create config file:</p>
+<div class="highlight-python"><pre>[root@yourhost]# git clone git@github.com:futuregrid/teefaa.git
+[root@yourhost]# python setup.py install
+[root@yourhost]# mkdir ~/.teefaa
+[root@yourhost]# cp etc/teefaa.conf-example ~/.teefaa/teefaa.conf</pre>
+</div>
+</div>
+<div class="section" id="create-a-snapshot-of-your-machine">
+<h2>Create a snapshot of your machine<a class="headerlink" href="#create-a-snapshot-of-your-machine" title="Permalink to this headline">¶</a></h2>
+<p>To make snapshot:</p>
+<div class="highlight-python"><pre>[root@yourhost]# teefaa create-snapshot</pre>
+</div>
+<p>The snapshot will be created on /var/lib/teefaa/snapshots.
+If you want to change the directory, modify your teefaa.conf</p>
+</div>
+<div class="section" id="create-a-repository-of-your-machine">
+<h2>Create a repository of your machine<a class="headerlink" href="#create-a-repository-of-your-machine" title="Permalink to this headline">¶</a></h2>
+<p>To create repository on india, send your snapshot to india.futuregrid.org,
+and then login to india.:</p>
+<div class="highlight-python"><pre>scp /var/lib/teefaa/snapshots/your-snapshot.squashfs youraccount@india.futuregrid.org:
+ssh youraccount@india.futuregrid.org</pre>
+</div>
+<p>Then, load python module, make sure you have access to our OpenStack,
+and then execute teefaa create repo, like this.:</p>
+<div class="highlight-python"><pre>module load teefaa
+euca-describe-instances
+teefaa create-repo --snapshot your-snapshot.squashfs</pre>
+</div>
+<p>You will get output like this.:</p>
+<div class="highlight-python"><pre>here's output.</pre>
+</div>
+</div>
+<div class="section" id="boot-your-image">
+<h2>Boot your image<a class="headerlink" href="#boot-your-image" title="Permalink to this headline">¶</a></h2>
+<p>To boot your image, execute this command:</p>
+<div class="highlight-python"><pre>teefaa boot --repo &lt;your repository&gt; \
+            --number &lt;number of nodes&gt; \
+            --queue &lt;name of queue&gt; \
+            --hours &lt;reservation hours(&lt;168)&gt;</pre>
+</div>
+<p>Here&#8217;s an example to reserve 2 nodes on india for 48 hours(2 days):</p>
+<div class="highlight-python"><pre>teefaa boot --repo 10.1.2.129:/mnt/tikgjE9g8 \
+            --number 2
+            --queue provision
+            --hours 48</pre>
+</div>
+<p>In about 10~15 minutes, your reservation show up on dispatcher&#8217;s queue, which is i132 on india.
+You can check it by this command.:</p>
+<div class="highlight-python"><pre>qsub @i132</pre>
+</div>
+<p>If your nodes are on the list, you should be able to login the nodes as root.</p>
+</div>
+</div>
+
+
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2012, Developed as part of FutureGrid by Koji Tanaka, Gregor von Laszewski, Fugang Wang, Javier Diaz.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>
