@@ -33,6 +33,7 @@ import time
 import paramiko
 import random
 import yaml
+import sh
 from subprocess import Popen, PIPE
 from platform import dist
 
