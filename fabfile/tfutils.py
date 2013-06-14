@@ -21,8 +21,8 @@ def install_pdsh():
         print 'pdsh-2.26 is already installed.'
         exit(1)
     #package_update()
-    #select_package('apt')
-    #package_ensure('build-essential')
+    select_package('yum')
+    package_ensure('make gcc wget bzip2 openssl')
     dir_ensure('/root/source')
     with cd('/root/source'):
         run('wget http://pdsh.googlecode.com/files/pdsh-2.26.tar.bz2')
