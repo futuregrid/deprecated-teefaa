@@ -11,7 +11,7 @@ def env_tfutils():
     env.use_ssh_config = True
 
 @task
-def install_pdsh(opsys='centos'):
+def install_pdsh():
     ''':opsys=XXXXX |Installs Parallel Distributed Shell'''
     env_tfutils()
     if not env.user == 'root':
@@ -21,12 +21,13 @@ def install_pdsh(opsys='centos'):
         print 'pdsh-2.26 is already installed.'
         exit(1)
     #package_update()
-    if opsys == 'centos' or \
-            opsys == 'redhat':
+    distro = run('python -c "import platform; print platform.dist()[0].lower()"')
+    if distro == 'centos' or \
+            distro == 'redhat':
         select_package('yum')
         package_ensure('make gcc wget bzip2 openssl')
-    elif opsys == 'ubuntu' or \
-            opsys == 'debian':
+    elif distro == 'ubuntu' or \
+            distro == 'debian':
         select_package('apt')
         package_ensure('build-essential')
     else:
