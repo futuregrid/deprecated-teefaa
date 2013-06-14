@@ -29,5 +29,8 @@ def backup(item):
         for a in cfg['exclude-list']:
             cmd.append('--exclude=\'%s\'' % a)
 
+    cmd.append(cfg['src'])
+    cmd.append(cfg['dest'])
+
     cmd = ' '.join(cmd)
     local(cmd)
