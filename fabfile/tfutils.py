@@ -11,8 +11,8 @@ def env_tfutils():
     env.use_ssh_config = True
 
 @task
-def install_pdsh():
-    '''Installs Parallel Distributed Shell'''
+def install_pdsh(opsys='centos'):
+    ''':opsys=XXXXX |Installs Parallel Distributed Shell'''
     env_tfutils()
     if not env.user == 'root':
         print 'You need to login as root'
@@ -21,8 +21,16 @@ def install_pdsh():
         print 'pdsh-2.26 is already installed.'
         exit(1)
     #package_update()
-    select_package('yum')
-    package_ensure('make gcc wget bzip2 openssl')
+    if opsys == 'centos' or \
+            opsys == 'redhat':
+        select_package('yum')
+        package_ensure('make gcc wget bzip2 openssl')
+    elif opsys == 'ubuntu' or \
+            opsys == 'debian':
+        select_package('apt')
+        package_ensure('build-essential')
+    else:
+        print 'currently supported: centos, redhat, ubuntu, debian'
     dir_ensure('/root/source')
     with cd('/root/source'):
         run('wget http://pdsh.googlecode.com/files/pdsh-2.26.tar.bz2')
@@ -38,7 +46,7 @@ def install_pdsh():
 
 @task
 def en_root_login(authorized_keys='root/.ssh/authorized_keys'):
-    '''enable root login'''
+    '''|Enable root login'''
     env_tfutils()
     keyfile = 'private/tfutils/%s' % authorized_keys
     put(keyfile, '/root/.ssh/authorized_keys', mode=0640, use_sudo=True)
