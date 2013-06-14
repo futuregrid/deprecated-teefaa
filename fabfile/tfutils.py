@@ -22,7 +22,7 @@ def install_pdsh():
         exit(1)
     #package_update()
     #select_package('apt')
-    package_ensure('build-essential')
+    #package_ensure('build-essential')
     dir_ensure('/root/source')
     with cd('/root/source'):
         run('wget http://pdsh.googlecode.com/files/pdsh-2.26.tar.bz2')
