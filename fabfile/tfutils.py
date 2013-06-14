@@ -9,12 +9,15 @@ from cuisine import *
 
 def env_tfutils():
     env.use_ssh_config = True
-    env.user = 'root'
+    fabname = 'tfutils'
 
 @task
 def install_pdsh():
     '''Installs Parallel Distributed Shell'''
     env_tfutils()
+    if not env.user == 'root':
+        print 'You need to login as root'
+        exit(1)
     if dir_exists('/opt/pdsh-2.26'):
         print 'pdsh-2.26 is already installed.'
         exit(1)
@@ -33,3 +36,12 @@ def install_pdsh():
         run('make install')
     with cd('/root'):
         file_append('.bashrc', 'export PATH=/opt/pdsh-2.26/bin:$PATH')
+
+@task
+def en_root_login(authorized_keys='root/.ssh/authorized_keys'):
+    '''enable root login'''
+    env_tfutils()
+    keyfile = 'private/%s/%s' % (fabname, authorized_keys)
+    put(keyfile, '/root/.ssh/authorized_keys', mode=0640, use_sudo=True)
+    sudo('chown root:root /root/.ssh/authorized_keys')
+
