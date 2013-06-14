@@ -1,0 +1,8 @@
+# backup.yml
+# vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4
+
+host1:
+    src: 'host1:/'
+    dest: '/backup/host1/rootimg'
+    mksquashfs: True
+    dir_squashfs: 'backup/snapshots'

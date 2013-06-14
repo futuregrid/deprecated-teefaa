@@ -12,7 +12,7 @@ def env_tfutils():
 
 @task
 def install_pdsh():
-    ''':opsys=XXXXX |Installs Parallel Distributed Shell'''
+    ''':opsys=XXXXX | Installs Parallel Distributed Shell'''
     env_tfutils()
     if not env.user == 'root':
         print 'You need to login as root'
@@ -47,7 +47,7 @@ def install_pdsh():
 
 @task
 def en_root_login(authorized_keys='root/.ssh/authorized_keys'):
-    '''|Enable root login'''
+    '''| Enable root login'''
     env_tfutils()
     keyfile = 'private/tfutils/%s' % authorized_keys
     put(keyfile, '/root/.ssh/authorized_keys', mode=0640, use_sudo=True)

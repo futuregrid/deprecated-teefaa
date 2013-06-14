@@ -368,7 +368,7 @@ def mkbtseed(btcfg, btbin):
     run('/BTsync/btsync --config /BTsync/btsync.conf')
 
 @task
-def make_livecd(livecd_name, livecd_cfg='cfg/livecd.yaml'):
+def make_livecd(livecd_name, livecd_cfg='ymlfile/teefaa/livecd.yml'):
     ''':livecd_name=XXXXX,livecd_cfg=cfg/livecd.yaml | Make LiveCD'''
     f = open(livecd_cfg)
     livecd = yaml.safe_load(f)[livecd_name]
@@ -483,7 +483,7 @@ def hello():
     run('ls -la')
 
 @task
-def imagelist(imagesfile="cfg/images.yaml"):
+def imagelist(imagesfile="ymlfile/teefaa/images.yml"):
     '''| Show Image List'''
     f = open(imagesfile)
     images = yaml.safe_load(f)
