@@ -1,0 +1,70 @@
+# hosts.yml
+
+192.168.11.1:
+    hostname: 'node01'
+    disk:
+        device: '/dev/sda'
+        size: '500'
+        partitions:
+            swap:
+                size: '2'
+            system:
+                size: '50'
+                mount: '/'
+                type: 'ext4'
+            data:
+                size: '-1'
+                mount: '/data'
+                type: 'xfs'
+    network:
+        eth0:
+            bootproto: "dhcp"
+            onboot: 'yes'
+        eth1:
+            ipaddr: "172.20.1.1"
+            macaddr: "xx:xx:xx:xx:xx:xx"
+            bootproto: "static"
+            onboot: "yes"
+            netmask: "255.255.255.0"
+            gateway: "172.20.1.254"
+            nameserver: "172.20.1.251"
+    del_keypair: True
+    update_keys: True
+    pubkeys:
+        mykey: 'ssh-rsa ............ me@myhost'
+        user2key: 'ssh-dss ............ user2@host1'
+
+192.168.11.2:
+    hostname: 'node02'
+    disk:
+        device: '/dev/sda'
+        size: '500'
+        partitions:
+            swap:
+                size: '2'
+            system:
+                size: '50'
+                mount: '/'
+                type: 'ext4'
+            data:
+                size: '-1'
+                mount: '/data'
+                type: 'xfs'
+    network:
+        eth0:
+            bootproto: "dhcp"
+            onboot: 'yes'
+        eth1:
+            ipaddr: "172.20.1.2"
+            macaddr: "xx:xx:xx:xx:xx:xx"
+            bootproto: "static"
+            onboot: "yes"
+            netmask: "255.255.255.0"
+            gateway: "172.20.1.254"
+            nameserver: "172.20.1.251"
+    del_keypair: True
+    update_keys: True
+    pubkeys:
+        mykey: 'ssh-rsa ............ me@myhost'
+        user2key: 'ssh-dss ............ user2@host1'
+

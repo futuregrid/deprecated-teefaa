@@ -11,7 +11,6 @@ from fabric.api import *
 from fabric.contrib import *
 from cuisine import *
 
-
 def env_teefaa(imagename):
     env.use_ssh_config = True
     env.user = 'root'

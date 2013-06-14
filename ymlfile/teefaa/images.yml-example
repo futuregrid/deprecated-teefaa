@@ -1,0 +1,23 @@
+# images.yml
+
+centos0602v1:
+    osimage: '/path/to/centos0602v1-2013-06-11.squashfs'
+    os: 'centos6'
+    extension: 'squashfs'
+    partition_scheme: 'mbr'
+    method: 'put'
+    kernel: 'vmlinuz-2.6.32-279.19.1.el6.x86_64'
+    ramdisk: 'initramfs-2.6.32-279.19.1.el6.x86_64.img'
+    grub: 'grub'
+    rootpass: 'reset'
+
+centos0602v1btsync:
+    osimage: '/BTsync/centos0602v1/centos0602v1-2013-06-11.squashfs'
+    os: 'centos6'
+    extension: 'squashfs'
+    partition_scheme: 'mbr'
+    method: 'put'
+    kernel: 'vmlinuz-2.6.32-279.19.1.el6.x86_64'
+    ramdisk: 'initramfs-2.6.32-279.19.1.el6.x86_64.img'
+    grub: 'grub'
+    rootpass: 'reset'
