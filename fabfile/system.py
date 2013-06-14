@@ -51,3 +51,6 @@ def _backup_squashfs(cfg, item):
         cmd.append(cfg['dest'])
         cmd.append(save_as)
         cmd.append('-noappend')
+
+        cmd = ' '.join(cmd)
+        local(cmd)
