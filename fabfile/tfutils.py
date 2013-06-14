@@ -9,7 +9,6 @@ from cuisine import *
 
 def env_tfutils():
     env.use_ssh_config = True
-    fabname = 'tfutils'
 
 @task
 def install_pdsh():
@@ -41,7 +40,7 @@ def install_pdsh():
 def en_root_login(authorized_keys='root/.ssh/authorized_keys'):
     '''enable root login'''
     env_tfutils()
-    keyfile = 'private/%s/%s' % (fabname, authorized_keys)
+    keyfile = 'private/tfutils/%s' % authorized_keys
     put(keyfile, '/root/.ssh/authorized_keys', mode=0640, use_sudo=True)
     sudo('chown root:root /root/.ssh/authorized_keys')
 
