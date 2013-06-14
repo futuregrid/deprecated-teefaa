@@ -4,6 +4,7 @@
 import os
 import sys
 import yaml
+import datetime
 from fabric.api import *
 from fabric.contrib import *
 from cuisine import *
@@ -16,6 +17,11 @@ def backup(item):
     cfg = yaml.safe_load(f)[item]
     f.close()
 
+    _backup_rsync(cfg)
+    _backup_squashfs(cfg, item)
+
+def _backup_rsync(cfg):
+    '''Execute rsync'''
     cmd = []
     cmd.append('echo rsync -av')
 
@@ -34,3 +40,18 @@ def backup(item):
 
     cmd = ' '.join(cmd)
     local(cmd)
+
+def _backup_squashfs(cfg, item):
+    '''Make squashfs'''
+    if cfg['mksquashfs']:
+        today = datetime.date.today
+        save_as = cfg['dir_squashfs'] \
+                + item \
+                + '-' \
+                + today \
+                + '.squashfs'
+        cmd = []
+        cmd.append('echo mksquashfs')
+        cmd.append(cfg['dest'])
+        cmd.append(save_as)
+        cmd.append('-noappend')
