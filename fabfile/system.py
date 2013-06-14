@@ -25,6 +25,8 @@ def _backup_rsync(cfg):
     cmd = []
     cmd.append('echo rsync -av')
 
+    dir_ensure(cfg['dest'])
+
     if cfg['one-file-system']:
         cmd.append('--one-file-system')
 
