@@ -8,6 +8,7 @@ from fabric.api import *
 from fabric.contrib import *
 from cuisine import *
 
+@task
 def backup(item):
     ''':item=XXXXX | Backup System'''
     cfgfile = 'ymlfile/system/backup.yml'
