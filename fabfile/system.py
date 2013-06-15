@@ -31,8 +31,8 @@ def backup_list():
     n = 1
     for item in cfg:
         if n == 1:
-            print '\n'
-        print "%s. %s" % (n, item)
+            print ''
+        print " %s. %s" % (n, item)
         n += 1
 
 def _backup_rsync(cfg):
