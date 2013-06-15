@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4
+#
+# tfutils - installs tools and does some initial settings.
+#
 
 import os
 import sys
@@ -42,9 +45,15 @@ def install_pdsh():
         files.append('.bashrc', 'export PATH=/opt/pdsh-2.26/bin:$PATH')
 
 @task
-def en_root_login(authorized_keys='root/.ssh/authorized_keys'):
+def enable_root_login(authorized_keys='root/.ssh/authorized_keys'):
     '''| Enable root login'''
+    if env.user == 'root':
+        print 'You are trying to enable_root_login as root. A bit off sense.'
+        exit(1)
     keyfile = 'private/tfutils/%s' % authorized_keys
     put(keyfile, '/root/.ssh/authorized_keys', mode=0640, use_sudo=True)
     sudo('chown root:root /root/.ssh/authorized_keys')
 
+def ensure_users():
+    '''| Ensure Users and ssh keys'''
+    

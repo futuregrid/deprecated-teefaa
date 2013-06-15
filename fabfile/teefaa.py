@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4
+#
+# teefaa.py - is a collection of scripts for bootstrapping baremetal/virtual machines.
+# 
 
 import os
 import sys

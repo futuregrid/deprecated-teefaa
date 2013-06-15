@@ -70,7 +70,8 @@ def _backup_squashfs(cfg, item):
     '''Make squashfs'''
     if cfg['mksquashfs']:
         today = datetime.date.today
-        save_as = '%s/%s-%s.squashfs' % (cfg['dir_squashfs'],item,today())
+        save_as = '%s/%s-%s.squashfs' \
+                % (cfg['dir_squashfs'],item,today())
         cmd = []
         cmd.append('mksquashfs')
         cmd.append(cfg['dest'])
