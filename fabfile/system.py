@@ -20,6 +20,19 @@ def backup(item):
     _backup_rsync(cfg)
     _backup_squashfs(cfg, item)
 
+@task
+def backup_list():
+    ''':item=XXXXX | Backup System'''
+    cfgfile = 'ymlfile/system/backup.yml'
+    f = open(cfgfile)
+    cfg = yaml.safe_load(f)
+    f.close()
+
+    n = 1
+    for item in cfg:
+        print "%s. %s" % (n, item)
+        n += 1
+
 def _backup_rsync(cfg):
     '''Execute rsync'''
     cmd = []
