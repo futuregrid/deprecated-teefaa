@@ -4,5 +4,10 @@
 host1:
     src: 'host1:/'
     dest: '/backup/host1/rootimg'
+    one-file-system: True
+    delete: True
+    exclude: True
+    exclude-list:
+        - 'tmp/*'
     mksquashfs: True
-    dir_squashfs: 'backup/snapshots'
+    dir_squashfs: '/local/backups/snapshots'

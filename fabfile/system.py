@@ -12,7 +12,14 @@ from cuisine import *
 @task
 def backup(item):
     ''':item=XXXXX | Backup System'''
+    if not os.getenv('USER') == 'root':
+        print 'You have to be root.'
+        exit(1)
+
     cfgfile = 'ymlfile/system/backup.yml'
+    if not os.path.exists(cfgfile):
+        print '%s doesn\'t exist.' % cfgfile
+        exit(1)
     f = open(cfgfile)
     cfg = yaml.safe_load(f)[item]
     f.close()

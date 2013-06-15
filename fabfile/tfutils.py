@@ -7,13 +7,9 @@ from fabric.api import *
 from fabric.contrib import *
 from cuisine import *
 
-def env_tfutils():
-    env.use_ssh_config = True
-
 @task
 def install_pdsh():
     ''':opsys=XXXXX | Installs Parallel Distributed Shell'''
-    env_tfutils()
     if not env.user == 'root':
         print 'You need to login as root'
         exit(1)
@@ -43,12 +39,11 @@ def install_pdsh():
         run('make')
         run('make install')
     with cd('/root'):
-        file_append('.bashrc', 'export PATH=/opt/pdsh-2.26/bin:$PATH')
+        files.append('.bashrc', 'export PATH=/opt/pdsh-2.26/bin:$PATH')
 
 @task
 def en_root_login(authorized_keys='root/.ssh/authorized_keys'):
     '''| Enable root login'''
-    env_tfutils()
     keyfile = 'private/tfutils/%s' % authorized_keys
     put(keyfile, '/root/.ssh/authorized_keys', mode=0640, use_sudo=True)
     sudo('chown root:root /root/.ssh/authorized_keys')
