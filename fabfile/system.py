@@ -23,7 +23,7 @@ def backup(item):
 def _backup_rsync(cfg):
     '''Execute rsync'''
     cmd = []
-    cmd.append('echo rsync -av')
+    cmd.append('rsync -av')
 
     if not os.path.isdir(cfg['dest']):
         local('mkdir -p %s' % cfg['dest'])
@@ -50,7 +50,7 @@ def _backup_squashfs(cfg, item):
         today = datetime.date.today
         save_as = '%s/%s-%s.squashfs' % (cfg['dir_squashfs'],item,today())
         cmd = []
-        cmd.append('echo mksquashfs')
+        cmd.append('mksquashfs')
         cmd.append(cfg['dest'])
         cmd.append(save_as)
         cmd.append('-noappend')
