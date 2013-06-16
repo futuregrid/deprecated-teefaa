@@ -11,7 +11,7 @@ import datetime
 from fabric.api import *
 from fabric.contrib import *
 from cuisine import *
-from teefaa import read_ymlfile
+from teefaa import read_ymlfile, check_distro
 
 
 @task
@@ -32,6 +32,11 @@ def users_ensure(group):
 
     ymlfile = 'ymlfile/system/users.yml'
     users = read_ymlfile(ymlfile)[group]
+
+    distro = check_distro()
+    if distro == fedora:
+        select_package('yum')
+        package_ensure('openssl')
 
     for user in users:
         options = users[user]
