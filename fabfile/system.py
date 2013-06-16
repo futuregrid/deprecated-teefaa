@@ -51,8 +51,10 @@ def users_ensure(group):
         user_ensure(user, passwd, home, uid, gid, shell, fullname)
         user_home = user_check(user)['home']
         dot_ssh = '%s/.ssh' % user_home
+        authorized_keys = '%s/authorized_keys'
         with mode_sudo():
             dir_ensure(dot_ssh, mode=700, owner=user)
+            file_ensure(authorized_keys, mode=600, owner=user)
         for key in options['authorized_keys']:
             with mode_sudo():
                 ssh_authorize(user, key)

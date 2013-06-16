@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4
 #
-# tfutils - installs tools and does some initial settings.
+# tfutils - installs utilities.
 #
 
 import os
@@ -31,6 +31,7 @@ def install_pdsh():
         package_update()
         package_ensure('build-essential')
     else:
+        print '%s is not supported.' % distro
         print 'currently supported: centos, redhat, ubuntu, debian'
     dir_ensure('/root/source')
     with cd('/root/source'):
@@ -45,17 +46,3 @@ def install_pdsh():
     with cd('/root'):
         files.append('.bashrc', 'export PATH=/opt/pdsh-2.26/bin:$PATH')
 
-@task
-def enable_root_login(authorized_keys='root/.ssh/authorized_keys'):
-    '''| Enable root login'''
-    if env.user == 'root':
-        print 'You are trying to enable_root_login as root. A bit off sense.'
-        exit(1)
-
-    keyfile = 'private/tfutils/%s' % authorized_keys
-    put(keyfile, '/root/.ssh/authorized_keys', mode=0640, use_sudo=True)
-    sudo('chown root:root /root/.ssh/authorized_keys')
-
-def ensure_users():
-    '''| Ensure Users and ssh keys'''
-    
