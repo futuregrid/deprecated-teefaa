@@ -55,7 +55,7 @@ def users_ensure(group):
         with mode_sudo():
             dir_ensure(dot_ssh, mode=700, owner=user)
             if not file_exists(authorized_keys):
-                run('touch %s' authorized_keys)
+                run('touch %s' % authorized_keys)
                 file_ensure(authorized_keys, mode=600, owner=user)
         for key in options['authorized_keys']:
             with mode_sudo():
