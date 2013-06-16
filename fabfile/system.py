@@ -34,7 +34,7 @@ def users_ensure(group):
     users = read_ymlfile(ymlfile)[group]
 
     distro = check_distro()
-    if distro == fedora:
+    if distro == 'fedora':
         select_package('yum')
         package_ensure('openssl')
 
