@@ -28,6 +28,7 @@ def install_pdsh():
     elif distro == 'ubuntu' or \
             distro == 'debian':
         select_package('apt')
+        package_update()
         package_ensure('build-essential')
     else:
         print 'currently supported: centos, redhat, ubuntu, debian'

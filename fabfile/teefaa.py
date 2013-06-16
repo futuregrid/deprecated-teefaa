@@ -14,45 +14,17 @@ from fabric.api import *
 from fabric.contrib import *
 from cuisine import *
 
-def env_teefaa(imagename):
-    env.use_ssh_config = True
-    env.user = 'root'
-
-    hostsfile = 'ymlfile/teefaa/hosts.yml'
-    f1 = open(hostsfile)
-    hosts = yaml.safe_load(f1)
-    f1.close()
-
-    imagesfile = 'ymlfile/teefaa/images.yml'
-    f2 = open(imagesfile)
-    images = yaml.safe_load(f2)
-    f2.close()
-
-    image = images[imagename]
-    host = hosts[env.host]
-
-    return image, host
-
 @task
 def bootstrap(imagename):
     ''':imagename=XXXXX | Bootstrap OS'''
 
-    #image, host = env_teefaa(imagename)
-
-    #host = hosts[env.host]
-    #image = images[imagename]
-    env.use_ssh_config = True
     env.user = 'root'
 
     hostsfile = 'ymlfile/teefaa/hosts.yml'
-    f1 = open(hostsfile)
-    hosts = yaml.safe_load(f1)
-    f1.close()
+    hosts = read_ymlfile(hostsfile)
 
     imagesfile = 'ymlfile/teefaa/images.yml'
-    f2 = open(imagesfile)
-    images = yaml.safe_load(f2)
-    f2.close()
+    images = read_ymlfile(imagesfile)
 
     image = images[imagename]
     host = hosts[env.host]
@@ -65,10 +37,10 @@ def bootstrap(imagename):
     scheme = image['partition_scheme']
     bootloader = image['bootloader']
 
-    partitioning(device, swap, system, data, scheme)
-    makefs(device, swap, system, data, scheme)
-    mountfs(device, data, scheme)
-    copyimg(image)
+    #partitioning(device, swap, system, data, scheme)
+    #makefs(device, swap, system, data, scheme)
+    #mountfs(device, data, scheme)
+    #copyimg(image)
     condition(host, image, device, scheme)
     install_bootloader(device, image)
 
@@ -193,9 +165,9 @@ def condition(host, image, device, scheme):
 def condition_redhat6(host, image, device, scheme):
     '''Condition config files for Redhat6'''
     # Update fstab, mtab, selinux and udev/rules
-    put('sysroot/etc/fstab.%s' % image['os'], '/mnt/etc/fstab')
-    put('sysroot/etc/mtab.%s' % image['os'], '/mnt/etc/mtab')
-    put('sysroot/boot/grub/grub.conf.%s' % image['os'], '/mnt/boot/grub/grub.conf')
+    put('share/teefaa/etc/fstab.%s' % image['os'], '/mnt/etc/fstab')
+    put('share/teefaa/etc/mtab.%s' % image['os'], '/mnt/etc/mtab')
+    put('share/teefaa/boot/grub/grub.conf.%s' % image['os'], '/mnt/boot/grub/grub.conf')
     data = host['disk']['partitions']['data']
     if data['mount']:
         if data['type'] == 'xfs':
@@ -216,7 +188,7 @@ def condition_redhat6(host, image, device, scheme):
             files.sed('/mnt/boot/grub/grub.conf', 'DEVICE%s' % b, 'DEVICE%s' % a)
     files.sed('/mnt/etc/fstab', 'DEVICE', device)
     files.sed('/mnt/etc/mtab', 'DEVICE', device)
-    put('sysroot/etc/selinux/config', '/mnt/etc/selinux/config')
+    put('share/teefaa/etc/selinux/config', '/mnt/etc/selinux/config')
     run('rm -f /mnt/etc/udev/rules.d/70-persistent-net.rules')
     run('rm -f /mnt/etc/sysconfig/network-scripts/ifcfg-eth*')
     run('rm -f /mnt/etc/sysconfig/network-scripts/ifcfg-ib*')
@@ -269,8 +241,8 @@ def condition_redhat6(host, image, device, scheme):
 def condition_ubuntu12(host, image, device, scheme):
     '''Condition config files for Redhat6'''
     # Update fstab, mtab, selinux and udev/rules
-    put('sysroot/etc/fstab.%s' % image['os'], '/mnt/etc/fstab')
-    put('sysroot/etc/mtab.%s' % image['os'], '/mnt/etc/mtab')
+    put('share/teefaa/etc/fstab.%s' % image['os'], '/mnt/etc/fstab')
+    put('share/teefaa/etc/mtab.%s' % image['os'], '/mnt/etc/mtab')
     data = host['disk']['partitions']['data']
     if data['mount']:
         if data['type'] == 'xfs':
@@ -497,3 +469,15 @@ def imagelist(imagesfile="ymlfile/teefaa/images.yml"):
         print "%s. %s" % (no, image)
         no += 1
 
+def read_ymlfile(ymlfile):
+    '''Read YAML file'''
+
+    if not os.path.exists(ymlfile):
+        print '%s doesn\'t exist.' % ymlfile
+        exit(1)
+
+    f = open(ymlfile)
+    yml = yaml.safe_load(f)
+    f.close()
+
+    return yml

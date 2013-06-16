@@ -11,27 +11,31 @@ import datetime
 from fabric.api import *
 from fabric.contrib import *
 from cuisine import *
+from teefaa import read_ymlfile
 
-def _read_ymlfile(ymlfile):
-    '''Read YAML file'''
-    if not os.path.exists(ymlfile):
-        print '%s doesn\'t exist.' % ymlfile
-        exit(1)
-    f = open(ymlfile)
-    yml = yaml.safe_load(f)
-    f.close()
 
-    return yml
+@task
+def users_force_resetpass(group):
+    ''':group=XXXXX | Force users to reset password'''
+
+    ymlfile = 'ymlfile/system/users.yml'
+    users = read_ymlfile(ymlfile)[group]
+
+    for user in users:
+        with mode_sudo():
+            run('usermod -p \'\' %s' % user)
+            run('chage -d 0 %s' % user)
 
 @task
 def users_ensure(group):
     ''':group=XXXXX | Ensure Users exists'''
+
     ymlfile = 'ymlfile/system/users.yml'
-    users = _read_ymlfile(ymlfile)[group]
+    users = read_ymlfile(ymlfile)[group]
+
     for user in users:
-        name = user
         options = users[user]
-        passwd,home,uid,gid,shell,fullname =None,None,None,None,None,None
+        passwd,home,uid,gid,shell,fullname = None,None,None,None,None,None
         if options['passwd']:
             passwd = options['passwd']
         if options['home']:
@@ -44,8 +48,8 @@ def users_ensure(group):
             shell = options['shell']
         if options['fullname']:
             fullname = options['fullname']
-        user_ensure(name, passwd, home, uid, gid, shell, fullname, encrypted_passwd=True)
-        user_home = user_check(user, need_passwd=False)['home']
+        user_ensure(user, passwd, home, uid, gid, shell, fullname)
+        user_home = user_check(user)['home']
         dot_ssh = '%s/.ssh' % user_home
         with mode_sudo():
             dir_ensure(dot_ssh, mode=700, owner=user)
@@ -60,13 +64,8 @@ def backup(item):
         print 'You have to be root.'
         exit(1)
 
-    cfgfile = 'ymlfile/system/backup.yml'
-    if not os.path.exists(cfgfile):
-        print '%s doesn\'t exist.' % cfgfile
-        exit(1)
-    f = open(cfgfile)
-    cfg = yaml.safe_load(f)[item]
-    f.close()
+    ymlfile = 'ymlfile/system/backup.yml'
+    cfg = read_ymlfile(ymlfile)[item]
 
     _backup_rsync(cfg)
     _backup_squashfs(cfg, item)
@@ -74,16 +73,15 @@ def backup(item):
 @task
 def backup_list():
     ''':item=XXXXX | Show the list of backup'''
-    cfgfile = 'ymlfile/system/backup.yml'
-    f = open(cfgfile)
-    cfg = yaml.safe_load(f)
-    f.close()
+    ymlfile = 'ymlfile/system/backup.yml'
+    cfg = read_ymlfile(ymlfile)
 
+    print 'Backup List:'
     n = 1
     for item in cfg:
         if n == 1:
             print ''
-        print " %s. %s" % (n, item)
+        print "    %s.  %s" % (n, item)
         n += 1
 
 def _backup_rsync(cfg):
