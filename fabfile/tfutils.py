@@ -50,6 +50,7 @@ def enable_root_login(authorized_keys='root/.ssh/authorized_keys'):
     if env.user == 'root':
         print 'You are trying to enable_root_login as root. A bit off sense.'
         exit(1)
+
     keyfile = 'private/tfutils/%s' % authorized_keys
     put(keyfile, '/root/.ssh/authorized_keys', mode=0640, use_sudo=True)
     sudo('chown root:root /root/.ssh/authorized_keys')

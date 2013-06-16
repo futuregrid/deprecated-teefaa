@@ -1,0 +1,28 @@
+# tfutils.yml
+
+enable_root_login:
+    keys:
+      - "ssh-rsa ........ me@host1"
+      - "ssh-rsa ........ me@host2"
+
+ensure_users:
+    bmarley:
+      fullname: 'Bob Marley'
+      passwd: None
+      home: None
+      uid: None
+      gid: None
+      shell: None
+      authorized_keys:
+          - "ssh-rsa ........ bmarley@usa"
+          - "ssh-rsa ........ bmarley@jamaica"
+    emurphy:
+      fullname: 'Edward A. Murphy, Jr.'
+      passwd: None
+      home: None
+      uid: None
+      gid: None
+      shell: None
+      authorized_keys:
+          - "ssh-rsa ........ emurphy@usa"
+          - "ssh-rsa ........ emurphy@panama"

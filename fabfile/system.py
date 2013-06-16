@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4
+#
+# system.py - is a set of tools for system management.
+#
 
 import os
 import sys
@@ -8,6 +11,47 @@ import datetime
 from fabric.api import *
 from fabric.contrib import *
 from cuisine import *
+
+def _read_ymlfile(ymlfile):
+    '''Read YAML file'''
+    if not os.path.exists(ymlfile):
+        print '%s doesn\'t exist.' % ymlfile
+        exit(1)
+    f = open(ymlfile)
+    yml = yaml.safe_load(f)
+    f.close()
+
+    return yml
+
+@task
+def users_ensure(group):
+    ''':group=XXXXX | Ensure Users exists'''
+    ymlfile = 'ymlfile/system/users.yml'
+    users = _read_ymlfile(ymlfile)[group]
+    for user in users:
+        name = user
+        options = users[user]
+        passwd,home,uid,gid,shell,fullname =None,None,None,None,None,None
+        if options['passwd']:
+            passwd = options['passwd']
+        if options['home']:
+            home = options['home']
+        if options['uid']:
+            uid = options['uid']
+        if options['gid']:
+            gid = options['gid']
+        if options['shell']:
+            shell = options['shell']
+        if options['fullname']:
+            fullname = options['fullname']
+        user_ensure(name, passwd, home, uid, gid, shell, fullname, encrypted_passwd=True)
+        user_home = user_check(user, need_passwd=False)['home']
+        dot_ssh = '%s/.ssh' % user_home
+        with mode_sudo():
+            dir_ensure(dot_ssh, mode=700, owner=user)
+        for key in options['authorized_keys']:
+            with mode_sudo():
+                ssh_authorize(user, key)
 
 @task
 def backup(item):
@@ -29,7 +73,7 @@ def backup(item):
 
 @task
 def backup_list():
-    ''':item=XXXXX | Backup System'''
+    ''':item=XXXXX | Show the list of backup'''
     cfgfile = 'ymlfile/system/backup.yml'
     f = open(cfgfile)
     cfg = yaml.safe_load(f)
@@ -80,3 +124,4 @@ def _backup_squashfs(cfg, item):
 
         cmd = ' '.join(cmd)
         local(cmd)
+

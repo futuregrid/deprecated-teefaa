@@ -1,0 +1,23 @@
+# users.yml
+
+group1:
+    bmarley:
+        fullname: 'Bob Marley'
+        passwd: False
+        home: False
+        uid: False
+        gid: False
+        shell: '/bin/bash'
+        authorized_keys:
+            - 'ssh-rsa ....... bmarley@usa'
+            - 'ssh-dss ....... bmarley@jamaica'
+    emurphy:
+        fullname: 'Edward A. Murphy, Jr.'
+        passwd: False
+        home: False
+        uid: False
+        gid: False
+        shell: '/bin/bash'
+        authorized_keys:
+            - 'ssh-rsa ....... emurphy@usa'
+            - 'ssh-dss ....... emurphy@panama'
