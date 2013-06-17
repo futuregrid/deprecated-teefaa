@@ -42,13 +42,13 @@ The goal of FG Teefaa is to provide the scripts and methods to easily provision 
 System on baremetal/virtual hosts on multiple sites.
 
 Support
-=======
+-------
 
 If you run into problems when using this framework, please use our 
 help form at `https://portal.futuregrid.org/help <https://portal.futuregrid.org/help>`_.
  
 Indices and tables
-==================
+------------------
 
 * :ref:`genindex`
 * :ref:`modindex`
