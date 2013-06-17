@@ -34,6 +34,7 @@ Teefaa Requires(/Thanks to):
   - Cuisine, version 0.6
   - PyYAML, version 3.10
 
+* Squashfs-tools (for creating snapshots of Operating System)
 * Bittorrent Sync (for high-speed multiple Baremetal Provisioning)
 * Torque Resource Manager (for scheduing Baremetal Provisioning)
 
