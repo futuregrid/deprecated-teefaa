@@ -31,7 +31,7 @@
     <script type="text/javascript" src="_static/bootstrap-2.3.2/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
     <link rel="top" title="FutureGrid teefaa  documentation" href="#" />
-    <link rel="next" title="Users Guide" href="usersguide.html" />
+    <link rel="next" title="Users Guide (Under Construction)" href="usersguide.html" />
 <meta charset='utf-8'>
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
@@ -64,11 +64,8 @@
      data-toggle="dropdown">Site <b class="caret"></b></a>
   <ul class="dropdown-menu globaltoc"
     ><ul>
-<li class="toctree-l1"><a class="reference internal" href="usersguide.html">Users Guide</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="usersguide.html#configuration">Configuration</a></li>
-<li class="toctree-l2"><a class="reference internal" href="usersguide.html#provisioning">Provisioning</a></li>
-<li class="toctree-l2"><a class="reference internal" href="usersguide.html#build-two-openstack-nodes">Build Two OpenStack nodes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="usersguide.html#clone-a-running-node">Clone a running node</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usersguide.html">Users Guide (Under Construction)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="usersguide.html#installation">Installation</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">Modules</a></li>
@@ -100,7 +97,7 @@
             
               
   <li><a href="usersguide.html"
-         title="next chapter">Users Guide &raquo;</a></li>
+         title="next chapter">Users Guide (Under Construction) &raquo;</a></li>
             
             
           </ul>
@@ -130,11 +127,8 @@
 <p class="first sidebar-title">Table of Contents</p>
 <div class="toctree-wrapper last compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="usersguide.html">Users Guide</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="usersguide.html#configuration">Configuration</a></li>
-<li class="toctree-l2"><a class="reference internal" href="usersguide.html#provisioning">Provisioning</a></li>
-<li class="toctree-l2"><a class="reference internal" href="usersguide.html#build-two-openstack-nodes">Build Two OpenStack nodes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="usersguide.html#clone-a-running-node">Clone a running node</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usersguide.html">Users Guide (Under Construction)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="usersguide.html#installation">Installation</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">Modules</a></li>
@@ -151,21 +145,21 @@
 </ul>
 </div>
 </div>
-<p>FutureGrid Teefaa is a set of scripts for Bare-metal Provisioning
-which consists of Snapshot, Cloudimg, Bootstrap and Torque Plugin.</p>
+<p>FutureGrid Teefaa is a set of scripts for Baremetal Provisioning. Which is designed as simple,
+flexible, programable, collaboratable so that we can build, test and appreciate new Open Source
+Technologies.</p>
+<p>Teefaa Requires(/Thanks to):</p>
 <ul class="simple">
-<li>Snapshot - Makes a snapshot of an OS and compresses it.</li>
-<li>Cloudimg - Makes a cloud image from a snapshot.</li>
-<li>Bootstrap - Installs a system on Bare-metal/VM from a snapshot, a running system
-or a running instance.</li>
-<li>Torque Plugin - Provides cluster users to provision OS images on compute nodes.</li>
+<li>Python, version 2.7</li>
+<li>Python Modules
+* Fabric, version 1.6
+* Cuisine, version 0.6
+* PyYAML, version 3.10</li>
+<li>Bittorrent Sync (for high-speed multiple baremetal provisioning)</li>
+<li>Torque Resource Manager (for scheduing baremetal provisioning)</li>
 </ul>
 <p>The goal of FG Teefaa is to provide the scripts and methods to easily provision multiple
-Operation Systems at user&#8217;s local enviromnent(Desktop, Laptop, VMs), at Cloud as instances and at
-Bare-metal Cluster as bare-metal hosts.</p>
-<p>The picture of FG Teefaa is like this. Users can start system development on
-a Desktop/Laptop/VM and make a snapshot for backup, then make cloud image for
-running the image on multiple instances, and then run it on bare-metal nodes.</p>
+Operation Systems on Baremetal hosts on multiple sites.</p>
 </div>
 <div class="section" id="support">
 <h1>Support<a class="headerlink" href="#support" title="Permalink to this headline">¶</a></h1>
