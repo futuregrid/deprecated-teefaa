@@ -18,7 +18,10 @@ from cuisine import *
 def bootstrap(imagename):
     ''':imagename=XXXXX | Bootstrap OS'''
 
-    env.user = 'root'
+    if not env.user == 'root':
+        print 'You need to login as root for bootstrap.'
+        print 'So add the option \"--user root\"'
+        exit(1)
 
     hostsfile = 'ymlfile/teefaa/hosts.yml'
     hosts = read_ymlfile(hostsfile)
