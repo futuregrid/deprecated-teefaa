@@ -148,5 +148,6 @@ def pxeboot_list():
     cfgfile = 'ymlfile/system/pxecfg.yml'
     pxecfg = read_ymlfile(cfgfile)
 
-    run('ls %s' % pxecfg['pxeprefix'])
+    output = run('ls %s' % pxecfg['pxeprefix'])
+    print output
 
