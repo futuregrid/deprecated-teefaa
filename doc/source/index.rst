@@ -34,16 +34,16 @@ Teefaa Requires(/Thanks to):
   - Cuisine, version 0.6
   - PyYAML, version 3.10
 
-* Bittorrent Sync (for high-speed multiple baremetal provisioning)
-* Torque Resource Manager (for scheduing baremetal provisioning)
+* Bittorrent Sync (for high-speed multiple Baremetal Provisioning)
+* Torque Resource Manager (for scheduing Baremetal Provisioning)
 
-The goal of FG Teefaa is to provide the scripts and methods to easily provision multiple 
-Operation Systems on Baremetal hosts on multiple sites.
+The goal of FG Teefaa is to provide the scripts and methods to easily provision Destributed
+System on baremetal/virtual hosts on multiple sites.
 
 Support
 =======
 
-If you run into problems when using the framework, please use our 
+If you run into problems when using this framework, please use our 
 help form at `https://portal.futuregrid.org/help <https://portal.futuregrid.org/help>`_.
  
 Indices and tables
