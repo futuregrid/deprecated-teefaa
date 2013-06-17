@@ -22,8 +22,8 @@ Welcome to FutureGrid Teefaa!
 
 
 FutureGrid Teefaa is a set of scripts for Baremetal Provisioning. Which is designed as simple, 
-flexible, programable, collaboratable so that we can build, test and appreciate new Open Source 
-Technologies.
+flexible, programable and collaboratable so that users/developers can build, test and appreciate 
+new Open Source Technologies as quickly as possible.
 
 Teefaa Requires(/Thanks to):
 
