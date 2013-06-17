@@ -160,5 +160,6 @@ def ipmi_power(hostname, action):
     password = ipmicfg['password']
     bmcaddr = ipmicfg['bmcaddr']
 
-    run('ipmitool -I lanplus -U %s -P %s -E -H %s power %s'
-            % (user, password, bmcaddr, action))
+    output = run('ipmitool -I lanplus -U %s -P %s -E -H %s power %s' 
+                     % (user, password, bmcaddr, action))
+    print output
