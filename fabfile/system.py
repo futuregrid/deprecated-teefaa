@@ -140,5 +140,5 @@ def pxeboot(boottype, hostname):
     bootcfg = '%s/%s' % (pxecfg['pxeprefix'], boottype)
     hostcfg = '%s/%s' % (pxecfg['pxeprefix'], hostname)
 
-    local('cat %s > %s' % (bootcfg, hostcfg))
+    run('cat %s > %s' % (bootcfg, hostcfg))
 
