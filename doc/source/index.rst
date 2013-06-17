@@ -21,29 +21,28 @@ Welcome to FutureGrid Teefaa!
    license
 
 
-FutureGrid Teefaa is a set of scripts for Bare-metal Provisioning 
-which consists of Snapshot, Cloudimg, Bootstrap and Torque Plugin.
+FutureGrid Teefaa is a set of scripts for Baremetal Provisioning. Which is designed as simple, 
+flexible, programable, collaboratable so that we can build, test and appreciate new Open Source 
+Technologies.
 
-* Snapshot - Makes a snapshot of an OS and compresses it.
-* Cloudimg - Makes a cloud image from a snapshot.
-* Bootstrap - Installs a system on Bare-metal/VM from a snapshot, a running system 
-  or a running instance.
-* Torque Plugin - Provides cluster users to provision OS images on compute nodes.
+Teefaa Requires(/Thanks to):
+
+* Python, version 2.7
+* Python Modules
+  * Fabric, version 1.6
+  * Cuisine, version 0.6
+  * PyYAML, version 3.10
+* Bittorrent Sync (for high-speed multiple baremetal provisioning)
+* Torque Resource Manager (for scheduing baremetal provisioning)
 
 The goal of FG Teefaa is to provide the scripts and methods to easily provision multiple 
-Operation Systems at user's local enviromnent(Desktop, Laptop, VMs), at Cloud as instances and at 
-Bare-metal Cluster as bare-metal hosts. 
+Operation Systems on Baremetal hosts on multiple sites.
 
-The picture of FG Teefaa is like this. Users can start system development on 
-a Desktop/Laptop/VM and make a snapshot for backup, then make cloud image for 
-running the image on multiple instances, and then run it on bare-metal nodes.
- 
 Support
 =======
 
 If you run into problems when using the framework, please use our 
 help form at `https://portal.futuregrid.org/help <https://portal.futuregrid.org/help>`_.
-
  
 Indices and tables
 ==================
