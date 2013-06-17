@@ -29,9 +29,11 @@ Teefaa Requires(/Thanks to):
 
 * Python, version 2.7
 * Python Modules
+
   - Fabric, version 1.6
   - Cuisine, version 0.6
   - PyYAML, version 3.10
+
 * Bittorrent Sync (for high-speed multiple baremetal provisioning)
 * Torque Resource Manager (for scheduing baremetal provisioning)
 
