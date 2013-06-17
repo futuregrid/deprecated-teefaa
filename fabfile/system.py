@@ -151,3 +151,14 @@ def pxeboot_list():
     output = run('ls %s' % pxecfg['pxeprefix'])
     print output
 
+@task
+def ipmi_power(hostname, action):
+    ''':hostname=XXXXX,action=XXXXX'''
+    cfgfile = 'ymlfile/system/pxecfg.yml'
+    ipmicfg = read_ymlfile(cfgfile)[hostname]
+    user = ipmicfg['user']
+    password = ipmicfg['password']
+    bmcaddr = ipmicfg['bmcaddr']
+
+    run('ipmitool -I lanplus -U %s -P %s -E -H %s power %s'
+            % (user, password, bmcaddr, action))
