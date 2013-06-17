@@ -142,3 +142,11 @@ def pxeboot(boottype, hostname):
 
     run('cat %s > %s' % (bootcfg, hostcfg))
 
+@task
+def pxeboot_list():
+    ''':boottype=XXXXX,hostname=XXXXX|PXE Boot'''
+    cfgfile = 'ymlfile/system/pxecfg.yml'
+    pxecfg = read_ymlfile(cfgfile)
+
+    run('ls %s' % pxecfg['pxeprefix'])
+
