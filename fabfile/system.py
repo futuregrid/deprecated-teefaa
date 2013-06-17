@@ -154,7 +154,7 @@ def pxeboot_list():
 @task
 def ipmi_power(hostname, action):
     ''':hostname=XXXXX,action=XXXXX'''
-    cfgfile = 'ymlfile/system/pxecfg.yml'
+    cfgfile = 'ymlfile/system/ipmitool.yml'
     ipmicfg = read_ymlfile(cfgfile)[hostname]
     user = ipmicfg['user']
     password = ipmicfg['password']
