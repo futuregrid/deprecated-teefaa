@@ -137,7 +137,7 @@ def pxeboot(hostname, boottype):
     ''':boottype=XXXXX,hostname=XXXXX|PXE Boot'''
     cfgfile = 'ymlfile/system/pxecfg.yml'
     pxecfg = read_ymlfile(cfgfile)[hostname]
-    if boottype is 'show':
+    if boottype == 'show':
         env.host_string = pxecfg['server']
         hostcfg = '%s/%s' % (pxecfg['pxeprefix'], hostname)
         run('cat %s' % hostcfg)
