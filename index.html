@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 
 
@@ -10,13 +9,13 @@
     
     <link rel="stylesheet" href="_static/basic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="_static/bootstrap-2.3.2/css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bootstrap-2.3.1/css/bootstrap.min.css" type="text/css" />
     <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
-    <link rel="stylesheet" href="_static/bootstrap-2.3.2/css/bootstrap-responsive.min.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bootstrap-2.3.1/css/bootstrap-responsive.min.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '',
+        URL_ROOT:    './',
         VERSION:     '',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
@@ -28,7 +27,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/js/jquery-1.9.1.min.js"></script>
     <script type="text/javascript" src="_static/js/jquery-fix.js"></script>
-    <script type="text/javascript" src="_static/bootstrap-2.3.2/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-2.3.1/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
     <link rel="top" title="FutureGrid teefaa  documentation" href="#" />
     <link rel="next" title="Users Guide (Under Construction)" href="usersguide.html" />
@@ -86,6 +85,7 @@
   <a href="#" class="dropdown-toggle" data-toggle="dropdown">Page <b class="caret"></b></a>
   <ul class="dropdown-menu localtoc"><ul>
 <li><a class="reference internal" href="#">Welcome to FutureGrid Teefaa!</a><ul>
+<li><a class="reference internal" href="#design">Design</a></li>
 <li><a class="reference internal" href="#support">Support</a></li>
 <li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
 </ul>
@@ -104,8 +104,8 @@
 
           
             
-<form class="navbar-search pull-right" action="search.html" method="get">
-  <input type="text" name="q" class="search-query" placeholder="Search" />
+<form class="navbar-search pull-right" style="margin-bottom:-3px;" action="search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
   <input type="hidden" name="check_keywords" value="yes" />
   <input type="hidden" name="area" value="default" />
 </form>
@@ -145,10 +145,11 @@
 </ul>
 </div>
 </div>
-<p>FutureGrid Teefaa is a set of scripts for Baremetal Provisioning. Which is designed as simple,
-flexible, programable and collaboratable so that users/developers can build, test and appreciate
-new Open Source Technologies as quickly as possible.</p>
-<p>Teefaa Requires(/Thanks to):</p>
+<p>FutureGrid Teefaa is a set of deployment scripts for System Provisioning(includes
+Baremetal Provisioning). Which is designed as simple, flexible, programable and
+collaboratable so that users/developers can build, test and appreciate new Open
+Source Technologies as quickly as possible.</p>
+<p>FG Teefaa requires(/thanks to):</p>
 <ul class="simple">
 <li>Python, version 2.7</li>
 <li>Python Modules<ul>
@@ -163,6 +164,33 @@ new Open Source Technologies as quickly as possible.</p>
 </ul>
 <p>The goal of FG Teefaa is to provide the scripts and methods to easily provision Destributed
 System on baremetal/virtual hosts on multiple sites.</p>
+<div class="section" id="design">
+<h2>Design<a class="headerlink" href="#design" title="Permalink to this headline">¶</a></h2>
+<ul>
+<li><p class="first">Scripts are written in Fabric</p>
+</li>
+<li><p class="first">Configuration files are written in YAML.</p>
+</li>
+<li><p class="first">Each scripts has three types of directories as shown below.</p>
+<div class="highlight-python"><pre>|-- fabfile/EXAMPLE.py
+|-- ymlfile/EXAMPLE
+|           |-- config1.yml
+|           `-- config2.yml
+|-- private/EXAMPLE
+|           `-- dir1
+|               |-- file1
+|               `-- file2
+`-- share/EXAMPLE
+          `-- dir1
+              |-- file1
+              `-- file2</pre>
+</div>
+</li>
+</ul>
+<p>This stracture enables a simplified separation among concurrent developments, which allows
+people to work on multile projects and multiple versions in a simple fashion. For example,
+while one person is developing EXAMPLE, another person can start developing EXAMPLE2.</p>
+</div>
 <div class="section" id="support">
 <h2>Support<a class="headerlink" href="#support" title="Permalink to this headline">¶</a></h2>
 <p>If you run into problems when using this framework, please use our

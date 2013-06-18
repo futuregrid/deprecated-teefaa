@@ -21,11 +21,12 @@ Welcome to FutureGrid Teefaa!
    license
 
 
-FutureGrid Teefaa is a set of scripts for Baremetal Provisioning. Which is designed as simple, 
-flexible, programable and collaboratable so that users/developers can build, test and appreciate 
-new Open Source Technologies as quickly as possible.
+FutureGrid Teefaa is a set of deployment scripts for System Provisioning(includes 
+Baremetal Provisioning). Which is designed as simple, flexible, programable and 
+collaboratable so that users/developers can build, test and appreciate new Open 
+Source Technologies as quickly as possible.
 
-Teefaa Requires(/Thanks to):
+FG Teefaa requires(/thanks to):
 
 * Python, version 2.7
 * Python Modules
@@ -40,6 +41,30 @@ Teefaa Requires(/Thanks to):
 
 The goal of FG Teefaa is to provide the scripts and methods to easily provision Destributed
 System on baremetal/virtual hosts on multiple sites.
+
+Design
+------
+
+* Scripts are written in Fabric
+* Configuration files are written in YAML.
+* Each scripts has three types of directories as shown below. ::
+
+    |-- fabfile/EXAMPLE.py
+    |-- ymlfile/EXAMPLE
+    |           |-- config1.yml
+    |           `-- config2.yml
+    |-- private/EXAMPLE
+    |           `-- dir1
+    |               |-- file1
+    |               `-- file2
+    `-- share/EXAMPLE
+              `-- dir1
+                  |-- file1
+                  `-- file2
+
+This stracture enables a simplified separation among concurrent developments, which allows 
+people to work on multile projects and multiple versions in a simple fashion. For example, 
+while one person is developing EXAMPLE, another person can start developing EXAMPLE2.
 
 Support
 -------
