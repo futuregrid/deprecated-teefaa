@@ -133,12 +133,13 @@ def _backup_squashfs(cfg, item):
         local(cmd)
 
 @task
-def pxeboot(boottype, hostname):
+def pxeboot(hostname, boottype):
     ''':boottype=XXXXX,hostname=XXXXX|PXE Boot'''
     cfgfile = 'ymlfile/system/pxecfg.yml'
-    pxecfg = read_ymlfile(cfgfile)
+    pxecfg = read_ymlfile(cfgfile)[hostname]
     bootcfg = '%s/%s' % (pxecfg['pxeprefix'], boottype)
     hostcfg = '%s/%s' % (pxecfg['pxeprefix'], hostname)
+    env.host_string = pxecfg['server']
 
     run('cat %s > %s' % (bootcfg, hostcfg))
 
