@@ -162,5 +162,5 @@ def power_status(node):
     env.host_string = ipmicfg['server']
 
     output = run('ipmitool -I lanplus -U %s -P %s -E -H %s power status' 
-                     % (user, password, bmcaddr, action))
+                     % (user, password, bmcaddr))
     print output
