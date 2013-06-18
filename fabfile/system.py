@@ -171,6 +171,9 @@ def power(node,action):
     env.host_string = ipmicfg['server']
 
     with hide('running', 'stdout'):
+        hostname = run('hostname')
         output = run('ipmitool -I lanplus -U %s -P %s -E -H %s power %s' 
                          % (user, password, bmcaddr, action))
+    print hostname
+    print '-------------------------------------------------'
     print output
