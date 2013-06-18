@@ -174,6 +174,6 @@ def power(node,action):
         hostname = run('hostname')
         output = run('ipmitool -I lanplus -U %s -P %s -E -H %s power %s' 
                          % (user, password, bmcaddr, action))
-    print hostname
+    print node
     print '-------------------------------------------------'
     print output
