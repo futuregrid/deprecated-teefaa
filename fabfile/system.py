@@ -152,15 +152,15 @@ def pxeboot_list():
     print output
 
 @task
-def ipmi_power(hostname, action):
-    ''':hostname=XXXXX,action=XXXXX'''
+def power_status(node):
+    ''':node=XXXXX'''
     cfgfile = 'ymlfile/system/ipmitool.yml'
-    ipmicfg = read_ymlfile(cfgfile)[hostname]
+    ipmicfg = read_ymlfile(cfgfile)[node]
     user = ipmicfg['user']
     password = ipmicfg['password']
     bmcaddr = ipmicfg['bmcaddr']
     env.host_string = ipmicfg['server']
 
-    output = run('ipmitool -I lanplus -U %s -P %s -E -H %s power %s' 
+    output = run('ipmitool -I lanplus -U %s -P %s -E -H %s power status' 
                      % (user, password, bmcaddr, action))
     print output
