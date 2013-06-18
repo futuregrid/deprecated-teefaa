@@ -170,6 +170,7 @@ def power(node,action):
     bmcaddr = ipmicfg['bmcaddr']
     env.host_string = ipmicfg['server']
 
-    output = run('ipmitool -I lanplus -U %s -P %s -E -H %s power %s' 
-                     % (user, password, bmcaddr, action))
+    with hide('output'):
+        output = run('ipmitool -I lanplus -U %s -P %s -E -H %s power %s' 
+                         % (user, password, bmcaddr, action))
     print output
