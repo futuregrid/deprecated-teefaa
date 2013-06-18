@@ -43,7 +43,7 @@ def bootstrap(imagename):
     #partitioning(device, swap, system, data, scheme)
     #makefs(device, swap, system, data, scheme)
     #mountfs(device, data, scheme)
-    copyimg(image)
+    #copyimg(image)
     condition(host, image, device, scheme)
     install_bootloader(device, image)
 
