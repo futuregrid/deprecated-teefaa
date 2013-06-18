@@ -22,8 +22,10 @@ def install_pdsh():
     #package_update()
     distro = run('python -c "import platform; print platform.dist()[0].lower()"')
     if distro == 'centos' or \
-            distro == 'redhat':
+            distro == 'redhat' or \
+            distro == 'fedora':
         select_package('yum')
+        package_update('audit')
         package_ensure('make gcc wget bzip2 openssl')
     elif distro == 'ubuntu' or \
             distro == 'debian':
