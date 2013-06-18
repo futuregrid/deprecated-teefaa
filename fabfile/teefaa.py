@@ -40,9 +40,9 @@ def bootstrap(imagename):
     scheme = image['partition_scheme']
     bootloader = image['bootloader']
 
-    partitioning(device, swap, system, data, scheme)
-    makefs(device, swap, system, data, scheme)
-    mountfs(device, data, scheme)
+    #partitioning(device, swap, system, data, scheme)
+    #makefs(device, swap, system, data, scheme)
+    #mountfs(device, data, scheme)
     copyimg(image)
     condition(host, image, device, scheme)
     install_bootloader(device, image)
