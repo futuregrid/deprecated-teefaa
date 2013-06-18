@@ -140,7 +140,10 @@ def pxeboot(hostname, boottype):
     if boottype == 'show':
         env.host_string = pxecfg['server']
         hostcfg = '%s/%s' % (pxecfg['pxeprefix'], hostname)
-        run('cat %s' % hostcfg)
+        output = run('cat %s' % hostcfg)
+        print '--------------------------------------------'
+        print output
+        print '--------------------------------------------'
         exit(0)
     bootcfg = '%s/%s' % (pxecfg['pxeprefix'], boottype)
     hostcfg = '%s/%s' % (pxecfg['pxeprefix'], hostname)
