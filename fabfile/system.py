@@ -11,7 +11,7 @@ import datetime
 from fabric.api import *
 from fabric.contrib import *
 from cuisine import *
-from teefaa import read_ymlfile, check_distro
+from scratch import read_ymlfile, check_distro
 
 
 @task
