@@ -5,7 +5,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Users Guide (Under Construction) &mdash; FutureGrid teefaa  documentation</title>
+    <title>Module Name: system &mdash; FutureGrid teefaa  documentation</title>
     
     <link rel="stylesheet" href="_static/basic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -30,8 +30,6 @@
     <script type="text/javascript" src="_static/bootstrap-2.3.1/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
     <link rel="top" title="FutureGrid teefaa  documentation" href="index.html" />
-    <link rel="next" title="Modules" href="modules.html" />
-    <link rel="prev" title="Welcome to FutureGrid Teefaa!" href="index.html" />
 <meta charset='utf-8'>
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
@@ -63,9 +61,9 @@
      class="dropdown-toggle"
      data-toggle="dropdown">Site <b class="caret"></b></a>
   <ul class="dropdown-menu globaltoc"
-    ><ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="">Users Guide (Under Construction)</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
+    ><ul>
+<li class="toctree-l1"><a class="reference internal" href="usersguide.html">Users Guide (Under Construction)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="usersguide.html#installation">Installation</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">Modules</a></li>
@@ -85,8 +83,8 @@
               <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown">Page <b class="caret"></b></a>
   <ul class="dropdown-menu localtoc"><ul>
-<li><a class="reference internal" href="#">Users Guide (Under Construction)</a><ul>
-<li><a class="reference internal" href="#installation">Installation</a></li>
+<li><a class="reference internal" href="#">Module Name: system</a><ul>
+<li><a class="reference internal" href="#system-power">system.power</a></li>
 </ul>
 </li>
 </ul>
@@ -95,10 +93,6 @@
             
             
               
-  <li><a href="index.html"
-         title="previous chapter">&laquo; Welcome to FutureGrid Teefaa!</a></li>
-  <li><a href="modules.html"
-         title="next chapter">Modules &raquo;</a></li>
             
             
           </ul>
@@ -118,29 +112,29 @@
 
 <div class="container">
   
-  <div class="section" id="users-guide-under-construction">
-<h1>Users Guide (Under Construction)<a class="headerlink" href="#users-guide-under-construction" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="installation">
-<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
-<ul>
-<li><p class="first">Install required software.</p>
-<div class="highlight-python"><pre>pip install fabric
-pip install cuisine
-pip install PyYAML</pre>
+  <a href="https://github.com/futuregrid/teefaa"
+    class="visible-desktop"><img
+   style="position: absolute; top: 40px; right: 0; border: 0;"
+   src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png"
+   alt="Fork me on GitHub"></a><div class="section" id="module-name-system">
+<h1>Module Name: system<a class="headerlink" href="#module-name-system" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="system-power">
+<h2>system.power<a class="headerlink" href="#system-power" title="Permalink to this headline">¶</a></h2>
+<p>Utility for turn on, off and check status of power.</p>
+<p>Check status:</p>
+<div class="highlight-python"><pre>fab system.power:[hostname],status</pre>
 </div>
-</li>
-<li><p class="first">Download FG Teefaa from github repository.</p>
-<div class="highlight-python"><pre>git clone https://github.com/futuregrid/teefaa.git</pre>
+<p>Output:</p>
+<div class="highlight-python"><pre>[hostname]
+-------------------------------------------------
+Chassis Power is [on/off]</pre>
 </div>
-</li>
-<li><p class="first">Confirm you got everything.</p>
-<div class="highlight-python"><pre>cd teefaa
-fab -l</pre>
+<p>Turn on the power:</p>
+<div class="highlight-python"><pre>fab system.power:[hostname],on</pre>
 </div>
-</li>
-<li><p class="first">That is all for installation and you should be able to see the list of scripts.</p>
-</li>
-</ul>
+<p>Turn off the power:</p>
+<div class="highlight-python"><pre>fab system.power:[hostname],off</pre>
+</div>
 </div>
 </div>
 
