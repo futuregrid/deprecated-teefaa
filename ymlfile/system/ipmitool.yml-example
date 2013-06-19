@@ -1,0 +1,10 @@
+# ipmitool.yml
+
+host1:
+    bmcaddr: '192.168.1.1'
+    user: 'USERID'
+    password: 'BadPassword'
+host2:
+    bmcaddr: '192.168.1.2'
+    user: 'USERID'
+    password: 'BadPassword'

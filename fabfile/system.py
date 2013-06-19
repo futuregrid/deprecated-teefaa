@@ -11,7 +11,7 @@ import datetime
 from fabric.api import *
 from fabric.contrib import *
 from cuisine import *
-from teefaa import read_ymlfile
+from scratch import read_ymlfile, check_distro
 
 
 @task
@@ -33,6 +33,11 @@ def users_ensure(group):
     ymlfile = 'ymlfile/system/users.yml'
     users = read_ymlfile(ymlfile)[group]
 
+    distro = check_distro()
+    if distro == 'fedora':
+        select_package('yum')
+        package_ensure('openssl')
+
     for user in users:
         options = users[user]
         passwd,home,uid,gid,shell,fullname = None,None,None,None,None,None
@@ -51,8 +56,12 @@ def users_ensure(group):
         user_ensure(user, passwd, home, uid, gid, shell, fullname)
         user_home = user_check(user)['home']
         dot_ssh = '%s/.ssh' % user_home
+        authorized_keys = '%s/authorized_keys' % dot_ssh
         with mode_sudo():
             dir_ensure(dot_ssh, mode=700, owner=user)
+            if not file_exists(authorized_keys):
+                run('touch %s' % authorized_keys)
+                file_ensure(authorized_keys, mode=600, owner=user)
         for key in options['authorized_keys']:
             with mode_sudo():
                 ssh_authorize(user, key)
@@ -123,3 +132,59 @@ def _backup_squashfs(cfg, item):
         cmd = ' '.join(cmd)
         local(cmd)
 
+@task
+def pxeboot(hostname, boottype):
+    ''':boottype=XXXXX,hostname=XXXXX|PXE Boot'''
+    cfgfile = 'ymlfile/system/pxecfg.yml'
+    pxecfg = read_ymlfile(cfgfile)[hostname]
+    env.host_string = pxecfg['server']
+
+    hostcfg = '%s/%s' % (pxecfg['pxeprefix'], hostname)
+    if not file_exists(hostcfg):
+        print ''
+        print ' ERROR: %s does not exist.' % hostcfg
+        print ''
+        exit(1)
+
+    if boottype == 'show':
+        output = run('cat %s' % hostcfg)
+        print '--------------------------------------------'
+        print output
+        print '--------------------------------------------'
+        exit(0)
+
+    bootcfg = '%s/%s' % (pxecfg['pxeprefix'], boottype)
+    if not file_exists(bootcfg):
+        print ''
+        print ' ERROR: %s does not exist.' % bootcfg
+        print ''
+        exit(1)
+
+    run('cat %s > %s' % (bootcfg, hostcfg))
+
+@task
+def pxeboot_list():
+    ''':boottype=XXXXX,hostname=XXXXX|PXE Boot'''
+    cfgfile = 'ymlfile/system/pxecfg.yml'
+    pxecfg = read_ymlfile(cfgfile)
+
+    output = run('ls %s' % pxecfg['pxeprefix'])
+    print output
+
+@task
+def power(node,action):
+    ''':node=XXXXX,action=XXXXX'''
+    cfgfile = 'ymlfile/system/ipmitool.yml'
+    ipmicfg = read_ymlfile(cfgfile)[node]
+    user = ipmicfg['user']
+    password = ipmicfg['password']
+    bmcaddr = ipmicfg['bmcaddr']
+    env.host_string = ipmicfg['server']
+
+    with hide('running', 'stdout'):
+        hostname = run('hostname')
+        output = run('ipmitool -I lanplus -U %s -P %s -E -H %s power %s' 
+                         % (user, password, bmcaddr, action))
+    print node
+    print '-------------------------------------------------'
+    print output
