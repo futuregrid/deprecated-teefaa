@@ -476,7 +476,9 @@ def read_ymlfile(ymlfile):
     '''Read YAML file'''
 
     if not os.path.exists(ymlfile):
-        print '%s doesn\'t exist.' % ymlfile
+        print ''
+        print ' %s doesn\'t exist.' % ymlfile
+        print ''
         exit(1)
 
     f = open(ymlfile)
