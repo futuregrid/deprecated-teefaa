@@ -140,7 +140,10 @@ def pxeboot(hostname, boottype):
     env.host_string = pxecfg['server']
 
     hostcfg = '%s/%s' % (pxecfg['pxeprefix'], hostname)
-    if not file_exists(hostcfg):
+
+    with hide('running', 'stdout'):
+        test = file_exists(hostcfg)
+    if not test:
         print ''
         print ' ERROR: %s does not exist.' % hostcfg
         print ''
@@ -156,24 +159,24 @@ def pxeboot(hostname, boottype):
         print '--------------------------------------------'
         exit(0)
 
+    if boottype == 'list':
+        with hide('running', 'stdout'):
+            output = run('cat %s' % hostcfg)
+        print ''
+        run('ls %s' % pxecfg['pxeprefix'])
+        print ''
+        exit(0)
+
     bootcfg = '%s/%s' % (pxecfg['pxeprefix'], boottype)
-    if not file_exists(bootcfg):
+    with hide('running', 'stdout'):
+        test = file_exists(bootcfg)
+    if not test:
         print ''
         print ' ERROR: %s does not exist.' % bootcfg
         print ''
         exit(1)
 
     run('cat %s > %s' % (bootcfg, hostcfg))
-
-@task
-def pxeboot_list():
-    ''':boottype=XXXXX,hostname=XXXXX|PXE Boot'''
-    cfgfile = 'ymlfile/system/pxecfg.yml'
-    pxecfg = read_ymlfile(cfgfile)
-    env.host_string = pxecfg['server']
-
-    output = run('ls %s' % pxecfg['pxeprefix'])
-    print output
 
 @task
 def power(hostname,action):
