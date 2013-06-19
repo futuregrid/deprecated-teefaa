@@ -53,7 +53,7 @@ def install_parallel(prefix='/usr/local'):
     ''':prefix=(default:/usr/local)'''
     with lcd('/tmp'):
         local('wget http://ftp.gnu.org/gnu/parallel/parallel-20130522.tar.bz2')
-        local('tar jxvf http://ftp.gnu.org/gnu/parallel/parallel-20130522.tar.bz2')
+        local('tar jxvf parallel-20130522.tar.bz2')
     with lcd('/tmp/parallel-20130522'):
         local('./configure --prefix=%s' % prefix)
         local('make')
