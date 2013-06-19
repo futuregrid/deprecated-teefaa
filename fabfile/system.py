@@ -161,7 +161,7 @@ def pxeboot(hostname, boottype):
 
     if boottype == 'list':
         with hide('running', 'stdout'):
-            output = run('ls %s' % pxecfg['pxeprefix'])
+            output = run('ls -1 %s| grep -v 01-' % pxecfg['pxeprefix'])
         print ''
         print output
         print ''
