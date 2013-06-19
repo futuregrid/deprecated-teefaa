@@ -191,3 +191,21 @@ def power(hostname,action):
     print '[%s]' % hostname
     print '-------------------------------------------------'
     print output
+
+@task
+def temperature(hostname):
+    ''':hostname'''
+    cfgfile = 'ymlfile/system/ipmitool.yml'
+    ipmicfg = read_ymlfile(cfgfile)[hostname]
+    user = ipmicfg['user']
+    password = ipmicfg['password']
+    bmcaddr = ipmicfg['bmcaddr']
+    env.host_string = ipmicfg['server']
+
+    with hide('running', 'stdout'):
+        output = run('ipmitool -I lanplus -U %s -P %s -E -H %s sdr type temperature'
+                         % (user, password, bmcaddr))
+    print ''
+    print '[%s]' % hostname
+    print '-------------------------------------------------'
+    print output
