@@ -149,6 +149,7 @@ def pxeboot(hostname, boottype):
     if boottype == 'show':
         with hide('running', 'stdout'):
             output = run('cat %s' % hostcfg)
+        print ''
         print '[%s]' % hostname
         print '--------------------------------------------'
         print output
@@ -186,6 +187,7 @@ def power(hostname,action):
     with hide('running', 'stdout'):
         output = run('ipmitool -I lanplus -U %s -P %s -E -H %s power %s' 
                          % (user, password, bmcaddr, action))
+    print ''
     print '[%s]' % hostname
     print '-------------------------------------------------'
     print output
