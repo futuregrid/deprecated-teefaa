@@ -137,23 +137,27 @@ def pxeboot(hostname, boottype):
     ''':boottype=XXXXX,hostname=XXXXX|PXE Boot'''
     cfgfile = 'ymlfile/system/pxecfg.yml'
     pxecfg = read_ymlfile(cfgfile)[hostname]
+    env.host_string = pxecfg['server']
+
+    hostcfg = '%s/%s' % (pxecfg['pxeprefix'], hostname)
+    if not file_exists(hostcfg):
+        print ''
+        print ' ERROR: %s does not exist.' % hostcfg
+        print ''
+        exit(1)
+
     if boottype == 'show':
-        env.host_string = pxecfg['server']
-        hostcfg = '%s/%s' % (pxecfg['pxeprefix'], hostname)
         output = run('cat %s' % hostcfg)
         print '--------------------------------------------'
         print output
         print '--------------------------------------------'
         exit(0)
-    bootcfg = '%s/%s' % (pxecfg['pxeprefix'], boottype)
-    hostcfg = '%s/%s' % (pxecfg['pxeprefix'], hostname)
-    env.host_string = pxecfg['server']
 
+    bootcfg = '%s/%s' % (pxecfg['pxeprefix'], boottype)
     if not file_exists(bootcfg):
-        print 'ERROR: %s does not exist.' % bootcfg
-        exit(1)
-    if not file_exists(hostcfg):
-        print 'ERROR: %s does not exist.' % hostcfg
+        print ''
+        print ' ERROR: %s does not exist.' % bootcfg
+        print ''
         exit(1)
 
     run('cat %s > %s' % (bootcfg, hostcfg))
