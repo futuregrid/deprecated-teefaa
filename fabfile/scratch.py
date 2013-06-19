@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4
 #
-# teefaa.py - is a collection of scripts for bootstrapping baremetal/virtual machines.
+# scratch.py - is a collection of scripts for bootstrapping baremetal/virtual machines.
 # 
 
 import os
@@ -19,14 +19,14 @@ def bootstrap(imagename):
     ''':imagename=XXXXX | Bootstrap OS'''
 
     if not env.user == 'root':
-        print 'You need to be root for executing bootstrap.'
-        print 'Which means you need add the option \"--user root\".'
+        print 'You need to login as root for bootstrap.'
+        print 'So add the option \"--user root\"'
         exit(1)
 
-    hostsfile = 'ymlfile/teefaa/hosts.yml'
+    hostsfile = 'ymlfile/scratch/hosts.yml'
     hosts = read_ymlfile(hostsfile)
 
-    imagesfile = 'ymlfile/teefaa/images.yml'
+    imagesfile = 'ymlfile/scratch/images.yml'
     images = read_ymlfile(imagesfile)
 
     image = images[imagename]
@@ -40,10 +40,10 @@ def bootstrap(imagename):
     scheme = image['partition_scheme']
     bootloader = image['bootloader']
 
-    #partitioning(device, swap, system, data, scheme)
-    #makefs(device, swap, system, data, scheme)
-    #mountfs(device, data, scheme)
-    #copyimg(image)
+    partitioning(device, swap, system, data, scheme)
+    makefs(device, swap, system, data, scheme)
+    mountfs(device, data, scheme)
+    copyimg(image)
     condition(host, image, device, scheme)
     install_bootloader(device, image)
 
@@ -168,9 +168,9 @@ def condition(host, image, device, scheme):
 def condition_redhat6(host, image, device, scheme):
     '''Condition config files for Redhat6'''
     # Update fstab, mtab, selinux and udev/rules
-    put('share/teefaa/etc/fstab.%s' % image['os'], '/mnt/etc/fstab')
-    put('share/teefaa/etc/mtab.%s' % image['os'], '/mnt/etc/mtab')
-    put('share/teefaa/boot/grub/grub.conf.%s' % image['os'], '/mnt/boot/grub/grub.conf')
+    put('share/scratch/etc/fstab.%s' % image['os'], '/mnt/etc/fstab')
+    put('share/scratch/etc/mtab.%s' % image['os'], '/mnt/etc/mtab')
+    put('share/scratch/boot/grub/grub.conf.%s' % image['os'], '/mnt/boot/grub/grub.conf')
     data = host['disk']['partitions']['data']
     if data['mount']:
         if data['type'] == 'xfs':
@@ -191,7 +191,7 @@ def condition_redhat6(host, image, device, scheme):
             files.sed('/mnt/boot/grub/grub.conf', 'DEVICE%s' % b, 'DEVICE%s' % a)
     files.sed('/mnt/etc/fstab', 'DEVICE', device)
     files.sed('/mnt/etc/mtab', 'DEVICE', device)
-    put('share/teefaa/etc/selinux/config', '/mnt/etc/selinux/config')
+    put('share/scratch/etc/selinux/config', '/mnt/etc/selinux/config')
     run('rm -f /mnt/etc/udev/rules.d/70-persistent-net.rules')
     run('rm -f /mnt/etc/sysconfig/network-scripts/ifcfg-eth*')
     run('rm -f /mnt/etc/sysconfig/network-scripts/ifcfg-ib*')
@@ -244,8 +244,8 @@ def condition_redhat6(host, image, device, scheme):
 def condition_ubuntu12(host, image, device, scheme):
     '''Condition config files for Redhat6'''
     # Update fstab, mtab, selinux and udev/rules
-    put('share/teefaa/etc/fstab.%s' % image['os'], '/mnt/etc/fstab')
-    put('share/teefaa/etc/mtab.%s' % image['os'], '/mnt/etc/mtab')
+    put('share/scratch/etc/fstab.%s' % image['os'], '/mnt/etc/fstab')
+    put('share/scratch/etc/mtab.%s' % image['os'], '/mnt/etc/mtab')
     data = host['disk']['partitions']['data']
     if data['mount']:
         if data['type'] == 'xfs':
@@ -346,7 +346,7 @@ def mkbtseed(btcfg, btbin):
     run('/BTsync/btsync --config /BTsync/btsync.conf')
 
 @task
-def make_livecd(livecd_name, livecd_cfg='ymlfile/teefaa/livecd.yml'):
+def make_livecd(livecd_name, livecd_cfg='ymlfile/scratch/livecd.yml'):
     ''':livecd_name=XXXXX,livecd_cfg=cfg/livecd.yaml | Make LiveCD'''
     f = open(livecd_cfg)
     livecd = yaml.safe_load(f)[livecd_name]
@@ -461,7 +461,7 @@ def hello():
     run('ls -la')
 
 @task
-def imagelist(imagesfile="ymlfile/teefaa/images.yml"):
+def imagelist(imagesfile="ymlfile/scratch/images.yml"):
     '''| Show Image List'''
     f = open(imagesfile)
     images = yaml.safe_load(f)
@@ -484,3 +484,8 @@ def read_ymlfile(ymlfile):
     f.close()
 
     return yml
+
+def check_distro():
+    distro = run('python -c "import platform; print platform.dist()[0].lower()"')
+
+    return distro
