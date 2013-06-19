@@ -149,6 +149,7 @@ def pxeboot(hostname, boottype):
     if boottype == 'show':
         with hide('running', 'stdout'):
             output = run('cat %s' % hostcfg)
+        print '%s' % hostname
         print '--------------------------------------------'
         print output
         print '--------------------------------------------'
