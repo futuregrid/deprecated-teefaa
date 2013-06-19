@@ -147,6 +147,12 @@ def pxeboot(hostname, boottype):
         exit(0)
     bootcfg = '%s/%s' % (pxecfg['pxeprefix'], boottype)
     hostcfg = '%s/%s' % (pxecfg['pxeprefix'], hostname)
+    if not file_exists(bootcfg):
+        print 'ERROR: %s does not exist.' % bootcfg
+        exit(1)
+    if not file_exists(hostcfg):
+        print 'ERROR: %s does not exist.' % hostcfg
+        exit(1)
     env.host_string = pxecfg['server']
 
     run('cat %s > %s' % (bootcfg, hostcfg))
