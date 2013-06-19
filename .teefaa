@@ -1,0 +1,4 @@
+# activate virtualenv
+source ~/virt_env/virt02/bin/activate
+# Set nova env
+source ~/.futuregrid/openstack/novarc
