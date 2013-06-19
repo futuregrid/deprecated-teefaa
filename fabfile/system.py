@@ -161,9 +161,9 @@ def pxeboot(hostname, boottype):
 
     if boottype == 'list':
         with hide('running', 'stdout'):
-            output = run('cat %s' % hostcfg)
+            output = run('ls %s' % pxecfg['pxeprefix'])
         print ''
-        run('ls %s' % pxecfg['pxeprefix'])
+        print output
         print ''
         exit(0)
 
