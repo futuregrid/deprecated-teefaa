@@ -149,7 +149,7 @@ def pxeboot(hostname, boottype):
     if boottype == 'show':
         with hide('running', 'stdout'):
             output = run('cat %s' % hostcfg)
-        print '%s' % hostname
+        print '[%s]' % hostname
         print '--------------------------------------------'
         print output
         print '--------------------------------------------'
@@ -174,10 +174,10 @@ def pxeboot_list():
     print output
 
 @task
-def power(node,action):
-    ''':node=XXXXX,action=XXXXX'''
+def power(hostname,action):
+    ''':hostname=XXXXX,action=XXXXX'''
     cfgfile = 'ymlfile/system/ipmitool.yml'
-    ipmicfg = read_ymlfile(cfgfile)[node]
+    ipmicfg = read_ymlfile(cfgfile)[hostname]
     user = ipmicfg['user']
     password = ipmicfg['password']
     bmcaddr = ipmicfg['bmcaddr']
@@ -187,6 +187,6 @@ def power(node,action):
         hostname = run('hostname')
         output = run('ipmitool -I lanplus -U %s -P %s -E -H %s power %s' 
                          % (user, password, bmcaddr, action))
-    print node
+    print '[%s]' % hostname
     print '-------------------------------------------------'
     print output
