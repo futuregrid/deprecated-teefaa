@@ -13,21 +13,19 @@ from platform import dist
 from fabric.api import *
 from fabric.contrib import *
 from cuisine import *
+from system import read_ymlfile
 
 @task
 def bootstrap(imagename):
-    ''':imagename=XXXXX | Bootstrap OS'''
+    ''':imagename  -  Bootstrap OS'''
 
     if not env.user == 'root':
         print 'You need to login as root for bootstrap.'
         print 'So add the option \"--user root\"'
         exit(1)
 
-    hostsfile = 'ymlfile/scratch/hosts.yml'
-    hosts = read_ymlfile(hostsfile)
-
-    imagesfile = 'ymlfile/scratch/images.yml'
-    images = read_ymlfile(imagesfile)
+    hosts = read_ymlfile('hosts.yml')
+    images = read_ymlfile('images.yml')
 
     image = images[imagename]
     host = hosts[env.host]
@@ -337,7 +335,7 @@ def install_bootloader(device, image):
 
 @task
 def mkbtseed(btcfg, btbin):
-    ''':btcfg=XXXXX,btbin=XXXXX | Make a seed of Bittorrent Sync'''
+    ''':btsync_conf,btsync_bin | Make a seed of Bittorrent Sync'''
     if not files.exists('/BTsync/image'):
         run('mkdir -p /BTsync/image')
     put(btcfg, '/BTsync/btsync.conf')
@@ -348,9 +346,7 @@ def mkbtseed(btcfg, btbin):
 @task
 def make_livecd(livecd_name, livecd_cfg='ymlfile/scratch/livecd.yml'):
     ''':livecd_name=XXXXX,livecd_cfg=cfg/livecd.yaml | Make LiveCD'''
-    f = open(livecd_cfg)
-    livecd = yaml.safe_load(f)[livecd_name]
-    f.close()
+    livecd = read_ymlfile('livecd.yml')[livecd_name]
 
     packages = [
             'wget',
@@ -395,12 +391,10 @@ def make_livecd(livecd_name, livecd_cfg='ymlfile/scratch/livecd.yml'):
     get('/tmp/%s.iso' % livecd_name, livecd['saveto'])
 
 @task
-def make_pxeimage(pxename, pxecfg='cfg/pxe.yaml'):
-    ''':pxename=XXXXX,pxecfg=cfg/pxeimage.yaml'''
-    f = open(pxecfg)
-    pxecfg = yaml.safe_load(f)[pxename]
+def make_pxeimage(pxename):
+    ''':pxename'''
+    pxecfg = read_ymlfile('pxe.yml')[pxename]
     prefix = pxecfg['prefix']
-    f.close()
 
     #put(pxecfg['livecd'], '/tmp/livecd.iso')
     if not file_is_dir('/mnt/tfmnt'):
@@ -426,7 +420,7 @@ def make_pxeimage(pxename, pxecfg='cfg/pxe.yaml'):
 
 @task
 def mksnapshot(name, saveto):
-    ''':name=XXXXX,saveto=XXXXX | Make Snapshot'''
+    ''':name,saveto  -  Make Snapshot'''
     today = datetime.date.today
     distro = run('python -c "import platform; print platform.dist()[0].lower()"')
     print distro
@@ -456,23 +450,21 @@ def mksnapshot(name, saveto):
 
 @task
 def hello():
-    '''| Check if remote hosts are reachable.'''
+    '''-  Check if remote hosts are reachable.'''
     run('hostname')
     run('ls -la')
 
 @task
-def imagelist(imagesfile="ymlfile/scratch/images.yml"):
+def imagelist():
     '''| Show Image List'''
-    f = open(imagesfile)
-    images = yaml.safe_load(f)
-    f.close()
+    images = read_ymlfile('images.yml')
     
     no = 1
     for image in images:
         print "%s. %s" % (no, image)
         no += 1
 
-def read_ymlfile(ymlfile):
+def rread_ymlfile(ymlfile):
     '''Read YAML file'''
 
     if not os.path.exists(ymlfile):

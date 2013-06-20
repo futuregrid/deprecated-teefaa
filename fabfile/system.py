@@ -12,14 +12,13 @@ import datetime
 from fabric.api import *
 from fabric.contrib import *
 from cuisine import *
-from scratch import read_ymlfile, check_distro
+from scratch import check_distro
 
 
 @task
 def users_force_resetpass(group):
     ''':group=XXXXX | Force users to reset password'''
-    ymlfile = fullpath_ymlfile('users.yml')
-    users = read_ymlfile(ymlfile)[group]
+    users = read_ymlfile('users.yml')[group]
 
     for user in users:
         with mode_sudo():
@@ -29,8 +28,7 @@ def users_force_resetpass(group):
 @task
 def users_ensure(group):
     ''':group=XXXXX | Ensure Users exists'''
-    ymlfile = fullpath_ymlfile('users.yml')
-    users = read_ymlfile(ymlfile)[group]
+    users = read_ymlfile('users.yml')[group]
 
     distro = check_distro()
     if distro == 'fedora':
@@ -68,8 +66,7 @@ def users_ensure(group):
 @task
 def backup(item):
     ''':item=XXXXX | Backup System'''
-    ymlfile = fullpath_ymlfile('backup.yml')
-    cfg = read_ymlfile(ymlfile)[item]
+    cfg = read_ymlfile('backup.yml')[item]
 
     if not os.getenv('USER') == 'root':
         print 'You have to be root.'
@@ -81,8 +78,7 @@ def backup(item):
 @task
 def backup_list():
     ''':item=XXXXX | Show the list of backup'''
-    ymlfile = 'ymlfile/system/backup.yml'
-    cfg = read_ymlfile(ymlfile)
+    cfg = read_ymlfile('backup.yml')
 
     print 'Backup List:'
     n = 1
@@ -134,8 +130,7 @@ def _backup_squashfs(cfg, item):
 @task
 def pxeboot(hostname, boottype):
     ''':hostname,[localboot/netboot/show/list] - utility for pxeboot'''
-    cfgfile = fullpath_ymlfile('pxecfg.yml')
-    pxecfg = read_ymlfile(cfgfile)[hostname]
+    pxecfg = read_ymlfile('pxecfg.yml')[hostname]
     env.host_string = pxecfg['server']
 
     hostcfg = '%s/%s' % (pxecfg['pxeprefix'], hostname)
@@ -180,8 +175,7 @@ def pxeboot(hostname, boottype):
 @task
 def power(hostname,action):
     ''':hostname,[on/off/status]'''
-    cfgfile = 'ymlfile/system/ipmitool.yml'
-    ipmicfg = read_ymlfile(cfgfile)[hostname]
+    ipmicfg = read_ymlfile('ipmitool.yml')[hostname]
     user = ipmicfg['user']
     password = ipmicfg['password']
     bmcaddr = ipmicfg['bmcaddr']
@@ -198,8 +192,7 @@ def power(hostname,action):
 @task
 def temperature(hostname):
     ''':hostname'''
-    cfgfile = fullpath_ymlfile('ipmitool.yml')
-    ipmicfg = read_ymlfile(cfgfile)[hostname]
+    ipmicfg = read_ymlfile('ipmitool.yml')[hostname]
     user = ipmicfg['user']
     password = ipmicfg['password']
     bmcaddr = ipmicfg['bmcaddr']
@@ -213,9 +206,19 @@ def temperature(hostname):
     print '-------------------------------------------------'
     print output
 
-def fullpath_ymlfile(filename):
-    '''Shows full path of ymlfile'''
-    ymlpath = re.sub('fabfile', 'ymlfile', __file__.rstrip('.py'))
-    ymlfile = ymlpath + '/' + filename
-    
-    return ymlfile
+def read_ymlfile(filename):
+    '''Read YAML file'''
+
+    yml_dir = re.sub('fabfile', 'ymlfile', __file__.rstrip('.py'))
+    fullpath_ymlfile = yml_dir + '/' + filename
+    if not os.path.exists(fullpath_ymlfile):
+        print ''
+        print '%s doesn\'t exist.' % fullpath_ymlfile
+        print ''
+        exit(1)
+
+    f = open(fullpath_ymlfile)
+    yml = yaml.safe_load(f)
+    f.close()
+
+    return yml
