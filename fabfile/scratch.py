@@ -470,9 +470,9 @@ def tmp_ifconfig(interface):
     ipaddr = cfg['network'][interface]['ipaddr']
     netmask = cfg['network'][interface]['netmask']
     gateway = cfg['network'][interface]['gateway']
-    run('echo ifconfig %s %s netmask %s' 
+    run('ifconfig %s %s netmask %s' 
             % (interface, ipaddr, netmask))
-    run('echo route default gw %s' % gateway)
+    run('route default gw %s' % gateway)
 
 def read_ymlfile(filename):
     '''Read YAML file'''
