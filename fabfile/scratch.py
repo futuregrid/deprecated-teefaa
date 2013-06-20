@@ -472,7 +472,7 @@ def tmp_ifconfig(interface):
     gateway = cfg['network'][interface]['gateway']
     run('ifconfig %s %s netmask %s' 
             % (interface, ipaddr, netmask))
-    run('route default gw %s' % gateway)
+    run('route add default gw %s' % gateway)
 
 def read_ymlfile(filename):
     '''Read YAML file'''
