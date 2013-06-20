@@ -5,21 +5,18 @@
 #
 
 import os
+import re
 import sys
 import yaml
 import datetime
 from fabric.api import *
 from fabric.contrib import *
 from cuisine import *
-from scratch import read_ymlfile, check_distro
-
 
 @task
 def users_force_resetpass(group):
     ''':group=XXXXX | Force users to reset password'''
-
-    ymlfile = 'ymlfile/system/users.yml'
-    users = read_ymlfile(ymlfile)[group]
+    users = read_ymlfile('users.yml')[group]
 
     for user in users:
         with mode_sudo():
@@ -29,9 +26,7 @@ def users_force_resetpass(group):
 @task
 def users_ensure(group):
     ''':group=XXXXX | Ensure Users exists'''
-
-    ymlfile = 'ymlfile/system/users.yml'
-    users = read_ymlfile(ymlfile)[group]
+    users = read_ymlfile('users.yml')[group]
 
     distro = check_distro()
     if distro == 'fedora':
@@ -69,12 +64,11 @@ def users_ensure(group):
 @task
 def backup(item):
     ''':item=XXXXX | Backup System'''
+    cfg = read_ymlfile('backup.yml')[item]
+
     if not os.getenv('USER') == 'root':
         print 'You have to be root.'
         exit(1)
-
-    ymlfile = 'ymlfile/system/backup.yml'
-    cfg = read_ymlfile(ymlfile)[item]
 
     _backup_rsync(cfg)
     _backup_squashfs(cfg, item)
@@ -82,8 +76,7 @@ def backup(item):
 @task
 def backup_list():
     ''':item=XXXXX | Show the list of backup'''
-    ymlfile = 'ymlfile/system/backup.yml'
-    cfg = read_ymlfile(ymlfile)
+    cfg = read_ymlfile('backup.yml')
 
     print 'Backup List:'
     n = 1
@@ -134,27 +127,42 @@ def _backup_squashfs(cfg, item):
 
 @task
 def pxeboot(hostname, boottype):
-    ''':boottype=XXXXX,hostname=XXXXX|PXE Boot'''
-    cfgfile = 'ymlfile/system/pxecfg.yml'
-    pxecfg = read_ymlfile(cfgfile)[hostname]
+    ''':hostname,[localboot/netboot/show/list] - utility for pxeboot'''
+    pxecfg = read_ymlfile('pxecfg.yml')[hostname]
     env.host_string = pxecfg['server']
 
     hostcfg = '%s/%s' % (pxecfg['pxeprefix'], hostname)
-    if not file_exists(hostcfg):
+
+    with hide('running', 'stdout'):
+        test = file_exists(hostcfg)
+    if not test:
         print ''
         print ' ERROR: %s does not exist.' % hostcfg
         print ''
         exit(1)
 
     if boottype == 'show':
-        output = run('cat %s' % hostcfg)
+        with hide('running', 'stdout'):
+            output = run('cat %s' % hostcfg)
+        print ''
+        print '[%s]' % hostname
         print '--------------------------------------------'
         print output
         print '--------------------------------------------'
         exit(0)
 
+    if boottype == 'list':
+        with hide('running', 'stdout'):
+            output = run('ls -1 %s| grep -v 01-' % pxecfg['pxeprefix'])
+        print ''
+        print output
+        print ''
+        exit(0)
+
     bootcfg = '%s/%s' % (pxecfg['pxeprefix'], boottype)
-    if not file_exists(bootcfg):
+    with hide('running', 'stdout'):
+        test = file_exists(bootcfg)
+    if not test:
         print ''
         print ' ERROR: %s does not exist.' % bootcfg
         print ''
@@ -163,28 +171,64 @@ def pxeboot(hostname, boottype):
     run('cat %s > %s' % (bootcfg, hostcfg))
 
 @task
-def pxeboot_list():
-    ''':boottype=XXXXX,hostname=XXXXX|PXE Boot'''
-    cfgfile = 'ymlfile/system/pxecfg.yml'
-    pxecfg = read_ymlfile(cfgfile)
-
-    output = run('ls %s' % pxecfg['pxeprefix'])
-    print output
-
-@task
-def power(node,action):
-    ''':node=XXXXX,action=XXXXX'''
-    cfgfile = 'ymlfile/system/ipmitool.yml'
-    ipmicfg = read_ymlfile(cfgfile)[node]
+def power(hostname,action):
+    ''':hostname,[on/off/status]'''
+    ipmicfg = read_ymlfile('ipmitool.yml')[hostname]
     user = ipmicfg['user']
     password = ipmicfg['password']
     bmcaddr = ipmicfg['bmcaddr']
     env.host_string = ipmicfg['server']
 
     with hide('running', 'stdout'):
-        hostname = run('hostname')
         output = run('ipmitool -I lanplus -U %s -P %s -E -H %s power %s' 
                          % (user, password, bmcaddr, action))
-    print node
+    print ''
+    print '[%s]' % hostname
     print '-------------------------------------------------'
     print output
+
+@task
+def temperature(hostname):
+    ''':hostname'''
+    ipmicfg = read_ymlfile('ipmitool.yml')[hostname]
+    user = ipmicfg['user']
+    password = ipmicfg['password']
+    bmcaddr = ipmicfg['bmcaddr']
+    env.host_string = ipmicfg['server']
+
+    with hide('running', 'stdout'):
+        output = run('ipmitool -I lanplus -U %s -P %s -E -H %s sdr type temperature'
+                         % (user, password, bmcaddr))
+    print ''
+    print '[%s]' % hostname
+    print '-------------------------------------------------'
+    print output
+
+def read_ymlfile(filename):
+    '''Read YAML file'''
+
+    yml_dir = re.sub('fabfile', 'ymlfile', __file__).rstrip(r'\.py$|\.pyc$')
+    fullpath_ymlfile = yml_dir + '/' + filename
+    if not os.path.exists(fullpath_ymlfile):
+        print ''
+        print '%s doesn\'t exist.' % fullpath_ymlfile
+        print ''
+        exit(1)
+
+    f = open(fullpath_ymlfile)
+    yml = yaml.safe_load(f)
+    f.close()
+
+    return yml
+
+def share_dir():
+    '''Return path of share directory'''
+    share = re.sub('fabfile', 'share', __file__).rstrip(r'\.py$|\.pyc$')
+
+    return share
+
+def check_distro():
+    distro = run('python -c "import platform; print platform.dist()[0].lower()"')
+
+    return distro
+

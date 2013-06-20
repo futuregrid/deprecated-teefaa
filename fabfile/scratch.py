@@ -16,18 +16,15 @@ from cuisine import *
 
 @task
 def bootstrap(imagename):
-    ''':imagename=XXXXX | Bootstrap OS'''
+    ''':imagename  -  Bootstrap OS'''
 
     if not env.user == 'root':
         print 'You need to login as root for bootstrap.'
         print 'So add the option \"--user root\"'
         exit(1)
 
-    hostsfile = 'ymlfile/scratch/hosts.yml'
-    hosts = read_ymlfile(hostsfile)
-
-    imagesfile = 'ymlfile/scratch/images.yml'
-    images = read_ymlfile(imagesfile)
+    hosts = read_ymlfile('hosts.yml')
+    images = read_ymlfile('images.yml')
 
     image = images[imagename]
     host = hosts[env.host]
@@ -168,9 +165,9 @@ def condition(host, image, device, scheme):
 def condition_redhat6(host, image, device, scheme):
     '''Condition config files for Redhat6'''
     # Update fstab, mtab, selinux and udev/rules
-    put('share/scratch/etc/fstab.%s' % image['os'], '/mnt/etc/fstab')
-    put('share/scratch/etc/mtab.%s' % image['os'], '/mnt/etc/mtab')
-    put('share/scratch/boot/grub/grub.conf.%s' % image['os'], '/mnt/boot/grub/grub.conf')
+    put(share_dir() + '/etc/fstab.' + image['os'], '/mnt/etc/fstab')
+    put(share_dir() + '/etc/mtab.' + image['os'], '/mnt/etc/mtab')
+    put(share_dir() + '/boot/grub/grub.conf.' + image['os'], '/mnt/boot/grub/grub.conf')
     data = host['disk']['partitions']['data']
     if data['mount']:
         if data['type'] == 'xfs':
@@ -191,7 +188,7 @@ def condition_redhat6(host, image, device, scheme):
             files.sed('/mnt/boot/grub/grub.conf', 'DEVICE%s' % b, 'DEVICE%s' % a)
     files.sed('/mnt/etc/fstab', 'DEVICE', device)
     files.sed('/mnt/etc/mtab', 'DEVICE', device)
-    put('share/scratch/etc/selinux/config', '/mnt/etc/selinux/config')
+    put(share_dir() + '/etc/selinux/config', '/mnt/etc/selinux/config')
     run('rm -f /mnt/etc/udev/rules.d/70-persistent-net.rules')
     run('rm -f /mnt/etc/sysconfig/network-scripts/ifcfg-eth*')
     run('rm -f /mnt/etc/sysconfig/network-scripts/ifcfg-ib*')
@@ -244,8 +241,8 @@ def condition_redhat6(host, image, device, scheme):
 def condition_ubuntu12(host, image, device, scheme):
     '''Condition config files for Redhat6'''
     # Update fstab, mtab, selinux and udev/rules
-    put('share/scratch/etc/fstab.%s' % image['os'], '/mnt/etc/fstab')
-    put('share/scratch/etc/mtab.%s' % image['os'], '/mnt/etc/mtab')
+    put(share_dir() + '/etc/fstab.' + image['os'], '/mnt/etc/fstab')
+    put(share_dir() + '/etc/mtab.' + image['os'], '/mnt/etc/mtab')
     data = host['disk']['partitions']['data']
     if data['mount']:
         if data['type'] == 'xfs':
@@ -337,7 +334,7 @@ def install_bootloader(device, image):
 
 @task
 def mkbtseed(btcfg, btbin):
-    ''':btcfg=XXXXX,btbin=XXXXX | Make a seed of Bittorrent Sync'''
+    ''':btsync_conf,btsync_bin | Make a seed of Bittorrent Sync'''
     if not files.exists('/BTsync/image'):
         run('mkdir -p /BTsync/image')
     put(btcfg, '/BTsync/btsync.conf')
@@ -348,9 +345,7 @@ def mkbtseed(btcfg, btbin):
 @task
 def make_livecd(livecd_name, livecd_cfg='ymlfile/scratch/livecd.yml'):
     ''':livecd_name=XXXXX,livecd_cfg=cfg/livecd.yaml | Make LiveCD'''
-    f = open(livecd_cfg)
-    livecd = yaml.safe_load(f)[livecd_name]
-    f.close()
+    livecd = read_ymlfile('livecd.yml')[livecd_name]
 
     packages = [
             'wget',
@@ -395,12 +390,10 @@ def make_livecd(livecd_name, livecd_cfg='ymlfile/scratch/livecd.yml'):
     get('/tmp/%s.iso' % livecd_name, livecd['saveto'])
 
 @task
-def make_pxeimage(pxename, pxecfg='cfg/pxe.yaml'):
-    ''':pxename=XXXXX,pxecfg=cfg/pxeimage.yaml'''
-    f = open(pxecfg)
-    pxecfg = yaml.safe_load(f)[pxename]
+def make_pxeimage(pxename):
+    ''':pxename'''
+    pxecfg = read_ymlfile('pxe.yml')[pxename]
     prefix = pxecfg['prefix']
-    f.close()
 
     #put(pxecfg['livecd'], '/tmp/livecd.iso')
     if not file_is_dir('/mnt/tfmnt'):
@@ -426,7 +419,7 @@ def make_pxeimage(pxename, pxecfg='cfg/pxe.yaml'):
 
 @task
 def mksnapshot(name, saveto):
-    ''':name=XXXXX,saveto=XXXXX | Make Snapshot'''
+    ''':name,saveto  -  Make Snapshot'''
     today = datetime.date.today
     distro = run('python -c "import platform; print platform.dist()[0].lower()"')
     print distro
@@ -456,38 +449,50 @@ def mksnapshot(name, saveto):
 
 @task
 def hello():
-    '''| Check if remote hosts are reachable.'''
+    '''-  Check if remote hosts are reachable.'''
     run('hostname')
     run('ls -la')
 
 @task
-def imagelist(imagesfile="ymlfile/scratch/images.yml"):
+def imagelist():
     '''| Show Image List'''
-    f = open(imagesfile)
-    images = yaml.safe_load(f)
-    f.close()
+    images = read_ymlfile('images.yml')
     
     no = 1
     for image in images:
         print "%s. %s" % (no, image)
         no += 1
 
-def read_ymlfile(ymlfile):
+@task
+def tmp_ifconfig(interface):
+    ''':interface  -  Setup IP and GW temporary'''
+    cfg = read_ymlfile('hosts.yml')[env.host]
+    ipaddr = cfg['network'][interface]['ipaddr']
+    netmask = cfg['network'][interface]['netmask']
+    gateway = cfg['network'][interface]['gateway']
+    run('ifconfig %s %s netmask %s' 
+            % (interface, ipaddr, netmask))
+    run('route add default gw %s' % gateway)
+
+def read_ymlfile(filename):
     '''Read YAML file'''
 
-    if not os.path.exists(ymlfile):
+    yml_dir = re.sub('fabfile', 'ymlfile', __file__).rstrip(r'\.py$|\.pyc$')
+    fullpath_ymlfile = yml_dir + '/' + filename
+    if not os.path.exists(fullpath_ymlfile):
         print ''
-        print ' %s doesn\'t exist.' % ymlfile
+        print '%s doesn\'t exist.' % fullpath_ymlfile
         print ''
         exit(1)
 
-    f = open(ymlfile)
+    f = open(fullpath_ymlfile)
     yml = yaml.safe_load(f)
     f.close()
 
     return yml
 
-def check_distro():
-    distro = run('python -c "import platform; print platform.dist()[0].lower()"')
+def share_dir():
+    '''Return path of share directory'''
+    share = re.sub('fabfile', 'share', __file__).rstrip(r'\.py$|\.pyc$')
 
-    return distro
+    return share
