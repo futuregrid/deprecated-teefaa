@@ -13,7 +13,6 @@ from platform import dist
 from fabric.api import *
 from fabric.contrib import *
 from cuisine import *
-from system import read_ymlfile
 
 @task
 def bootstrap(imagename):
@@ -475,4 +474,25 @@ def tmp_ifconfig(interface):
             % (interface, ipaddr, netmask))
     run('echo route default gw %s' % gateway)
 
+def read_ymlfile(filename):
+    '''Read YAML file'''
 
+    yml_dir = re.sub('fabfile', 'ymlfile', __file__).rstrip(r'\.py$|\.pyc$')
+    fullpath_ymlfile = yml_dir + '/' + filename
+    if not os.path.exists(fullpath_ymlfile):
+        print ''
+        print '%s doesn\'t exist.' % fullpath_ymlfile
+        print ''
+        exit(1)
+
+    f = open(fullpath_ymlfile)
+    yml = yaml.safe_load(f)
+    f.close()
+
+    return yml
+
+def share_dir():
+    '''Return path of share directory'''
+    share = re.sub('fabfile', 'share', __file__).rstrip(r'\.py$|\.pyc$')
+
+    return share
