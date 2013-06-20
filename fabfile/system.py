@@ -200,7 +200,7 @@ def power(hostname,action):
 @task
 def temperature(hostname):
     ''':hostname'''
-    ymlpath = re.sub('fabfile', 'ymlfile', __file__.rstrip('.py'))
+    ymlpath = get_ymlpath()
     cfgfile = '%s/ipmitool.yml' % ymlpath
     ipmicfg = read_ymlfile(cfgfile)[hostname]
     user = ipmicfg['user']
@@ -215,3 +215,8 @@ def temperature(hostname):
     print '[%s]' % hostname
     print '-------------------------------------------------'
     print output
+
+def get_ymlpath():
+    ymlpath = re.sub('fabfile', 'ymlfile', __file__.rstrip('.py'))
+    
+    return ymlpath
