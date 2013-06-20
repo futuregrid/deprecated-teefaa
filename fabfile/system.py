@@ -134,7 +134,7 @@ def _backup_squashfs(cfg, item):
 
 @task
 def pxeboot(hostname, boottype):
-    ''':boottype=XXXXX,hostname=XXXXX|PXE Boot'''
+    ''':hostname,[localboot,netboot,show,list] | PXE Boot'''
     cfgfile = 'ymlfile/system/pxecfg.yml'
     pxecfg = read_ymlfile(cfgfile)[hostname]
     env.host_string = pxecfg['server']
@@ -180,7 +180,7 @@ def pxeboot(hostname, boottype):
 
 @task
 def power(hostname,action):
-    ''':hostname=XXXXX,action=XXXXX'''
+    ''':hostname,[on,off,status]'''
     cfgfile = 'ymlfile/system/ipmitool.yml'
     ipmicfg = read_ymlfile(cfgfile)[hostname]
     user = ipmicfg['user']
@@ -215,6 +215,7 @@ def temperature(hostname):
     print output
 
 def fullpath_ymlfile(filename):
+    '''Shows full path of ymlfile'''
     ymlpath = re.sub('fabfile', 'ymlfile', __file__.rstrip('.py'))
     ymlfile = ymlpath + '/' + filename
     
