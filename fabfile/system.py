@@ -134,8 +134,8 @@ def _backup_squashfs(cfg, item):
 
 @task
 def pxeboot(hostname, boottype):
-    ''':hostname,[localboot,netboot,show,list] | PXE Boot'''
-    cfgfile = 'ymlfile/system/pxecfg.yml'
+    ''':hostname,[localboot/netboot/show/list] - utility for pxeboot'''
+    cfgfile = fullpath_ymlfile('pxecfg.yml')
     pxecfg = read_ymlfile(cfgfile)[hostname]
     env.host_string = pxecfg['server']
 
@@ -180,7 +180,7 @@ def pxeboot(hostname, boottype):
 
 @task
 def power(hostname,action):
-    ''':hostname,[on,off,status]'''
+    ''':hostname,[on/off/status]'''
     cfgfile = 'ymlfile/system/ipmitool.yml'
     ipmicfg = read_ymlfile(cfgfile)[hostname]
     user = ipmicfg['user']
