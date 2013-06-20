@@ -478,8 +478,3 @@ def rread_ymlfile(ymlfile):
     f.close()
 
     return yml
-
-def check_distro():
-    distro = run('python -c "import platform; print platform.dist()[0].lower()"')
-
-    return distro
