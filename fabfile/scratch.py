@@ -464,3 +464,15 @@ def imagelist():
         print "%s. %s" % (no, image)
         no += 1
 
+@task
+def tmp_ifconfig(interface):
+    ''':interface  -  Setup IP and GW temporary'''
+    cfg = read_ymlfile('hosts.yml')[env.host]
+    ipaddr = cfg['network'][interface]['ipaddr']
+    netmask = cfg['network'][interface]['netmask']
+    gateway = cfg['network'][interface]['gateway']
+    run('echo ifconfig %s %s netmask %s' 
+            % (interface, ipaddr, netmask))
+    run('echo route default gw %s' % gateway)
+
+
