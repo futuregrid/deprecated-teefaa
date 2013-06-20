@@ -207,7 +207,7 @@ def temperature(hostname):
 def read_ymlfile(filename):
     '''Read YAML file'''
 
-    yml_dir = re.sub('fabfile', 'ymlfile', __file__.rstrip('.py?'))
+    yml_dir = re.sub('fabfile', 'ymlfile', __file__.rstrip(r'.py?'))
     fullpath_ymlfile = yml_dir + '/' + filename
     if not os.path.exists(fullpath_ymlfile):
         print ''
