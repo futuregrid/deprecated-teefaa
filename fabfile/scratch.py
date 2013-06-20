@@ -166,9 +166,9 @@ def condition(host, image, device, scheme):
 def condition_redhat6(host, image, device, scheme):
     '''Condition config files for Redhat6'''
     # Update fstab, mtab, selinux and udev/rules
-    put('share/scratch/etc/fstab.%s' % image['os'], '/mnt/etc/fstab')
-    put('share/scratch/etc/mtab.%s' % image['os'], '/mnt/etc/mtab')
-    put('share/scratch/boot/grub/grub.conf.%s' % image['os'], '/mnt/boot/grub/grub.conf')
+    put(share_dir() + '/etc/fstab.' + image['os'], '/mnt/etc/fstab')
+    put(share_dir() + '/etc/mtab.' + image['os'], '/mnt/etc/mtab')
+    put(share_dir() + '/boot/grub/grub.conf.' + image['os'], '/mnt/boot/grub/grub.conf')
     data = host['disk']['partitions']['data']
     if data['mount']:
         if data['type'] == 'xfs':
@@ -189,7 +189,7 @@ def condition_redhat6(host, image, device, scheme):
             files.sed('/mnt/boot/grub/grub.conf', 'DEVICE%s' % b, 'DEVICE%s' % a)
     files.sed('/mnt/etc/fstab', 'DEVICE', device)
     files.sed('/mnt/etc/mtab', 'DEVICE', device)
-    put('share/scratch/etc/selinux/config', '/mnt/etc/selinux/config')
+    put(share_dir() + '/etc/selinux/config', '/mnt/etc/selinux/config')
     run('rm -f /mnt/etc/udev/rules.d/70-persistent-net.rules')
     run('rm -f /mnt/etc/sysconfig/network-scripts/ifcfg-eth*')
     run('rm -f /mnt/etc/sysconfig/network-scripts/ifcfg-ib*')
@@ -242,8 +242,8 @@ def condition_redhat6(host, image, device, scheme):
 def condition_ubuntu12(host, image, device, scheme):
     '''Condition config files for Redhat6'''
     # Update fstab, mtab, selinux and udev/rules
-    put('share/scratch/etc/fstab.%s' % image['os'], '/mnt/etc/fstab')
-    put('share/scratch/etc/mtab.%s' % image['os'], '/mnt/etc/mtab')
+    put(share_dir() + '/etc/fstab.' + image['os'], '/mnt/etc/fstab')
+    put(share_dir() + '/etc/mtab.' + image['os'], '/mnt/etc/mtab')
     data = host['disk']['partitions']['data']
     if data['mount']:
         if data['type'] == 'xfs':
@@ -464,17 +464,3 @@ def imagelist():
         print "%s. %s" % (no, image)
         no += 1
 
-def rread_ymlfile(ymlfile):
-    '''Read YAML file'''
-
-    if not os.path.exists(ymlfile):
-        print ''
-        print '%s doesn\'t exist.' % ymlfile
-        print ''
-        exit(1)
-
-    f = open(ymlfile)
-    yml = yaml.safe_load(f)
-    f.close()
-
-    return yml

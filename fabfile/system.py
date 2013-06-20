@@ -221,6 +221,12 @@ def read_ymlfile(filename):
 
     return yml
 
+def share_dir():
+    '''Return path of share directory'''
+    share = re.sub('fabfile', 'share', __file__).rstrip(r'\.py$|\.pyc$')
+
+    return share
+
 def check_distro():
     distro = run('python -c "import platform; print platform.dist()[0].lower()"')
 
