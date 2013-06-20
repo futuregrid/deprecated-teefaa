@@ -29,8 +29,7 @@ def users_force_resetpass(group):
 @task
 def users_ensure(group):
     ''':group=XXXXX | Ensure Users exists'''
-
-    ymlfile = 'ymlfile/system/users.yml'
+    ymlfile = fullpath_ymlfile('users.yml')
     users = read_ymlfile(ymlfile)[group]
 
     distro = check_distro()
@@ -69,12 +68,12 @@ def users_ensure(group):
 @task
 def backup(item):
     ''':item=XXXXX | Backup System'''
+    ymlfile = fullpath_ymlfile('backup.yml')
+    cfg = read_ymlfile(ymlfile)[item]
+
     if not os.getenv('USER') == 'root':
         print 'You have to be root.'
         exit(1)
-
-    ymlfile = 'ymlfile/system/backup.yml'
-    cfg = read_ymlfile(ymlfile)[item]
 
     _backup_rsync(cfg)
     _backup_squashfs(cfg, item)
