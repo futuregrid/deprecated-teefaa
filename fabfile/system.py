@@ -18,8 +18,7 @@ from scratch import read_ymlfile, check_distro
 @task
 def users_force_resetpass(group):
     ''':group=XXXXX | Force users to reset password'''
-
-    ymlfile = 'ymlfile/system/users.yml'
+    ymlfile = fullpath_ymlfile('users.yml')
     users = read_ymlfile(ymlfile)[group]
 
     for user in users:
@@ -200,8 +199,7 @@ def power(hostname,action):
 @task
 def temperature(hostname):
     ''':hostname'''
-    ymlpath = get_ymlpath()
-    cfgfile = '%s/ipmitool.yml' % ymlpath
+    cfgfile = path_ymlfile('ipmitool.yml')
     ipmicfg = read_ymlfile(cfgfile)[hostname]
     user = ipmicfg['user']
     password = ipmicfg['password']
@@ -216,7 +214,8 @@ def temperature(hostname):
     print '-------------------------------------------------'
     print output
 
-def get_ymlpath():
+def fullpath_ymlfile(filename):
     ymlpath = re.sub('fabfile', 'ymlfile', __file__.rstrip('.py'))
+    ymlfile = ymlpath + '/' + filename
     
-    return ymlpath
+    return ymlfile
