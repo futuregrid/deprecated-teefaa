@@ -9,7 +9,6 @@ import re
 import sys
 import yaml
 import datetime
-import a_module
 from fabric.api import *
 from fabric.contrib import *
 from cuisine import *
@@ -202,7 +201,7 @@ def power(hostname,action):
 def temperature(hostname):
     ''':hostname'''
     ymlpath = re.sub('fabfile.', 'ymlfile/', __name__)
-    print a_module.__file__
+    print __file__
     cfgfile = 'ymlfile/system/ipmitool.yml'
     ipmicfg = read_ymlfile(cfgfile)[hostname]
     user = ipmicfg['user']
