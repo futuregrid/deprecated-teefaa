@@ -199,6 +199,7 @@ def power(hostname,action):
 @task
 def temperature(hostname):
     ''':hostname'''
+    print __name__
     cfgfile = 'ymlfile/system/ipmitool.yml'
     ipmicfg = read_ymlfile(cfgfile)[hostname]
     user = ipmicfg['user']
