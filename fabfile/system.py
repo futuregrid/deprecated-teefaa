@@ -12,8 +12,6 @@ import datetime
 from fabric.api import *
 from fabric.contrib import *
 from cuisine import *
-from scratch import check_distro
-
 
 @task
 def users_force_resetpass(group):
@@ -222,3 +220,8 @@ def read_ymlfile(filename):
     f.close()
 
     return yml
+
+def check_distro():
+    distro = run('python -c "import platform; print platform.dist()[0].lower()"')
+
+    return distro
