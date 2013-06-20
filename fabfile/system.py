@@ -5,6 +5,7 @@
 #
 
 import os
+import re
 import sys
 import yaml
 import datetime
@@ -199,7 +200,8 @@ def power(hostname,action):
 @task
 def temperature(hostname):
     ''':hostname'''
-    print __name__
+    test = re.sub('fabfile.', 'yamlfile/', __name__)
+    print test
     cfgfile = 'ymlfile/system/ipmitool.yml'
     ipmicfg = read_ymlfile(cfgfile)[hostname]
     user = ipmicfg['user']
