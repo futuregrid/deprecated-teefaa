@@ -208,7 +208,7 @@ def read_ymlfile(filename):
     '''Read YAML file'''
 
     yml_dir = re.sub('fabfile', 'ymlfile', __file__)
-    yml_dir = re.sub(r'\.py$+\.pyc$', '', yml_dir)
+    yml_dir = re.sub(r'\.py$| \.pyc$', '', yml_dir)
     fullpath_ymlfile = yml_dir + '/' + filename
     if not os.path.exists(fullpath_ymlfile):
         print ''
