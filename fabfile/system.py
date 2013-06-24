@@ -8,10 +8,17 @@ import os
 import re
 import sys
 import yaml
+import time
 import datetime
 from fabric.api import *
 from fabric.contrib import *
 from cuisine import *
+
+fabname = 'system'
+@task
+def print_fabname():
+    print fabname
+
 
 @task
 def users_force_resetpass(group):
@@ -180,12 +187,79 @@ def power(hostname,action):
     env.host_string = ipmicfg['server']
 
     with hide('running', 'stdout'):
-        output = run('ipmitool -I lanplus -U %s -P %s -E -H %s power %s' 
+        if action == 'wait_till_on':
+            keywords = 'Power is on'
+            _power_wait(keywords, user, password, bmcaddr)
+        elif action == 'wait_till_off':
+            keywords = 'Power is off'
+            _power_wait(keywords, user, password, bmcaddr)
+        elif action == 'on' or \
+                action == 'off' or \
+                action == 'status':
+            output = run('ipmitool -I lanplus -U %s -P %s -E -H %s power %s' 
                          % (user, password, bmcaddr, action))
-    print ''
-    print '[%s]' % hostname
-    print '-------------------------------------------------'
-    print output
+            print ''
+            print '[%s]' % hostname
+            print '-------------------------------------------------'
+            print output
+        else:
+            print 'action \'%s\' is not supported.' % action
+            exit(1)
+
+def _power_wait(keywords, user, password, bmcaddr):
+    output = ''
+    counter = 0
+    while output.find(keywords) == -1:
+        output = run('ipmitool -I lanplus -U %s -P %s -E -H %s power status'
+                     % (user, password, bmcaddr))
+        counter += 1
+        limit = 10
+        print '[%s/%s]\n%s' % (counter, limit, output)
+        if counter == limit:
+            print 'Give it up'
+            exit(1)
+        time.sleep(5)
+    return True
+
+@task
+def wait_till_ping(hostname,limit=10):
+    ''':hostname,limit=10'''
+    with settings(warn_only = True):
+        counter = 0
+        loop = True
+        while loop:
+            output = local('ping -c 3 %s' % hostname)
+            counter += 1
+            if output.return_code == 0:
+                print "Tried ping and succeeded [%s/%s]" % (counter, limit)
+                break
+            else:
+                print "Tried ping and no answer [%s/%s]" % (counter, limit)
+            if counter > limit:
+                print "Give up"
+                exit(1)
+                time.sleep(5)
+
+@task
+def wait_till_ssh(hostname,limit=10):
+    ''':hostname,limit=10'''
+    env.host_string = hostname
+    with settings(warn_only = True):
+        counter = 0
+        loop = True
+        while loop:
+            counter += 1
+            try:
+                run('hostname')
+                break
+            except fabric.exceptions.NetworkError:
+                print "Tried ssh and no answer [%s/%s]" % (counter, limit)
+                if counter > limit:
+                    print "Give up"
+                    exit(1)
+                time.sleep(5)
+                pass
+        print "Tried ssh and succeeded [%s/%s]" % (counter, limit)
 
 @task
 def temperature(hostname):
