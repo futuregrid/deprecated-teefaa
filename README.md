@@ -1,4 +1,6 @@
 FutureGrid Teefaa
 =================
 
-The project Documentation is located at http://futuregrid.github.com/teefaa/
+The code has moved to 
+
+http://github.com/cloudmesh/teefaa
